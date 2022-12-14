@@ -353,8 +353,6 @@ print("".join(["omicron", "pi", "rho"])) # omicronpirho
 print("phi       chi\npsi".split()) # ['phi', 'chi', 'psi']
 print("phi       chi\npsi".split('\n')) # ['phi', 'chi', 'psi']
 
-
-
 # El método lstrip() sin parámetros devuelve una cadena recién creada formada a partir de la original eliminando
 # todos los espacios en blanco INICIALES.
 print("[" + " tau ".lstrip() + "]") # [tau ] OJO iniciales
@@ -368,7 +366,7 @@ print("[" + " upsilon ".rstrip() + "]")
 print("cisco.com".rstrip(".com"))
 
 # El método strip() combina los efectos causados por rstrip() y lstrip() - crea una nueva cadena que carece de
-# todos los espacios en blanco iniciales y finales.
+# todos los espacios en blanco iniciales y finales (ojo no en medio).
 print("[" + "   aleph   ".strip() + "]") # [aleph]
 print(".orgpythoninstitute.org".strip(".org")) # pythoninstitute
 
@@ -391,6 +389,37 @@ print("omega".startswith("om")) # True
 print("omega".endswith("meg")) # False
 print("omega".endswith("a")) # True
 print()
+
+# Ejercicio
+''' Su tarea es escribir su propia función, que se comporta casi exactamente como el método split() original, es decir:
+debe aceptar exactamente un argumento: una cadena;debe devolver una lista de palabras creadas a partir de la cadena,
+dividida en los lugares donde la cadena contiene espacios en blanco; si la cadena está vacía, la función debería
+devolver una lista vacía; su nombre debería ser mysplit() Utilice la plantilla en el editor. Prueba tu código
+cuidadosamente '''
+def mysplit(string):
+    try:
+        if type(string) != str:
+            raise Exception('only accept strings')
+        if string.isspace():
+            return []
+        # return string.split()
+        # like is not use split
+        string = string.strip()
+        l = []
+        aux = 0
+        for s in range(len(string)):
+            if string[s].isspace() or s == (len(string) -1):
+                l.append(string[aux:s+1].strip())
+                aux=s
+        return l
+    except Exception as e:
+        print('raise an error:', e)
+
+print(mysplit("To be or not to be, that is the question"))  # ['To', 'be', 'or', 'not', 'to', 'be,', 'that', 'is', 'the', 'question']
+print(mysplit("To be or not to be,that is the question"))   # ['To', 'be', 'or', 'not', 'to', 'be,that', 'is', 'the', 'question']
+print(mysplit("   "))   # []
+print(mysplit(" abc "))     # ['abc']
+print(mysplit(""))  # []
 
 
 # ***********************************
