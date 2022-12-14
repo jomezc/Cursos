@@ -233,17 +233,6 @@ print(list("abcabc")) # ['a', 'b', 'c', 'a', 'b', 'c']
 print("abcabc".count("b"))# 2
 print('abcabc'.count("d"))# 0
 
-# El capitalize() crea una nueva cadena llena de caracteres,
-# si el primer carácter dentro de la cadena es una letra (nota: el primer carácter es un elemento con un índice igual a
-# 0, no solo el primer carácter visible), se convertirá a mayúsculas; todas las letras restantes de la cadena se
-# convertirán a minúsculas.
-# la cadena original no cambia de ninguna manera
-# la cadena modificada se devuelve como resultado
-print("Alpha".capitalize()) # Alpha
-print('ALPHA'.capitalize())# Alpha
-print(' Alpha'.capitalize())# alpha
-print('123'.capitalize()) # 123
-print("αβγδ".capitalize())#Αβγδ
 
 # El método center() hace una copia de la cadena original,
 #tratando de centrarla dentro de un campo de un ancho específico.
@@ -296,7 +285,7 @@ print(t.isalnum())
 t = '20E1' # True
 print(t.isalnum())
 
-# isapha(), solo letras:
+# isalpha(), solo letras:
 print("Moooo".isalpha()) # True
 print('Mu40'.isalpha()) # False
 
@@ -309,16 +298,6 @@ print("Moooo".islower()) #False
 print('moooo'.islower()) #True
 
 # isspace() solo espacios:
-print(' \n '.isspace())
-print(" ".isspace())
-print("mooo mooo mooo".isspace())
-
-# Example 3: Demonstrating the isupper() method:
-print("Moooo".isupper())
-print('moooo'.isupper())
-print('MOOOO'.isupper())
-
-# isspace() solo espacios:
 print(' \n '.isspace()) # True
 print(" ".isspace()) # True
 print("mooo mooo mooo".isspace()) # False
@@ -327,6 +306,17 @@ print("mooo mooo mooo".isspace()) # False
 print("Moooo".isupper()) #False
 print('MOOOO'.isupper()) #True
 
+# El capitalize() crea una nueva cadena llena de caracteres,
+# si el primer carácter dentro de la cadena es una letra (nota: el primer carácter es un elemento con un índice igual a
+# 0, no solo el primer carácter visible), se convertirá a mayúsculas; todas las letras restantes de la cadena se
+# convertirán a minúsculas.
+# la cadena original no cambia de ninguna manera
+# la cadena modificada se devuelve como resultado
+print("Alpha".capitalize()) # Alpha
+print('ALPHA'.capitalize())# Alpha
+print(' Alpha'.capitalize())# alpha
+print('123'.capitalize()) # 123
+print("αβγδ".capitalize())#Αβγδ
 
 # El método swapcase() crea una nueva cadena intercambiando las mayúsculas y minúsculas de todas las letras dentro
 # de la cadena de origen: los caracteres en minúsculas se convierten en mayúsculas y viceversa. El resto de caracteres
@@ -337,7 +327,7 @@ print("I know that I know nothing.".swapcase())  # i KNOW THAT i KNOW NOTHING.
 # cambia todas las demás a minúsculas
 print("I know that I know nothing. Part 1.".title())    # I Know That I Know Nothing. Part 1.
 
-# Por último, pero no menos importante, el método upper() hace una copia de la cadena de origen, reemplaza todas
+# el método upper() hace una copia de la cadena de origen, reemplaza todas
 # las letras minúsculas con sus equivalentes en mayúsculas y devuelve la cadena como resultado.
 print("I know that I know nothing. Part 2.".upper())    #I KNOW THAT I KNOW NOTHING. PART 2.
 
@@ -362,6 +352,7 @@ print("".join(["omicron", "pi", "rho"])) # omicronpirho
 # si le pones otra cosa pues es el separador
 print("phi       chi\npsi".split()) # ['phi', 'chi', 'psi']
 print("phi       chi\npsi".split('\n')) # ['phi', 'chi', 'psi']
+
 
 
 # El método lstrip() sin parámetros devuelve una cadena recién creada formada a partir de la original eliminando
