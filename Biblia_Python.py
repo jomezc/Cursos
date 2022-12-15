@@ -183,9 +183,9 @@ print("+" + 10 * "-" + "+")
 print(("|" + " " * 10 + "|\n") * 5, end="")
 print("+" + 10 * "-" + "+")
 
-leg_a = float(input("Input first leg length: "))
+leg_a = float(input("Input first leg length: ")) # float a número en punto flotante
 leg_b = float(input("Input second leg length: "))
-print("Hypotenuse length is " + str((leg_a**2 + leg_b**2) ** .5)) #2 3 -> 3.605551275463989
+print("Hypotenuse length is " + str((leg_a**2 + leg_b**2) ** .5)) #2 3 -> 3.605551275463989 str a char
 x = int(input("Enter a number: ")) # The user enters 2
 print(x * "5")
 
@@ -534,6 +534,15 @@ print((-2 / 4), (2 / 4), (2 // 4), (-2 // 4)) # -0.5 0.5 0 -1
 # ***********************************
 # ******** COMPARACIONES##
 # ***********************************
+''' Python no es consciente (no puede serlo de ninguna manera) de los problemas lingüísticos sutiles: solo compara los 
+valores de los puntos de código, carácter por carácter.Cuando comparas dos cadenas de diferentes longitudes y la más 
+corta es idéntica al comienzo de la más larga, la cadena más larga se considera mayor.La comparación de cadenas siempre 
+distingue entre mayúsculas y minúsculas (las letras mayúsculas se toman como menores que las minúsculas). No comparar 
+string con números, 
+string == number --> False;
+string != number --> True;
+string >= number --> falla.'''
+
 a = 4
 b = 2
 r = (a == b)  # lo del lado derecho se evalúa primero y luego se asigna
@@ -545,6 +554,28 @@ r = a < b  # menor
 r = a >= b  # menor o igual
 r = a <= b  # menor o igual
 print(f'Resultado: {r}')
+
+s1 = '12.8'
+i = int(s1) # value error aqui porque no podemos pasar el string 12.8 a entero a float si podriamos
+
+
+'''
+En general, Python ofrece dos formas diferentes de ordenar listas.
+El primero se implementa como una función llamada sorted().
+La función toma un argumento (una lista) y devuelve una nueva lista, llena con los elementos del argumento ordenado. 
+La lista original permanece intacta. Mire el código en el editor y ejecútelo. 
+El segundo método afecta a la lista en sí: no se crea ninguna lista nueva. La ordenación se realiza in situ mediante 
+el método denominado sort().
+'''
+first_greek = ['omega', 'alpha', 'pi', 'gamma']
+first_greek_2 = sorted(first_greek)
+print(first_greek) # ['omega', 'alpha', 'pi', 'gamma']
+print(first_greek_2) # ['alpha', 'gamma', 'omega', 'pi']
+
+second_greek = ['omega', 'alpha', 'pi', 'gamma']
+print(second_greek) # ['omega', 'alpha', 'pi', 'gamma']
+second_greek.sort()
+print(second_greek)  ['alpha', 'gamma', 'omega', 'pi']
 
 # ***********************************
 # ******** Ejemplo prioridad##
@@ -2074,6 +2105,104 @@ for i in range(len(test_data)):
 		print("OK")
 	else:
 		print("Failed")
+
+
+# EJERCIO FUNCION PANTALLA DE 13 LED (NUMEROS)
+''' Su tarea es escribir un programa que pueda simular el trabajo de un dispositivo de siete pantallas, aunque
+utilizará LED individuales en lugar de segmentos. Cada dígito se construye a partir de 13 LED, puede ser de cualquier
+longitud de números
+
+input: 9081726354
+Sample output:
+### ### ###   # ### ### ### ### ### # #
+# # # # # #   #   #   # #     # #   # #
+### # # ###   #   # ### ### ### ### ###
+  # # # # #   #   # #   # #   #   #   #
+### ### ###   #   # ### ### ### ###   #
+'''
+
+
+def pantalla(str):
+    # Simulamos un "led de 13 luces" 0 APAGADO, 1 ENCENDIDO
+    # A1A2A3
+    # F-  B-
+    # G1G2G3
+    # E-  C-
+    # D1D2D3
+    led = {
+        #  [A1, A2, A3, B, C, D1, D2, D3, E, ,G1, G2, G3, F]
+        0: [1,  1,  1,  1, 1,  1,  1,  1, 1,  1,  0,  1,  1],
+        1: [0,  0,  1,  1, 1,  0,  0,  1, 0,  0,  0,  1,  0],
+        2: [1,  1,  1,  1, 0,  1,  1,  1, 1,  1,  1,  1,  0],
+        3: [1,  1,  1,  1, 1,  1,  1,  1, 0,  1,  1,  1,  0],
+        4: [1,  0,  1,  1, 1,  0,  0,  1, 0,  1,  1,  1,  1],
+        5: [1,  1,  1,  0, 1,  1,  1,  1, 1,  1,  1,  1,  1],
+        6: [1,  0,  0,  0, 1,  1,  1,  1, 1,  1,  1,  1,  1],
+        7: [1,  1,  1,  1, 1,  0,  0,  1, 0,  0,  0,  1,  0],
+        8: [1,  1,  1,  1, 1,  1,  1,  1, 1,  1,  1,  1,  1],
+        9: [1,  1,  1,  1, 1,  1,  1,  1, 0,  1,  1,  1,  1]
+    }
+    # IMPRIME PRIMERA LINEA DEL LED: A1A2A3
+    for s in str:
+        for a in range(3):
+            if led.get(int(s))[a] == 1:
+                print('#', end='')
+            else:
+                print(' ', end='')
+        print('', end=' ')
+    print(end='\n')
+
+    # IMPRIME SEGUNDA LINEA DEL LED: F B
+    for s in str:
+        if led.get(int(s))[-1] == 1:
+            print('#', end='')
+        else:
+            print(' ', end='')
+        print(' ', end='')
+
+        if led.get(int(s))[3] == 1:
+                print('#', end='')
+        else:
+            print(' ', end='')
+        print('', end=' ')
+    print()
+
+    # IMPRIME TERCERA LINEA DEL LED: G1G2G3
+    for s in str:
+        for a in range(9, 12):
+            if led.get(int(s))[a] == 1:
+                print('#', end='')
+            else:
+                print(' ', end='')
+        print('', end=' ')
+    print()
+
+    # IMPRIME CUARTA LINEA DEL LED: E C
+    for s in str:
+        if led.get(int(s))[8] == 1:
+            print('#', end='')
+        else:
+            print(' ', end='')
+        print(' ', end='')
+
+        if led.get(int(s))[4] == 1:
+            print('#', end='')
+        else:
+            print(' ', end='')
+        print('', end=' ')
+    print()
+
+    # IMPRIME QUINTA LINEA DEL LED: D1D2D3
+    for s in str:
+        for a in range(5, 8):
+            if led.get(int(s))[a] == 1:
+                print('#', end='')
+            else:
+                print(' ', end='')
+        print('', end=' ')
+    print()
+
+pantalla('9081726354')
 
 # ***********************************
 # ******** FUNCIONES RECURSIVAS
