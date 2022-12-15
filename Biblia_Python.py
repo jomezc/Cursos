@@ -422,6 +422,40 @@ print(mysplit(" abc "))     # ['abc']
 print(mysplit(""))  # []
 
 
+# CALC IBAN
+"""
+British: GB72 HBZU 7006 7212 1253 00
+French: FR76 30003 03620 00020216907 50
+German: DE02100100100152517108
+"""
+
+# IBAN Validator.
+
+iban = input("Enter IBAN, please: ")
+iban = iban.replace(' ','')
+
+if not iban.isalnum():
+    print("You have entered invalid characters.")
+elif len(iban) < 15:
+    print("IBAN entered is too short.")
+elif len(iban) > 31:
+    print("IBAN entered is too long.")
+else:
+    iban = (iban[4:] + iban[0:4]).upper()
+    iban2 = ''
+    for ch in iban:
+        if ch.isdigit():
+            iban2 += ch
+        else:
+            iban2 += str(10 + ord(ch) - ord('A'))
+    iban = int(iban2)
+    if iban % 97 == 1:
+        print("IBAN entered is valid.")
+    else:
+        print("IBAN entered is invalid.")
+
+
+
 # ***********************************
 # ********  BOOL  ###############
 # ***********************************
@@ -1202,6 +1236,93 @@ while  c0>1:
 print(f'steps = {step}')
 
 # Even par odd impar
+
+
+################# Cifrado Cesar ****  .
+
+text = input("Enter your message: ") # bLa blaaa
+cipher = ''
+for char in text:
+    if not char.isalpha():
+        continue
+    char = char.upper()
+    code = ord(char) + 1
+    if code > ord('Z'):
+        code = ord('A')
+    cipher += chr(code)
+print(cipher) # CMBCMBBB
+
+# Descifrar mensaje.
+cipher = input('Enter your cryptogram: ') # CMBCMBBB
+text = ''
+for char in cipher:
+    if not char.isalpha():
+        continue
+    char = char.upper()
+    code = ord(char) - 1
+    if code < ord('A'):
+        code = ord('Z')
+    text += chr(code)
+print(text)  # BLABLAAA
+
+# Procesador de numeros ***.
+line = input("Enter a line of numbers - separate them with spaces: ") # 1 2 3 4 5 6
+strings = line.split()
+total = 0
+try:
+    for substr in strings:
+        total += float(substr)
+    print("The total is:", total)
+except:
+    print(substr, "is not a number.") # 21.0
+
+# Cifrado Cesar v2
+"""
+El cifrado César original cambia cada carácter por uno: a se convierte en b, z se convierte en a, y así sucesivamente.
+Hagámoslo un poco más difícil y permitamos que el valor desplazado provenga del rango 1..25 inclusive.
+Además, deje que el código conserve el caso de las letras (las letras minúsculas seguirán siendo minúsculas)
+y todos los caracteres no alfabéticos deben permanecer intactos.
+
+Su tarea es escribir un programa que:
+pide al usuario una línea de texto para cifrar;
+pide al usuario un valor de cambio (un número entero del rango 1..25nota: debe obligar al usuario a ingresar
+un valor de cambio válido (¡no se rinda y no deje que los datos incorrectos lo engañen!)
+imprime el texto codificado.
+"""
+text = input("Inserta el mensaje: ") # abcxyzABCxyz 123 || The die is cast
+ok = False
+while not ok:
+    try:
+        cifr = int(input("Inserta el número de cambio: ")) # 2 || 25
+        if not 0 < cifr <= 25:
+            raise Exception('El numero debe estar comprendido entre 1 y 25')
+        ok = True
+    except Exception as e:
+        print(e)
+
+cipher = ''
+
+for char in text:
+    mod = 25
+    if 65 <= ord(char) <= 90 or 97 <= ord(char) <= 122:
+        if 65 <= ord(char) <= 90:
+            rest = 65
+        else:
+            rest = 97
+        asci = ord(char) - rest
+        new_alph_tmp = asci + cifr
+        if new_alph_tmp == 25:
+            mod += 1
+        if new_alph_tmp > 25:
+            new_alph = (new_alph_tmp % mod) - 1
+        else:
+            new_alph = new_alph_tmp % mod
+        new_asci = new_alph + rest
+        char = chr(new_asci)
+        # quitamos el sobrante para jugar con el alfabeto, para
+        # después sumarle el dígito acorde el actual jugando con el resto
+    cipher += char
+print(cipher) # cdezabCDEzab 123 || Sgd chd hr bzrs
 
 # ***********************************
 # ******** match ###################
