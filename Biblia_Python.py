@@ -2204,6 +2204,32 @@ def pantalla(str):
 
 pantalla('9081726354')
 
+#Versión con menos codigo pero mas complejidad (n*n vs MIA 5*n)
+
+# using a list containing patterns （0~9）
+
+list=[['###', '# #', '# #', '# #', '###'],
+[' #', ' #', ' #', ' #', ' #'],
+['###', '  #', '###', '#  ', '###'],
+['###', '  #', '###', '  #', '###'],
+['# #', '# #', '###', '  #', '  #'],
+['###', '#  ', '###', '  #', '###'],
+['###', '#  ', '###', '# #', '###'],
+['###', '  #', '  #', '  #', '  #'],
+['###', '# #', '###', '# #', '###'],
+['###', '# #', '###', '  #', '###']
+]
+
+def print_number(num):
+    string = str(num)
+    for i in range(0,5):
+        for character in string:
+            print(list[int(character)][i],end = ' ')
+        print()
+
+print_number(int(input("Enter the number you wish to display: ")))
+
+
 # ***********************************
 # ******** FUNCIONES RECURSIVAS
 # ***********************************
