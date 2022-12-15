@@ -2060,6 +2060,25 @@ for i in range(1, 20):
 			print(i + 1, end=" ")
 print() # 2 3 5 7 11 13 17 19
 
+# Palíndromo
+'''suponga que una cadena vacía no es un palíndromo;
+tratar las letras mayúsculas y minúsculas como iguales;
+los espacios no se tienen en cuenta durante la verificación; trátelos como inexistentes;
+hay más de unas pocas soluciones correctas; trate de encontrar más de una.'''
+
+def palindromo(string):
+    string = string.upper().replace(' ','')
+    frase = 'Es un palíndromo'
+    for a in range(len(string) - 1):
+        if not string[a] == string[(len(string) - 1) - a]:
+            frase = 'No es un palíndromo'
+        if frase[0] == 'N' or a == (len(string) - 1) - a:
+            break
+    print(frase)
+
+palindromo('Ten animals I slam in a net')
+
+
 # ***********************************
 # ******** ejemplo funciones variables  *************
 # ***********************************
