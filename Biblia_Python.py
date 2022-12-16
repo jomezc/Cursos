@@ -2543,34 +2543,37 @@ math.e   # una constante con un valor que es una aproximación del número de Eu
 math.exp(x)  # encontrar el valor de e elevado a x;
 math.log(x)  # el logaritmo natural de x
 math.log(x, b)  # el logaritmo de x a base b
-math.log10(x)   #el logaritmo decimal de x (más preciso que log(x, 10))
-math.log2(x)    #el logaritmo binario de x (más preciso que log(x, 2))
-pow(x, y)   #encontrar el valor de x elevado a y (cuidado con los dominios)
-#Esta es una función incorporada y no tiene que importarse.
+math.log10(x)   # el logaritmo decimal de x (más preciso que log(x, 10))
+math.log2(x)    # el logaritmo binario de x (más preciso que log(x, 2))
+pow(x, y)   # encontrar el valor de x elevado a y (cuidado con los dominios)
+# Esta es una función incorporada y no tiene que importarse.
 
 # Propósito general
 math.ceil(x)    # el entero más pequeño MAYOR o igual que x
 math.floor(x)   # el entero más grande MENOR o igual que x)
 math.trunc(x)   # el valor de x truncado a un entero (ten cuidado, no es un equivalente ni de ceil ni de floor)
-math.factorial(x) # devuelve x! (x tiene que ser una integral y no una negativa)
-math.hypot(x, y) # devuelve la longitud de la hipotenusa de un triángulo rectángulo con las longitudes de las piernas iguales a x e y (igual que sqrt(pow(x, 2) + pow(y, 2)) pero más precisa)
+math.factorial(x)  # devuelve x! (x tiene que ser una integral y no una negativa)
+math.hypot(x, y)  # devuelve la longitud de la hipotenusa de un triángulo rectángulo con las longitudes de las piernas
+# iguales a x e y (igual que sqrt(pow(x, 2) + pow(y, 2)) pero más precisa)
 
 # ********* random  modulo de números aleatorios
-#Un generador de números aleatorios toma un valor llamado semilla,
-# lo trata como un valor de entrada, calcula un número "aleatorio" basado en él (el método depende de un algoritmo elegido) y produce un nuevo valor de semilla.
+# Un generador de números aleatorios toma un valor llamado semilla,
+# lo trata como un valor de entrada, calcula un número "aleatorio" basado en él (el método depende de un algoritmo
+# elegido) y produce un nuevo valor de semilla.
 from random import random, seed, randrange, randint, choice, sample
 
 beg, end,step, left, right, sequence, elements_to_choose = 0, 10, 1, 2, 5, [1,2,3,4,5,6,7,8,9], 5
-random()    #produce un número flotante x procedente del rango (0,0, 1,0)
-seed()      #La función es capaz de establecer directamente la semilla del generador.
+random()    # produce un número flotante x procedente del rango (0,0, 1,0)
+seed()      # La función es capaz de establecer directamente la semilla del generador.
             # Te mostramos dos de sus variantes: seed() - establece la semilla con la hora actual;
             # seed(int_value): establece la semilla con el valor entero int_value.
 
 for i in range(5):
-    # seed(0) # con seed0 0 estsblcemos la semilla en 0 con lo que ya no es aleatorio, los numeros generados serán los mismos
+    # seed(0) # con seed0 0 establecemos la semilla en 0 con lo que ya no es aleatorio, los numeros generados serán los
+    # mismos
     print(random())
 
-# valores aleatorios enteros, exclusión implicita del lado derecho es como un aleatorio del range
+# valores aleatorios enteros, exclusión implícita del lado derecho es como un aleatorio del range
 randrange(end)
 randrange(beg, end)
 randrange(beg, end, step)
@@ -2578,11 +2581,12 @@ randint(left, right)
 
 # Las funciones anteriores tienen una desventaja importante: pueden producir valores repetitivos
 # incluso si el número de invocaciones posteriores no es mayor que el ancho del rango especificado.
-# Afortunadamente, hay una mejor solución que escribir su propio código para verificar la singularidad de los números "dibujados".
+# Afortunadamente, hay una mejor solución que escribir su propio código para verificar la singularidad de los números
+# "dibujados".
 
 
-choice(sequence) # La primera variante elige un elemento "aleatorio" de la secuencia de entrada y lo devuelve.
-sample(sequence, elements_to_choose) # Elige algunos de los elementos de entrada, devolviendo una lista  del tamaño
+choice(sequence)  # La primera variante elige un elemento "aleatorio" de la secuencia de entrada y lo devuelve.
+sample(sequence, elements_to_choose) # Elige algunos de los elementos de entrada, devolviendo una lista del tamaño
 # indicado con la opción. Los elementos de la muestra se colocan en orden aleatorio
 my_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -2611,7 +2615,8 @@ print(processor()) # , nombre real del procesador ( si es posible)
 print(system()) # Darwin, devuelve el nombre genérico del sistema operativo como una cadena.
 print(version()) # Darwin Kernel Version 22.1.0: Sun Oct  9 20:15:09 PDT 2022; root:xnu-8792.41.9~2/RELEASE_ARM64_T6000
 print(python_implementation())  # CPython, devuelve una cadena que indica la implementación de Python
-print(python_version_tuple())   # ('3', '11', '0'), la mayor parte de la versión de Python; la parte menor; El número de nivel de parche.
+print(python_version_tuple())   # ('3', '11', '0'), la mayor parte de la versión de Python; la parte menor;
+# El número de nivel de parche.
 # La versión del sistema operativo se proporciona como una cadena
 
 # ***********************************
@@ -2939,6 +2944,7 @@ persona1.mostrar_detalle()
 
 print('Eliminación objetos'.center(50, '-'))
 del persona1  # eliminción explicita
+
 
 # Es raro en python por la existencia del concepto del reoclector de basura
 # Esto es porque todos los objetos que no estén apuntados por una varable se van
@@ -4568,6 +4574,7 @@ class SnakeManager:
         for row in pr.snakeOnBorad:
             out = out + row + '\n'
         return out
+
 
 if __name__ == '__main__':
     # pr = SnakeManager([4, 3], [[2, 2], [3, 2], [3, 1], [3, 0], [2, 0], [1, 0], [0, 0]], 3)
