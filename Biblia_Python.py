@@ -1294,6 +1294,32 @@ for s in st1:
         break
 print(response) #Yes || con donut como st1 --> No
 
+# ++++  Sudoku  ++++++++
+"""
+Sudoku es un rompecabezas de colocación de números que se juega en un tablero de 9x9. El jugador tiene que llenar el
+tablero de una manera muy específica:
+
+Cada fila del tablero debe contener todos los dígitos del 0 al 9 (no importa el orden)
+cada columna del tablero debe contener todos los dígitos del 0 al 9 (nuevamente, el orden no importa)
+cada una de las nueve "fichas" de 3x3 (las llamaremos "subcuadrados") de la tabla debe contener todos los dígitos del
+0 al 9. Si necesita más detalles, puede encontrarlos aquí.
+
+Su tarea es escribir un programa que:
+
+Lee 9 filas del Sudoku, cada una con 9 dígitos (verifique cuidadosamente si los datos ingresados son válidos)
+emite Sí si el Sudoku es válido y No en caso contrario.
+Pruebe su código usando los datos que le hemos proporcionado.
+
+Datos de prueba
+Ejemplo de entrada:
+295743861 431865927 876192543 387459216 612387495 549216738 763524189 928671354 154938672 -> Salida de muestra: Sí
+
+Ejemplo de entrada:
+195743862 431865927 876192543 387459216 612387495 549216738 763524189 928671354 254938671 -> Salida de muestra: No
+"""
+
+input('Introduce una entrada')
+
 # ***********************************
 # ******** match ###################
 # ***********************************
