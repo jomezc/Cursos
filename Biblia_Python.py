@@ -193,7 +193,7 @@ print("Hypotenuse length is " + str((leg_a**2 + leg_b**2) ** .5))  # 2 3 -> 3.60
 x = int(input("Enter a number: ")) # The user enters 2
 print(x * "5")
 
-# como son secuencias se pueden recorrer como las listas ( ejemplos en for) tanto por con índices positivos como
+# como son secuencias se pueden recorrer como las listas (ejemplos en for) tanto por con índices positivos como
 # negativos o rangos así como in o not in, al ser inmutables, pues eso NI del, insert o append se puede
 the_string = 'silly walk'
 
@@ -414,36 +414,6 @@ print("omega".startswith("om"))  # True
 print("omega".endswith("meg"))  # False
 print("omega".endswith("a"))  # True
 print()
-
-# ++++ Ejercicio CALC IBAN ++++++++++
-"""
-British: GB72 HBZU 7006 7212 1253 00
-French: FR76 30003 03620 00020216907 50
-German: DE02100100100152517108
-"""
-
-iban = input("Enter IBAN, please: ")
-iban = iban.replace(' ','')
-
-if not iban.isalnum():
-    print("You have entered invalid characters.")
-elif len(iban) < 15:
-    print("IBAN entered is too short.")
-elif len(iban) > 31:
-    print("IBAN entered is too long.")
-else:
-    iban = (iban[4:] + iban[0:4]).upper()
-    iban2 = ''
-    for ch in iban:
-        if ch.isdigit():
-            iban2 += ch
-        else:
-            iban2 += str(10 + ord(ch) - ord('A'))
-    iban = int(iban2)
-    if iban % 97 == 1:
-        print("IBAN entered is valid.")
-    else:
-        print("IBAN entered is invalid.")
 
 
 # ***********************************
@@ -1274,6 +1244,55 @@ while not fin:
     fin = True if len(text) == 1 else False
 print(f'digito de la vida: {text}')  # 6 || 4
 
+# ++++ Ejercicio CALC IBAN ++++++++++
+"""
+British: GB72 HBZU 7006 7212 1253 00
+French: FR76 30003 03620 00020216907 50
+German: DE02100100100152517108
+"""
+
+iban = input("Enter IBAN, please: ")
+iban = iban.replace(' ','')
+
+if not iban.isalnum():
+    print("You have entered invalid characters.")
+elif len(iban) < 15:
+    print("IBAN entered is too short.")
+elif len(iban) > 31:
+    print("IBAN entered is too long.")
+else:
+    iban = (iban[4:] + iban[0:4]).upper()
+    iban2 = ''
+    for ch in iban:
+        if ch.isdigit():
+            iban2 += ch
+        else:
+            iban2 += str(10 + ord(ch) - ord('A'))
+    iban = int(iban2)
+    if iban % 97 == 1:
+        print("IBAN entered is valid.")
+    else:
+        print("IBAN entered is invalid.")
+
+# ++++  Cadena contenida en Cadena ++++++++
+
+"""
+Su tarea es escribir un programa que responda a la siguiente pregunta: ¿los caracteres que componen la primera cadena
+están ocultos dentro de la segunda cadena?
+si la segunda cadena se da como "vcxzxduybfdsobywuefgas", la respuesta es sí;
+si la segunda cadena es "vcxzxdcybfdstbywuefsas", la respuesta es no (ya que no existen las letras "d", "o" o "g",
+en este orden)
+"""
+st1 = 'donor'
+st2 = 'Nabucodonosor'
+aux = 0
+response = 'Yes'
+for s in st1:
+    aux2 = st2.find(s)
+    if aux2 < aux:
+        response = 'No'
+        break
+print(response) #Yes || con donut como st1 --> No
 
 # ***********************************
 # ******** match ###################
@@ -2510,7 +2529,7 @@ from math import sin as s, cos as cc # podemos poner alias de los from también
 print(s(3), cc(16))
 
 # ****** dir()
-#La función devuelve una lista ordenada alfabéticamente que contiene todos los nombres de entidades disponibles
+# La función devuelve una lista ordenada alfabéticamente que contiene todos los nombres de entidades disponibles
 # en el módulo identificado por un nombre pasado a la función como argumento: dir(módulo)
 import math
 print(dir(math)) # devuelve una lista
@@ -4534,7 +4553,6 @@ class SnakeManager:
 
         return possible
 
-
     def searchL(self):
         validPath = set()
         possible = self.isPossible()
@@ -4543,7 +4561,6 @@ class SnakeManager:
             if status == 'ok':
                 validPath.add(str(p))
         return len(validPath)
-
 
     def boundedDepthSearch(self, loopPath):
         photoBoard = self.snakeOnBorad
