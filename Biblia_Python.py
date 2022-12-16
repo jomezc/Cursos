@@ -568,6 +568,7 @@ print((-2 / 4), (2 / 4), (2 // 4), (-2 // 4)) # -0.5 0.5 0 -1
 # ***********************************
 # ******** COMPARACIONES##
 # ***********************************
+
 ''' Python no es consciente (no puede serlo de ninguna manera) de los problemas lingüísticos sutiles: solo compara los 
 valores de los puntos de código, carácter por carácter.Cuando comparas dos cadenas de diferentes longitudes y la más 
 corta es idéntica al comienzo de la más larga, la cadena más larga se considera mayor.La comparación de cadenas siempre 
@@ -1323,6 +1324,33 @@ for char in text:
         # después sumarle el dígito acorde el actual jugando con el resto
     cipher += char
 print(cipher) # cdezabCDEzab 123 || Sgd chd hr bzrs
+
+
+# Digito de la vida
+"""
+Algunos dicen que el Dígito de la Vida es un dígito evaluado usando el cumpleaños de alguien. Es simple: solo necesita
+sumar todos los dígitos de la fecha. Si el resultado contiene más de un dígito, debe repetir la suma hasta obtener
+exactamente un dígito. Por ejemplo:
+1 enero 2017 = 2017 01 01
+2 + 0 + 1 + 7 + 0 + 1 + 0 + 1 = 12
+1 + 2 = 3
+3 es el dígito que buscamos y encontramos.
+
+Su tarea es escribir un programa que:
+pregunta al usuario su cumpleaños (en el formato AAAAMMDD, AAAADDMM o MMDDAAAA - en realidad, el orden de los dígitos
+no importa) emite el dígito de vida para la fecha.
+"""
+text = input("Inserta Tu cumpleaños: ") # 19991229 || 20000101
+suma = 0
+fin = False
+while not fin:
+    for t in text:
+        suma += int(t)
+    text = str(suma)
+    suma = 0
+    fin = True if len(text) == 1 else False
+print(f'digito de la vida: {text}') #6 ||v 4
+
 
 # ***********************************
 # ******** match ###################
