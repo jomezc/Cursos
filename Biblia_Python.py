@@ -1,7 +1,7 @@
 """
 APUNTES JESÚS GÓMEZ CÁNOVAS SOBRE PYTHON
 
-su código (en ejecución) se encuentra en la parte superior del mismo;
+Su código (en ejecución) se encuentra en la parte superior del mismo;
 Python (más precisamente, su entorno de ejecución) se encuentra directamente debajo de él;
 la siguiente capa de la pirámide está llena con el sistema operativo (sistema operativo):
 el entorno de Python proporciona algunas de sus funcionalidades utilizando los servicios del sistema operativo;
@@ -12,7 +12,7 @@ y toda otra maquinaria necesaria para que la computadora funcione;
 el sistema operativo sabe cómo conducirlo y usa muchos trucos para conducir todas las partes a un ritmo constante.
 """
 
-print("Texto")  # Imprmir por pantalla
+print("Texto")  # Imprimir por pantalla
 
 # ***********************************
 # ********  VARIABLES  #############
@@ -46,30 +46,32 @@ x = 10
 print(x)
 # Con la función type podemos ver el tipo del dato
 print(type(x))
-# representacion de numeros en otras bases:
-print(0o123) #Octal: 0octal ,83  0O or 0o prefix [0..7] range
-print(0x123) #Hexadecimal: 0x123 ,291 0x or 0X prefix
+# Representación de números en otras bases:
+print(0o123)  # Octal: 0octal ,83  0O or 0o prefix [0..7] range
+print(0x123)  # Hexadecimal: 0x123 ,291 0x or 0X prefix
 
 # ******** STRING
 x = "ju-ja"  # se puede utilizar comillas simples y dobles, pero deben comenzar y terminar igual
 print(type(x))
-print(11_11_11) # 11_11_11 Python 3.6 has introduced underscores in numeric literals
+print(11_11_11)  # 11_11_11 Python 3.6 has introduced underscores in numeric literals
 # Como las variables pueden apuntar cualquier tipo de dato podemos agregar una pista (no las define)
-x: str = 'hola'
+s: str = 'hola'
 print(x)
 print(type(x))
-x: str = 10  # al ser dinámicas y no definirlo podemos igualmente meter un número y funciona
+s: str = 10  # al ser dinámicas y no definirlo podemos igualmente meter un número y funciona
 print(x)
 print('I\'m Monty Python')  # \ salvar caracteres para especiales como \n o para este ejemplo
 # ******** FLOAT
-x = 10.5 # Con ponerle el punto ya le estamos declarando una variable de tipo flotante
+
+x = 10.5  # Con ponerle el punto ya le estamos declarando una variable de tipo flotante
 x = .5
 print(x)
 print(type(x))
-print (3e3) # Exponenete 3 x 108.
-print (3E8)
-print(0.0000000000000000000001) # el resultado de ejecutarlo es 1e-22 python escoge
-# el modo mas económico de representación de números
+print(3e3)  # Exponente 3 x 108.
+print(3E8)
+print(0.0000000000000000000001)  # el resultado de ejecutarlo es 1e-22 python escoge
+
+# el modo más económico de representación de números
 anything = float(input("Enter a number: "))
 something = float(anything) ** 2.0
 print(anything, "to the power of 2 is", something)
@@ -83,7 +85,7 @@ print(type(x))
 # OJO SABER QUE TODOS LOS TIPOS DE DATOS SON ALMACENADOS POR CLASES EN PYTHON
 print(True > False) # True
 print(True < False) # False
-2 == 2. # True
+2 == 2.  # True
 # Due to the low priority of the == operator, the question shall be treated as equivalent to this one:
 # black_sheep == (2 * white_sheep)
 
@@ -127,7 +129,7 @@ Esto significa que Python3 es completamente I18Ned.
 
 2. Un número correspondiente a un carácter en particular se llama punto de código
 
-Los /n se cuentan cómo carácter en las ‘’’ ( para multilinea son los 3, 1 solo 1 línea) o si se introducen, 
+Los /n se cuentan cómo carácter en las ‘’’ ( para multilínea son los 3, 1 solo 1 línea) o si se introducen, 
 los vacíos no. + concatenar ( no conmutativo, el orden importa), * replicar n veces ( se pone número). 
 variantes abreviadas de los operadores anteriores también son aplicables para cadenas (+= y *=)
 
@@ -152,15 +154,16 @@ print(chr(65))  # A
 print(len("\n\n"))  #2.
 
 print("\"I\'m\"\n\"\"learning\"\"\n\"\"\"Python\"\"\"")
-#"I'm"
-#""learning""
-#"""Python"""
-# Cadena (String), concatenar valores, con +
+# "I'm"
+# ""learning""
+# """Python"""
+
+# ******** Cadena (String), concatenar valores, con +
 miGrupoFavorito = "ACDC" + " " + "The best rock band"
 print("Mi grupo favorito es: " + miGrupoFavorito)  # en PRINT
 b = "Mi grupo favorito es:"
 print(b + " " + miGrupoFavorito)
-# podemos también usar comas que mete automáticamente espacio
+# ******** podemos también usar comas que mete automáticamente espacio
 print(b, miGrupoFavorito)
 
 n1 = "1"
@@ -168,24 +171,25 @@ n2 = "2"
 print(n1 + n2)  # Concatenación
 n1 = 1
 n2 = 2
-# Sobrecarga
+# ******** Sobrecarga
 print(n1 + n2)  # suma
 n1 = "1"
 n2 = 2
 print("Concatenación: ", int(n1) + n2)  # conversión a entero int(), tiene que ser valido
-print("Programming","Essentials","in", sep="***", end="...") # Programming***Essentials***in...Python
+print("Programming", "Essentials", "in", sep="***", end="...") # Programming***Essentials***in...Python
 print("Python")
 # En las cadenas de Python, la barra invertida (\) es un carácter especial que anuncia que el siguiente carácter tiene
 # un significado diferente, por ejemplo, \n (el carácter de nueva línea) inicia una nueva línea de salida.
 
-# rectágulo
+# ++++ Ejercicio rectángulo +++++++++++
 print("+" + 10 * "-" + "+")
 print(("|" + " " * 10 + "|\n") * 5, end="")
 print("+" + 10 * "-" + "+")
 
-leg_a = float(input("Input first leg length: ")) # float a número en punto flotante
+# ++++ Ejercicio Hipotenusa +++++++++++
+leg_a = float(input("Input first leg length: "))  # float a número en punto flotante
 leg_b = float(input("Input second leg length: "))
-print("Hypotenuse length is " + str((leg_a**2 + leg_b**2) ** .5)) #2 3 -> 3.605551275463989 str a char
+print("Hypotenuse length is " + str((leg_a**2 + leg_b**2) ** .5))  # 2 3 -> 3.605551275463989 str a char
 x = int(input("Enter a number: ")) # The user enters 2
 print(x * "5")
 
@@ -194,53 +198,59 @@ print(x * "5")
 the_string = 'silly walk'
 
 for character in the_string:
-    print(character, end=' ') # 's i l l y  w a l k'
+    print(character, end=' ')  # 's i l l y  w a l k'
 
-print(the_string[-1]) # k
+print(the_string[-1])  # k
 print(the_string[1:3])
-print("f" in the_string) #False
+print("f" in the_string)  # False
 
-# min() encuentra el elemento mínimo de la secuencia pasada como argumento. Hay una condición:
+# ******** MÉTODOS DE CADENAS  #############
+
+# ******** min()
+# Encuentra el elemento mínimo de la secuencia pasada como argumento. Hay una condición:
 # la secuencia (cadena, lista, no importa) no puede estar vacía, de lo contrario obtendrá una excepción ValueError.
 # max el mayor
-print(min("aAbByYzZ")) #A , es menor ascii
-print(max("aAbByYzZ")) #z , es mayor ascii
+print(min("aAbByYzZ"))  # A, es menor ascii
+print(max("aAbByYzZ"))  # z, es mayor ascii
 
-# Demonstrating min() - Examples 2 & 3:
 t = 'The Knights Who Say "Ni!"'
 print('[' + min(t) + ']') # espacio es el 32
 print('[' + max(t) + ']') # y
 
 t = [0, 1, 2]
-print(min(t)) # 0 menor ascii de los numeros
-print(max(t)) # 2
+print(min(t))  # 0 menor ascii de los números
+print(max(t))  # 2
 
-# index()
-#Busca la secuencia desde el principio, para encontrar el primer elemento del valor especificado en su argumento.
+# ******** index()
+# Busca la secuencia desde el principio, para encontrar el primer elemento del valor especificado en su argumento.
 # Encuentra el elemento mínimo de la secuencia pasada como argumento. Hay una condición:
 # la secuencia (cadena, lista, no importa) no puede estar vacía, de lo contrario obtendrá una excepción ValueError.
-print("aAbByYzZaA".index("b")) # 2
-print("aAbByYzZaA".index("Z")) # 7
-print("aAbByYzZaA".index("A")) # 1
+print("aAbByYzZaA".index("b"))  # 2
+print("aAbByYzZaA".index("Z"))  # 7
+print("aAbByYzZaA".index("A"))  # 1
 
-# La función list() toma su argumento (una cadena) y crea una nueva lista que contiene todos los caracteres de la
+# ******** list()
+# Toma su argumento (una cadena) y crea una nueva lista que contiene todos los caracteres de la
 # cadena, uno por elemento de la lista. Nota: no es estrictamente una función de cadena: list()
 # puede crear una nueva lista a partir de muchas otras entidades (por ejemplo, de tuplas y diccionarios)
-print(list("abcabc")) # ['a', 'b', 'c', 'a', 'b', 'c']
+print(list("abcabc"))  # ['a', 'b', 'c', 'a', 'b', 'c']
 
-# El método count() cuenta todas las ocurrencias del elemento dentro de la secuencia. La ausencia de tales elementos
+# ******** count()
+# Cuenta todas las ocurrencias del elemento dentro de la secuencia. La ausencia de tales elementos
 # no causa ningún problema.
-print("abcabc".count("b"))# 2
-print('abcabc'.count("d"))# 0
+print("abcabc".count("b"))  # 2
+print('abcabc'.count("d"))  # 0
 
 
-# El método center() hace una copia de la cadena original,
-#tratando de centrarla dentro de un campo de un ancho específico.
+# ******** center()
+# Hace una copia de la cadena original,
+# tratando de centrarla dentro de un campo de un ancho específico.
 # o con un numero de ocurrencias del segundo parámetro
-print('[' + 'alpha'.center(10) + ']') #[  alpha   ]
-print('[' + 'alpha'.center(10,'*') + ']') #[**alpha***]
+print('[' + 'alpha'.center(10) + ']')  # [  alpha   ]
+print('[' + 'alpha'.center(10,'*') + ']')  # [**alpha***]
 
-#El método endswith() verifica si la cadena dada termina con el argumento especificado y devuelve True o False,
+# ******** endswith()
+# Verifica si la cadena dada termina con el argumento especificado y devuelve True o False,
 # según el resultado de la verificación.
 if "epsilon".endswith("on"):
     print("yes")
@@ -248,18 +258,19 @@ else:
     print("no")
 # yes
 
-# El método find() es similar a index(), que ya conoce: busca una subcadena y devuelve el índice de la primera
+# ******** find()
+# Es similar a index(), que ya conoce: busca una subcadena y devuelve el índice de la primera
 # aparición de esta subcadena, pero:
 # es más seguro: no genera un error para un argumento que contiene una subcadena inexistente (devuelve -1 entonces)
 # funciona solo con cadenas; no intente aplicarlo a ninguna otra secuencia.
 # El segundo argumento especifica el índice en el que se iniciará la búsqueda (no tiene que caber dentro de la cadena).
-#el tercer argumento  es el límite superior (no incluido) de la búsqueda
+# El tercer argumento es el límite superior (no incluido) de la búsqueda
 
-print("Eta".find("ta")) #1
-print("Eta".find("mma")) #-1
-print('kappa'.find('a', 2)) # 4
-print('kappa'.find('a', 1, 4)) # 1
-print('kappa'.find('a', 2, 4)) #-1
+print("Eta".find("ta"))  # 1
+print("Eta".find("mma"))  # -1
+print('kappa'.find('a', 2))  # 4
+print('kappa'.find('a', 1, 4))  # 1
+print('kappa'.find('a', 2, 4))  # -1
 
 the_text = """A variation of the ordinary lorem ipsum
 text has been used in typesetting since the 1960s"""
@@ -270,68 +281,76 @@ while fnd != -1:
     fnd = the_text.find('the', fnd + 1)
     # 15 80
 
-# rfind() hacen casi lo mismo que sus contrapartes (los que no tienen el prefijo r), pero comienzan sus búsquedas
-# desde el final de la cadena, no desde el principio (por lo tanto el prefijo r, de derecho).
-print("tau tau tau".rfind("ta")) # 8
-print("tau tau tau".rfind("ta", 9)) # -1
-print("tau tau tau".rfind("ta", 3, 9)) #4
+# ******** rfind()
+# Hacen casi lo mismo que sus contrapartes (los que no tienen el prefijo r), pero comienzan sus
+# búsquedas desde el final de la cadena, no desde el principio (por lo tanto, el prefijo r, de derecho).
+print("tau tau tau".rfind("ta"))  # 8
+print("tau tau tau".rfind("ta", 9))  # -1
+print("tau tau tau".rfind("ta", 3, 9))  # 4
 
-# isalnum() comprueba si la cadena contiene solo dígitos o caracteres alfabéticos (letras) y
-# devuelve True o FalseTambién
+# ******** isalnum()
+# Comprueba si la cadena contiene solo dígitos o caracteres alfabéticos (letras) y devuelve True o FalseTambién
 t = 'Six lambdas' # False
 print(t.isalnum())
-t = 'ΑβΓδ' # True
+t = 'ΑβΓδ'  # True
 print(t.isalnum())
-t = '20E1' # True
+t = '20E1'  # True
 print(t.isalnum())
 
-# isalpha(), solo letras:
-print("Moooo".isalpha()) # True
-print('Mu40'.isalpha()) # False
+# ******** isalpha()
+# solo letras:
+print("Moooo".isalpha())  # True
+print('Mu40'.isalpha())  # False
 
-# isdigit() , solo dígitos:
-print('2018'.isdigit()) #True
-print("Year2019".isdigit()) #False
+# ******** isdigit()
+# solo dígitos:
+print('2018'.isdigit())  # True
+print("Year2019".isdigit())  # False
 
-# islower() solo letras minúsculas:
-print("Moooo".islower()) #False
-print('moooo'.islower()) #True
+# ******** islower()
+# Solo letras minúsculas:
+print("Moooo".islower())  # False
+print('moooo'.islower())  # True
 
-# isspace() solo espacios:
-print(' \n '.isspace()) # True
-print(" ".isspace()) # True
-print("mooo mooo mooo".isspace()) # False
+# ********  isspace()
+# Solo espacios:
+print(' \n '.isspace())  # True
+print(" ".isspace())  # True
+print("mooo mooo mooo".isspace())  # False
 
-# Example 3: Demonstrating the isupper() method:
-print("Moooo".isupper()) #False
-print('MOOOO'.isupper()) #True
+# ********  isupper()
+print("Moooo".isupper())  # False
+print('MOOOO'.isupper())  # True
 
-# El capitalize() crea una nueva cadena llena de caracteres,
-# si el primer carácter dentro de la cadena es una letra (nota: el primer carácter es un elemento con un índice igual a
-# 0, no solo el primer carácter visible), se convertirá a mayúsculas; todas las letras restantes de la cadena se
-# convertirán a minúsculas.
-# la cadena original no cambia de ninguna manera
-# la cadena modificada se devuelve como resultado
-print("Alpha".capitalize()) # Alpha
-print('ALPHA'.capitalize())# Alpha
-print(' Alpha'.capitalize())# alpha
-print('123'.capitalize()) # 123
-print("αβγδ".capitalize())#Αβγδ
+# ******** capitalize()
+# Crea una nueva cadena llena de caracteres, si el primer carácter dentro de la cadena es una letra (nota: el primer
+# carácter es un elemento con un índice igual a 0, no solo el primer carácter visible), se convertirá a mayúsculas;
+# todas las letras restantes de la cadena se convertirán a minúsculas. La cadena original no cambia de ninguna manera
+# La cadena modificada se devuelve como resultado
+print("Alpha".capitalize())  # Alpha
+print('ALPHA'.capitalize())  # Alpha
+print(' Alpha'.capitalize())  # alpha
+print('123'.capitalize())  # 123
+print("αβγδ".capitalize())  # Αβγδ
 
-# El método swapcase() crea una nueva cadena intercambiando las mayúsculas y minúsculas de todas las letras dentro
+# ******** swapcase()
+# Crea una nueva cadena intercambiando las mayúsculas y minúsculas de todas las letras dentro
 # de la cadena de origen: los caracteres en minúsculas se convierten en mayúsculas y viceversa. El resto de caracteres
 # no se tocan
 print("I know that I know nothing.".swapcase())  # i KNOW THAT i KNOW NOTHING.
 
-# El método title() realiza una función algo similar: cambia la primera letra de cada palabra a mayúsculas y
+# ******** title()
+# realiza una función algo similar: cambia la primera letra de cada palabra a mayúsculas y
 # cambia todas las demás a minúsculas
 print("I know that I know nothing. Part 1.".title())    # I Know That I Know Nothing. Part 1.
 
-# el método upper() hace una copia de la cadena de origen, reemplaza todas
+# ******** upper()
+# Hace una copia de la cadena de origen, reemplaza todas
 # las letras minúsculas con sus equivalentes en mayúsculas y devuelve la cadena como resultado.
-print("I know that I know nothing. Part 2.".upper())    #I KNOW THAT I KNOW NOTHING. PART 2.
+print("I know that I know nothing. Part 2.".upper())    # I KNOW THAT I KNOW NOTHING. PART 2.
 
-# lower() hace una copia de una cadena de origen, reemplaza todas las letras mayúsculas con sus
+# ******** lower()
+# Hace una copia de una cadena de origen, reemplaza todas las letras mayúsculas con sus
 # equivalentes en minúsculas y devuelve la cadena como resultado. Una vez más, la cadena de origen permanece intacta.
 print("SiGmA=60".lower()) # sigma=60
 
@@ -342,94 +361,66 @@ print("SiGmA=60".lower()) # sigma=60
 # ...la cadena desde la que se ha invocado el método se usa como separador, se coloca entre las cadenas;
 # la cadena recién creada se devuelve como resultado.
 print(",".join(["omicron", "pi", "rho"]))   # omicron,pi,rho
-print("abc".join(["omicron", "pi", "rho"])) # omicronabcpiabcrho
-print("".join(["omicron", "pi", "rho"])) # omicronpirho
+print("abc".join(["omicron", "pi", "rho"]))  # omicronabcpiabcrho
+print("".join(["omicron", "pi", "rho"]))  # omicronpirho
 
 # **** split()
 # El método split() hace lo que dice: divide la cadena y crea una lista de todas las subcadenas detectadas.
 # El método asume que las subcadenas están delimitadas por espacios en blanco: los espacios no participan en la
-# operación y no se copian en la lista resultante.Si la cadena está vacía, la lista resultante también está vacía.
+# operación y no se copian en la lista resultante. Si la cadena está vacía, la lista resultante también está vacía.
 # si le pones otra cosa pues es el separador
-print("phi       chi\npsi".split()) # ['phi', 'chi', 'psi']
-print("phi       chi\npsi".split('\n')) # ['phi', 'chi', 'psi']
+print("phi       chi\npsi".split())  # ['phi', 'chi', 'psi']
+print("phi       chi\npsi".split('\n'))  # ['phi', 'chi', 'psi']
 
-# El método lstrip() sin parámetros devuelve una cadena recién creada formada a partir de la original eliminando
+# **** lstrip()
+# Sin parámetros devuelve una cadena recién creada formada a partir de la original eliminando
 # todos los espacios en blanco INICIALES.
-print("[" + " tau ".lstrip() + "]") # [tau ] OJO iniciales
-# El método lstrip() de un parámetro hace lo mismo que su versión sin parámetros,
+print("[" + " tau ".lstrip() + "]")  # [tau ] OJO iniciales
+# **** lstrip()
+# De un parámetro hace lo mismo que su versión sin parámetros,
 # pero elimina todos los caracteres incluidos en su argumento (una cadena), no solo los espacios en blanco:
-print("www.cisco.com".lstrip("w.")) # cisco.com
-print("pythoninstitute.org".lstrip(".org")) # pythoninstitute.org
+print("www.cisco.com".lstrip("w."))  # cisco.com
+print("pythoninstitute.org".lstrip(".org"))  # pythoninstitute.org
 
-# rstrip() lo mismo pero desde el otro extremo:
+# **** rstrip()
+# Lo mismo pero desde el otro extremo:
 print("[" + " upsilon ".rstrip() + "]")
 print("cisco.com".rstrip(".com"))
 
-# El método strip() combina los efectos causados por rstrip() y lstrip() - crea una nueva cadena que carece de
+# **** strip()
+# Combina los efectos causados por rstrip() y lstrip() - crea una nueva cadena que carece de
 # todos los espacios en blanco iniciales y finales (ojo no en medio).
-print("[" + "   aleph   ".strip() + "]") # [aleph]
-print(".orgpythoninstitute.org".strip(".org")) # pythoninstitute
+print("[" + "   aleph   ".strip() + "]")  # [aleph]
+print(".orgpythoninstitute.org".strip(".org"))  # pythoninstitute
 
-# El método replace() de dos parámetros devuelve una copia de la cadena original en la que todas las apariciones
+# **** replace()
+# De dos parámetros devuelve una copia de la cadena original en la que todas las apariciones
 # del primer argumento han sido reemplazadas por el segundo argumento.
 #  Si el segundo argumento es una cadena vacía, reemplazar en realidad es eliminar la cadena del primer argumento.
 #  ¿Qué tipo de magia ocurre si el primer argumento es una cadena vacía?
 # La variante replace() de tres parámetros usa el tercer argumento (un número) para limitar el número de reemplazos.
-print("www.netacad.com".replace("netacad.com", "pythoninstitute.org")) # www.pythoninstitute.org
-print("This is it!".replace("is", "are"))# Thare are it!
-print("Apple juice".replace("juice", ""))# Apple
-print("This is it!".replace("is", "are", 1))# Thare is it!
-print("This is it!".replace("is", "are", 2))# Thare are it!
+print("www.netacad.com".replace("netacad.com", "pythoninstitute.org"))  # www.pythoninstitute.org
+print("This is it!".replace("is", "are"))  # Thare are it!
+print("Apple juice".replace("juice", ""))  # Apple
+print("This is it!".replace("is", "are", 1))  # Thare is it!
+print("This is it!".replace("is", "are", 2))  # Thare are it!
 
-# El método "startswith()" es un reflejo especular de "endswith()": comprueba si una cadena dada comienza
+# **** startswith()
+# Es un reflejo especular de "endswith()": comprueba si una cadena dada comienza
 # con la subcadena especificada.
 # Demonstrating the startswith() method:
-print("omega".startswith("meg")) # False
-print("omega".startswith("om")) # True
-print("omega".endswith("meg")) # False
-print("omega".endswith("a")) # True
+print("omega".startswith("meg"))  # False
+print("omega".startswith("om"))  # True
+print("omega".endswith("meg"))  # False
+print("omega".endswith("a"))  # True
 print()
 
-# Ejercicio
-''' Su tarea es escribir su propia función, que se comporta casi exactamente como el método split() original, es decir:
-debe aceptar exactamente un argumento: una cadena;debe devolver una lista de palabras creadas a partir de la cadena,
-dividida en los lugares donde la cadena contiene espacios en blanco; si la cadena está vacía, la función debería
-devolver una lista vacía; su nombre debería ser mysplit() Utilice la plantilla en el editor. Prueba tu código
-cuidadosamente '''
-def mysplit(string):
-    try:
-        if type(string) != str:
-            raise Exception('only accept strings')
-        if string.isspace():
-            return []
-        # return string.split()
-        # like is not use split
-        string = string.strip()
-        l = []
-        aux = 0
-        for s in range(len(string)):
-            if string[s].isspace() or s == (len(string) -1):
-                l.append(string[aux:s+1].strip())
-                aux=s
-        return l
-    except Exception as e:
-        print('raise an error:', e)
-
-print(mysplit("To be or not to be, that is the question"))  # ['To', 'be', 'or', 'not', 'to', 'be,', 'that', 'is', 'the', 'question']
-print(mysplit("To be or not to be,that is the question"))   # ['To', 'be', 'or', 'not', 'to', 'be,that', 'is', 'the', 'question']
-print(mysplit("   "))   # []
-print(mysplit(" abc "))     # ['abc']
-print(mysplit(""))  # []
-
-
-# CALC IBAN
+# ++++ Ejercicio CALC IBAN ++++++++++
 """
 British: GB72 HBZU 7006 7212 1253 00
 French: FR76 30003 03620 00020216907 50
 German: DE02100100100152517108
 """
-
-# IBAN Validator.
 
 iban = input("Enter IBAN, please: ")
 iban = iban.replace(' ','')
@@ -455,16 +446,14 @@ else:
         print("IBAN entered is invalid.")
 
 
-
 # ***********************************
 # ********  BOOL  ###############
 # ***********************************
-#Is it guaranteed that False == 0 and True == 1,
+# Is it guaranteed that False == 0 and True == 1,
 miVariable = True
 miVariable2 = False
 miVariable3 = 2 < 3  # la comprobación devuelve un valor true o false
 print(miVariable, miVariable2, miVariable3)
-
 
 
 # ***********************************
@@ -477,8 +466,9 @@ value = None
 if value is None:
     print("Sorry, you don't carry any value")
 
-
-# ******** IF
+# ***********************************
+# ********  IF  ###############
+# ***********************************
 if miVariable2:  # LOS DOS PUNTOS SON NECESARIOS
     print("el resultado fue verdadero")
 else:
@@ -490,8 +480,6 @@ x, y, z = z, y, x
 print(x > z)
 print((y - 5) == x)
 
-
-
 # ***********************************
 # ********  Input ***************
 # ***********************************
@@ -502,14 +490,15 @@ m = int(input("Escribe el segundo numero: "))  # ahora si no metemos enteros fal
 r = n + m
 print("El resultado es:", r)
 
-# Ejercicio
+# ++++ Ejercicio
 dia = int(input('valora tu día del 1 al 10: '))
 print("Mi dia estuvo de:", dia)
 
 # ***********************************
 # ******** OPERADORES #########
 # ***********************************
-# SUMA +
+
+# **** SUMA +
 opA = 3
 opB = 2
 suma = opA + opB
@@ -517,29 +506,34 @@ print('Resultado de la suma: ', suma)
 # Literal precedido de 'f' y {}
 print(f'resultado de la  suma: {suma}')
 
-# RESTA -
+# **** RESTA -
 resta = opA - opB
 print(f'Resultado de la resta: {resta}')
-print(-4 - 4) #-8
-print(4. - 8) #-8.
-print(-1.1)#-1.1
-# Multiplicación *
+print(-4 - 4)  # -8
+print(4. - 8)  # -8.
+print(-1.1)  # -1.1
+
+# ****  Multiplicación *
 mult = opA * opB
 print(f'Resultado de la multiplicación: {mult}')
-# division normal /
+
+# **** division normal /
 div = opA / opB
 print(f'Resultado de la división: {div}')
-# division entera ( sin parte fraccionaria) //
+
+# ****  division entera ( sin parte fraccionaria) //
 division = opA // opB
 print(f'resultado division entera: {division}')
-# modulo %
+
+# **** modulo %
 mod = opA % opB
 print(f'Resultado del modulo: {mod}')
-# exponente **
+
+# **** exponente **
 exp = opA ** opB
 print(f'Resultado del exponente: {exp}')
 
-# Ejercicio Rectángulo
+# ++++  Ejercicio Rectángulo ++++++++++++++
 alto = int(input('Proporciona el alto: '))
 ancho = int(input('proporciona el ancho: '))
 area = alto * ancho
@@ -560,15 +554,14 @@ m *= 3  # m = m * 3
 m /= 3
 print(m)
 
-print(9 % 6 % 2) # 1 left-sided binding
-print(2 ** 2 ** 3) #256  the exponentiation operator uses right-sided binding.
-#unary operator is an operator with only one operand, e.g., -1, or +3.
+print(9 % 6 % 2)  # 1 left-sided binding
+print(2 ** 2 ** 3)  # 256  the exponentiation operator uses right-sided binding.
+# operador unario es un operador con un solo operando, por ejemplo, -1 o +3.
 print((-2 / 4), (2 / 4), (2 // 4), (-2 // 4)) # -0.5 0.5 0 -1
 
 # ***********************************
 # ******** COMPARACIONES##
 # ***********************************
-
 ''' Python no es consciente (no puede serlo de ninguna manera) de los problemas lingüísticos sutiles: solo compara los 
 valores de los puntos de código, carácter por carácter.Cuando comparas dos cadenas de diferentes longitudes y la más 
 corta es idéntica al comienzo de la más larga, la cadena más larga se considera mayor.La comparación de cadenas siempre 
@@ -612,11 +605,9 @@ print(second_greek) # ['omega', 'alpha', 'pi', 'gamma']
 second_greek.sort()
 print(second_greek)  ['alpha', 'gamma', 'omega', 'pi']
 
-# ***********************************
-# ******** Ejemplo prioridad##
-# ***********************************
-# 1
-#------
+# ++++  Ejemplo prioridad +++++++++
+#  1
+# ------
 # x + 1
 #    ---
 #  x + 1
@@ -626,10 +617,7 @@ print(second_greek)  ['alpha', 'gamma', 'omega', 'pi']
 #       x
 print("y =", 1/(x+(1/(x+(1/(x+(1/x)))))))
 
-
-# ***********************************
-# ********conversor millas km
-# ***********************************
+# ++++  conversor millas km ++++++++++
 
 kilometers = 12.25
 miles = 7.38
@@ -640,26 +628,21 @@ kilometers_to_miles = kilometers / 1.61
 print(miles, "miles is", round(miles_to_kilometers, 2), "kilometers")
 print(kilometers, "kilometers is", round(kilometers_to_miles, 2), "miles")
 
-# ***********************************
-# ******** ecuación sencilla
-# ***********************************
+# ++++  ecuación sencilla ++++++++++
 x =  -1
 x = float(x)
 y = 3*(x**3) - 2*(x**2) + 3*x -1
 print("y =", y)
 
-# ***********************************
-# ********Algoritmo pa_impar
-# ***********************************
+
+# ++++  Algoritmo pa_impar ++++++++
 n = int(input("Ingresa un numero: "))
 if n % 2 == 0:
     print(f'{n} es par')
 else:
     print(f'{n} es impar')
 
-# ***********************************
-# ******** Algoritmo determinaMayorEdad
-# ***********************************
+# ++++  Algoritmo determinaMayorEdad +++++++++
 ADULTO = 18
 edad = int(input('Dime tu edad: '))
 if edad >= ADULTO:
@@ -667,36 +650,21 @@ if edad >= ADULTO:
 else:
     print(f'tienes {edad} por ello eres un cri@')
 
-# ***********************************
-# ******** paso de minutos en reloj
-# ***********************************
+# ******** paso de minutos en reloj +++++++
 """
-Scenario
-Your task is to prepare a simple code able to evaluate the 
-end time of a period of time, given as a number of minutes (it could be arbitrarily large). The start time is given as a pair of hours (0..23) and minutes (0..59). 
-The result has to be printed to the console.
-For example, if an event starts at 12:17 and lasts 59 minutes, 
-it will end at 13:16.
-Don't worry about any imperfections in your 
-code - it's okay if it accepts an invalid time - the most important
-thing is that the code produce valid results for valid input data.
-Test your code carefully. Hint: using the % operator may be the key to success.
-12
-17
-59
-Expected output: 13:16
-Sample input:
-23
-58
-642
-Expected output: 10:40
+Su tarea es preparar un código simple capaz de evaluar el
+hora de finalización de un período de tiempo, dada como un número de minutos (podría ser arbitrariamente grande). 
+La hora de inicio se da como un par de horas (0..23) y minutos (0..59).
+El resultado tiene que ser impreso en la consola.
+Por ejemplo, si un evento comienza a las 12:17 y dura 59 minutos,
+terminará a las 13:16.
+input: 12 17 59 --> output: 13:16
+input: 23 58 642 --> Expected output: 10:40
 """
 hour = int(input("Starting time (hours): "))
 mins = int(input("Starting time (minutes): "))
 dura = int(input("Event duration (minutes): "))
 print(f'{(((mins+dura)//60)+hour)%24}:{(mins+dura)%60}')
-
-# Write your code here.
 
 
 # ***********************************
@@ -719,21 +687,20 @@ print(r)
 # ley de Morgan
 # not (p and q) == (not p) or (not q)
 # not (p or q) == (not p) and (not q)
+# Valores lógicos frente a bits individuales
+# Los operadores lógicos toman sus argumentos como un todo sin importar cuántos bits contengan.
+# Los operadores solo conocen el valor: cero (cuando se restablecen todos los bits) significa Falso;
+# no cero (cuando al menos un bit está establecido) significa Verdadero.
+# El resultado de sus operaciones es uno de estos valores: Falso o Verdadero.
+# Esto significa que este fragmento asignará el valor True a la variable j si i no es cero;
+# de lo contrario, será Falso.
 
-# Logical values vs. single bits
-# Logical operators take their arguments as a whole regardless of how many bits they contain.
-# The operators are aware only of the value: zero (when all the bits are reset) means False;
-# not zero (when at least one bit is set) means True.
-#
-# The result of their operations is one of these values: False or True.
-# This means that this snippet will assign the value True to the j variable if i is not zero;
-# otherwise, it will be False.
 """
 Operadores bit a bit ( SOLO ENTEROS)
 https://www.geeksforgeeks.org/python-bitwise-operators/
 Sin embargo, hay cuatro operadores que le permiten manipular bits individuales de datos. Se llaman operadores bit a bit.
-
-Cubren todas las operaciones que mencionamos antes en el contexto lógico y un operador adicional. Este es el operador xor (como en o exclusivo), y se denota como ^ (signo de intercalación).
+Cubren todas las operaciones que mencionamos antes en el contexto lógico y un operador adicional. Este es el operador 
+xor (como en o exclusivo), y se denota como ^ (signo de intercalación).
 
 Aquí están todos ellos:
 
@@ -755,7 +722,8 @@ Aquí están todos ellos:
     lo contrario 0 -> 1 ; 1-> 0;
 ^ (signo de intercalación) - bit a bit exclusivo o (xor)
     El operador XOR tiene como salida un 1 siempre que las entradas no coincidan,
-     lo cual ocurre cuando una de las dos entradas es exclusivamente verdadera. Esto es lo mismo que la suma mod 2. Aquí está la tabla de verdad:
+     lo cual ocurre cuando una de las dos entradas es exclusivamente verdadera. Esto es lo mismo que la suma mod 2. 
+     Aquí está la tabla de verdad:
     0 XOR 0 = 0
     0 XOR 1 = 1
     1 XOR 0 = 1
@@ -767,16 +735,15 @@ por ello:
 ^ requiere exactamente un 1 para proporcionar 1 como resultado.
 x = 4
 y = 1
-
 a = x & y
 b = x | y
 c = ~x  # tricky!
 d = x ^ 5
 e = x >> 2
 f = x << 2
-
 print(a, b, c, d, e, f) # 0 5 -5 1 1 16
 """
+
 # Python program to show
 # bitwise operators
 
@@ -795,43 +762,34 @@ print("~a =", ~a)
 # print bitwise XOR operation
 print("a ^ b =", a ^ b)
 """
-Shift Operators
-Estos operadores se utilizan para desplazar los bits de un número hacia la izquierda o hacia la derecha, multiplicando 
-o dividiendo el número por dos, respectivamente. 
-Se pueden utilizar cuando tenemos que multiplicar o dividir un número por dos.
-Desplazamiento a la derecha bit a bit: desplaza los bits del número a la derecha y llena 0 en los vacíos a 
-la izquierda (llena 1 en el caso de un número negativo) como resultado. 
+Operadores de Turno
+Estos operadores se utilizan para desplazar los bits de un número hacia la izquierda o hacia la derecha, multiplicando
+o dividiendo el número por dos, respectivamente.Se pueden utilizar cuando tenemos que multiplicar o dividir un número 
+por dos.
+Desplazamiento a la derecha bit a bit: desplaza los bits del número a la derecha y llena 0 en los vacíos a
+la izquierda (llena 1 en el caso de un número negativo) como resultado.
+Efecto similar al dividir el número con alguna potencia de dos.Desplazamiento bit a bit a la derecha: desplaza los bits 
+del número a la derecha y llena 0 en vacíos left (llena 1 en el caso de un número negativo) como resultado.
 Efecto similar al de dividir el número con alguna potencia de dos.
-
-Bitwise right shift: Shifts the bits of the number to the right and fills 0 on voids 
-left( fills 1 in the case of a negative number) as a result. 
-Similar effect as of dividing the number with some power of two.
 """
-# Example 1:
-a = 10 # = 0000 1010 (Binary)
-a >> 1 # = 0000 0101 = 5
+# ++++  Ejemplos +++++++++
+a = 10  # = 0000 1010 (Binary)
+a >> 1  # = 0000 0101 = 5
+a = -10  # = 1111 0110 (Binary)
+a >> 1  # = 1111 1011 = -5
 
-# Example 2:
-a = -10 #= 1111 0110 (Binary)
-a >> 1 #= 1111 1011 = -5
-
-"""Bitwise left shift: Shifts the bits of the number to the left and fills 0 on voids right as a result. 
-Similar effect as of multiplying the number with some power of two.
-Example: 
+""" Bitwise left shift: Shifts the bits of the number to the left and fills 0 on voids right as a result. 
+Similar effect as of multiplying the number with some power of two. Example: 
 """
+# ++++  Ejemplos +++++++++
+a = 5  # = 0000 0101 (Binary)
+a << 1  # = 0000 1010 = 10
+a << 2  # = 0001 0100 = 20
+b = -10  # = 1111 0110 (Binary)
+b << 1  # = 1110 1100 = -20
+b << 2  # = 1101 1000 = -40
 
-#Example 1:
-a = 5 #= 0000 0101 (Binary)
-a << 1 #= 0000 1010 = 10
-a << 2 #= 0001 0100 = 20
-
-#Example 2:
-b = -10 #= 1111 0110 (Binary)
-b << 1 #= 1110 1100 = -20
-b << 2 #= 1101 1000 = -40
-
-
-# ******** ejemplo and
+# ++++  ejemplo and  +++++++++
 v = int(input('proporciona un valor numérico: '))
 max = 5
 r = (v > 0) and (v <= max)  # mas simple.... 0 < v <= maximo
@@ -839,20 +797,22 @@ if r:
     print(f'{v} está dentro de rango')
 else:
     print(f'{v} está fuera de rango')
-# ejemplo or
+
+# ++++  ejemplo or +++++++++
 vacas = True
 diaDescanso = False
 if vacas or diaDescanso:
     print('A vivir')
 else:
     print('niño rata....')
-# ejemplo not
+
+# ++++  ejemplo ejemplo not ++++++
 if not (vacas or diaDescanso):
     print('A vivir')
 else:
     print('niño rata....')
 
-# ******** EJEMPLOS COMPLETOS
+# ++++  EJEMPLOS COMPLETOS +++++++++
 edad = int(input('Dime tu edad: '))
 
 if (20 <= edad <= 30) or (30 <= edad <= 40):
@@ -866,7 +826,7 @@ if (20 <= edad <= 30) or (30 <= edad <= 40):
 else:
     print(f'{edad} no está dentro de los 20`s o de los 30`s')
 
-# ******** EJEMPLOSSSS
+# ++++   EJEMPLOSSSS ++++++
 
 n = int(input('Proporciona el numero1: '))
 m = int(input('Proporciona el numero2: '))
@@ -877,7 +837,7 @@ elif n < m:
 else:
     print(f'{n} y {m} son iguales')
 
-# ********
+# ++++  ejemplo +++++
 
 print('Proporcione los siguientes datos del libro:')
 nom = input('Proporciona el nombre: ')
@@ -893,7 +853,7 @@ Id: {pid}
 envio gratuito?: {env}
 ''')
 
-# ******** mas ejercicio
+# ++++   mas ejercicio +++++++
 
 numero = int(input('proporciona un valor entre 1 y 3: '))
 numeroT = ''
@@ -911,7 +871,8 @@ print(f'{numero} - {numeroT}')
 condicion = True
 print('verdadero') if condicion else print('falso')
 
-# ******** Ejercicio IF
+# ++++ Ejercicio IF ++++++++++
+
 edad = int(input('Proporciona tu edad: '))
 mensaje = ''
 if 0 <= edad < 10:
@@ -928,19 +889,14 @@ print(f'tu edad es: {edad}, {mensaje}')
 # ***********************************
 # ******** MAX MIN  #######################
 # ***********************************
-# max() maximo valor, se puede usar con múltiples parámetros
+# max() máximo valor, se puede usar con múltiples parámetros
 # min() minimo valor, se puede usar con múltiples parámetros
 # Read three numbers.
 number1 = int(input("Enter the first number: "))
 number2 = int(input("Enter the second number: "))
 number3 = int(input("Enter the third number: "))
 
-# Check which one of the numbers is the greatest
-# and pass it to the largest_number variable.
-
 largest_number = max(number1, number2, number3)
-
-# Print the result.
 print("The largest number is:", largest_number)
 
 # ***********************************
@@ -971,11 +927,9 @@ while n <= 10:
         print(n)
     n += 1
 
-
 # A program that reads a sequence of numbers
 # and counts how many numbers are even and how many are odd.
 # The program terminates when zero is entered.
-
 odd_numbers = 0
 even_numbers = 0
 
@@ -1012,16 +966,17 @@ else:
     print('fin for')
 
 # arreglo cadena de caracteres, iterar recorrer cada elemento
-# ********   break ###############
+
+# ********   break
 cadena = 'holanda'
 for letra in cadena:
     if letra == 'a':
         print(f' letra encontrada: {letra}')
-        break  # rompe el ciclo incluso el else ##############
+        break  # rompe el ciclo incluso el else !!!!
 else:
     print('fin for')
 
-# ********   continue ###############
+# ********  continue
 
 # rango de números range()
 for i in range(10):
@@ -1038,7 +993,7 @@ for n in range(2, 10, 2):  # range(start, stop, step)
     print(n)
 
 
-# ********   enumerate  ###############
+# ********   enumerate
 # En vez de hacer esto:
 values = 'ABC'
 index = 0
@@ -1058,7 +1013,7 @@ for count, value in enumerate(values):
     print(count, value)
 
 
-#ejercicio
+# ++++ ejercicio +++++
 import time
 for i in range(1, 6): # cuenta de 1 inlcuido a 5 ( 6 no incluido)
     print(f" Mississippi {i}")
@@ -1075,9 +1030,6 @@ while True:
         break
 print("adios")
 
-
-
-
 # Prompt the user to enter a word
 # and assign it to the user_word variable.
 user_word = input("dime algo bonito, las vocales no molan: ")
@@ -1088,19 +1040,18 @@ for letter in user_word:
     # Complete the body of the for loop.
 
 
-# ej 1
+# ++++ ej 1 ++++++
 """
-Create a program with a for loop and a break statement. 
-The program should iterate over characters in an email address, 
-exit the loop when it reaches the @ symbol, and print the part before @ on one line. 
-
+Cree un programa con un bucle for y una instrucción break. El programa debe iterar sobre los caracteres en una dirección 
+de correo electrónico, salga del bucle cuando llegue al símbolo @ e imprima la parte antes de @ en una línea.
 """
 for ch in "john.smith@pythoninstitute.org":
     if ch == "@":
         break
     print(ch, end="")
 """
-Create a program with a for loop and a continue statement. The program should iterate Use the skeleton below:
+Cree un programa con un bucle for y una declaración de continuación. El programa debe iterar Use el esqueleto a 
+continuación:
 """
 for digit in "0165031806510":
     if digit == "0":
@@ -1108,7 +1059,7 @@ for digit in "0165031806510":
         continue
     print(digit, end="")
 
-# ******** Ejercicio
+# ++++  Ejercicio +++++
 
 n = int(input('Proporciona un valor entre 0 y 10: '))
 while not (0 <= n <= 10):
@@ -1127,42 +1078,14 @@ elif 9 <= n <= 10:
 else:
     print('No va a entrar aquí')
 
-
-# ******** Ejercicio pirámide
+# ++++  Ejercicio pirámide +++++
 """
-Level of difficulty
-Medium
-
-Objectives
-Familiarize the student with:
-
-using the while loop;
-finding the proper implementation of verbally defined rules;
-reflecting real-life situations in computer code.
-Scenario
-Listen to this story: a boy and his father, a computer programmer, are playing with wooden blocks. They are building a pyramid.
-
-Their pyramid is a bit weird, as it is actually a pyramid-shaped wall - it's flat. The pyramid is stacked according to one simple principle: each lower layer contains one block more than the layer above.
-
-The figure illustrates the rule used by the builders:
-
-
-
-Your task is to write a program which reads the number of blocks the builders have, and outputs the height of the pyramid that can be built using these blocks.
-
-Note: the height is measured by the number of fully completed layers - if the builders don't have a sufficient number of blocks and cannot complete the next layer, they finish their work immediately.
-
-Test your code using the data we've provided.
-
-
-Test Data
-
-Sample input: 6
-
-Expected output: The height of the pyramid: 3
-Sample input: 1000
-
-Expected output: The height of the pyramid: 44
+Su tarea es escribir un programa que lea la cantidad de bloques que tienen los constructores y muestre la altura de la 
+pirámide que se puede construir usando estos bloques. Nota: la altura se mide por la cantidad de capas completamente 
+completadas: si los constructores no tienen una cantidad suficiente de bloques y no pueden completar la siguiente capa,
+terminan su trabajo de inmediato. Pruebe su código usando los datos que le hemos proporcionado.
+Entrada de muestra: 6 --> Salida esperada: La altura de la pirámide: 3
+Entrada de muestra: 1000 --> Salida esperada: La altura de la pirámide: 44
 """
 blocks = int(input("Enter the number of blocks: "))
 height = 0
@@ -1173,60 +1096,28 @@ while blocks >= number:
     height += 1
 print("The height of the pyramid:", height)
 
-## ejercicio test hypotesis
+# ++++  ejercicio test hypotesis ++++++
 # ojo! La cláusula else se ejecuta después de que el ciclo finaliza su ejecución,
 # siempre que no haya sido terminado por break, por ejemplo:
-"""Objectives
-Familiarize the student with:
-
-using the while loop;
-converting verbally defined loops into actual Python code.
-Scenario
-In 1937, a German mathematician named Lothar Collatz formulated an intriguing hypothesis (it still remains unproven) which can be described in the following way:
-
-take any non-negative and non-zero integer number and name it c0;
-if it's even, evaluate a new c0 as c0 ÷ 2;
-otherwise, if it's odd, evaluate a new c0 as 3 × c0 + 1;
-if c0 ≠ 1, skip to point 2.
-The hypothesis says that regardless of the initial value of c0, it will always go to 1.
-
-Of course, it's an extremely complex task to use a computer in order to prove the hypothesis for any natural number (it may even require artificial intelligence), but you can use Python to check some individual numbers. Maybe you'll even find the one which would disprove the hypothesis.
-
-
-Write a program which reads one natural number and executes the above steps as long as c0 remains different from 1. We also want you to count the steps needed to achieve the goal. Your code should output all the intermediate values of c0, too.
-
-Hint: the most important part of the problem is how to transform Collatz's idea into a while loop - this is the key to success.
-
-Test your code using the data we've provided.
-
-Test Data
-
-Sample input: 15
-
-Expected output:
-
-46
-23
-70
-35
-106
-53
-160
-80
-40
-20
-10
-5
-16
-8
-4
-2
-1
-steps = 17
 """
-c0 = int(input("numero: "))
+tome cualquier número entero no negativo y distinto de cero y asígnele el nombre c0; si es par, evalúe un nuevo c0 como 
+c0 ÷ 2; de lo contrario, si es impar, evalúe un nuevo c0 como 3 × c0 + 1;
+si c0 ≠ 1, salte al punto 2.
+La hipótesis dice que independientemente del valor inicial de c0, siempre irá a 1.
+Por supuesto, es una tarea extremadamente compleja usar una computadora para probar la hipótesis de cualquier número 
+natural (incluso puede requerir inteligencia artificial), pero puede usar Python para verificar algunos números 
+individuales. Tal vez incluso encuentres el que refutaría la hipótesis.
+Escriba un programa que lea un número natural y ejecute los pasos anteriores siempre que c0 sea diferente de 1. 
+También queremos que cuente los pasos necesarios para lograr el objetivo. Su código también debe generar todos los 
+valores intermedios de c0. Pista: la parte más importante del problema es cómo transformar la idea de Collatz en un 
+bucle while: esta es la clave del éxito.
+Ejemplo de entrada: 15 
+salida: 46 23 70 35 106 53 160 80 40 20 10 5 dieciséis 8 4 2 1
+pasos = 17
+"""
+c0 = int(input("numero: "))  # Even || odd
 step = 0
-while  c0>1:
+while c0>1:
     if c0 % 2 == 0:
         c0 /= 2
         c0=int(c0)
@@ -1234,14 +1125,46 @@ while  c0>1:
         c0 = 3* c0 +1
     step +=1
     print(c0)
-print(f'steps = {step}')
+print(f'steps = {step}')  # par || impar
 
-# Even par odd impar
+# ++++  Ejercicio ++++++
+''' Su tarea es escribir su propia función, que se comporta casi exactamente como el método split() original, es decir:
+debe aceptar exactamente un argumento: una cadena;debe devolver una lista de palabras creadas a partir de la cadena,
+dividida en los lugares donde la cadena contiene espacios en blanco; si la cadena está vacía, la función debería
+devolver una lista vacía; su nombre debería ser mysplit() Utilice la plantilla en el editor. Prueba tu código
+cuidadosamente '''
 
 
-################# Cifrado Cesar ****  .
+def mysplit(string):
+    try:
+        if type(string) != str:
+            raise Exception('only accept strings')
+        if string.isspace():
+            return []
+        # return string.split()
+        # like is not use split
+        string = string.strip()
+        l = []
+        aux = 0
+        for s in range(len(string)):
+            if string[s].isspace() or s == (len(string) -1):
+                l.append(string[aux:s+1].strip())
+                aux=s
+        return l
+    except Exception as e:
+        print('raise an error:', e)
 
-text = input("Enter your message: ") # bLa blaaa
+
+print(mysplit("To be or not to be, that is the question"))
+# ['To', 'be', 'or', 'not', 'to', 'be,', 'that', 'is', 'the', 'question']
+print(mysplit("To be or not to be,that is the question"))
+# ['To', 'be', 'or', 'not', 'to', 'be,that', 'is', 'the', 'question']
+print(mysplit("   "))   # []
+print(mysplit(" abc "))     # ['abc']
+print(mysplit(""))  # []
+
+# ++++  Cifrado Cesar ++++++
+text = input("Enter your message: ")  # bLa blaaa
 cipher = ''
 for char in text:
     if not char.isalpha():
@@ -1251,10 +1174,10 @@ for char in text:
     if code > ord('Z'):
         code = ord('A')
     cipher += chr(code)
-print(cipher) # CMBCMBBB
+print(cipher)  # CMBCMBBB
 
-# Descifrar mensaje.
-cipher = input('Enter your cryptogram: ') # CMBCMBBB
+# ++++ Descifrar mensaje +++++
+cipher = input('Enter your cryptogram: ')  # CMBCMBBB
 text = ''
 for char in cipher:
     if not char.isalpha():
@@ -1266,8 +1189,8 @@ for char in cipher:
     text += chr(code)
 print(text)  # BLABLAAA
 
-# Procesador de numeros ***.
-line = input("Enter a line of numbers - separate them with spaces: ") # 1 2 3 4 5 6
+# ++++  Procesador de numeros ++++++++.
+line = input("Enter a line of numbers - separate them with spaces: ")  # 1 2 3 4 5 6
 strings = line.split()
 total = 0
 try:
@@ -1275,9 +1198,9 @@ try:
         total += float(substr)
     print("The total is:", total)
 except:
-    print(substr, "is not a number.") # 21.0
+    print(substr, "is not a number.")  # 21.0
 
-# Cifrado Cesar v2
+# ++++  Cifrado Cesar v2 +++++++
 """
 El cifrado César original cambia cada carácter por uno: a se convierte en b, z se convierte en a, y así sucesivamente.
 Hagámoslo un poco más difícil y permitamos que el valor desplazado provenga del rango 1..25 inclusive.
@@ -1290,11 +1213,11 @@ pide al usuario un valor de cambio (un número entero del rango 1..25nota: debe 
 un valor de cambio válido (¡no se rinda y no deje que los datos incorrectos lo engañen!)
 imprime el texto codificado.
 """
-text = input("Inserta el mensaje: ") # abcxyzABCxyz 123 || The die is cast
+text = input("Inserta el mensaje: ")  # abcxyzABCxyz 123 || The die is cast
 ok = False
 while not ok:
     try:
-        cifr = int(input("Inserta el número de cambio: ")) # 2 || 25
+        cifr = int(input("Inserta el número de cambio: "))  # 2 || 25
         if not 0 < cifr <= 25:
             raise Exception('El numero debe estar comprendido entre 1 y 25')
         ok = True
@@ -1323,10 +1246,10 @@ for char in text:
         # quitamos el sobrante para jugar con el alfabeto, para
         # después sumarle el dígito acorde el actual jugando con el resto
     cipher += char
-print(cipher) # cdezabCDEzab 123 || Sgd chd hr bzrs
+print(cipher)  # cdezabCDEzab 123 || Sgd chd hr bzrs
 
 
-# Digito de la vida
+# ++++  Digito de la vida +++++
 """
 Algunos dicen que el Dígito de la Vida es un dígito evaluado usando el cumpleaños de alguien. Es simple: solo necesita
 sumar todos los dígitos de la fecha. Si el resultado contiene más de un dígito, debe repetir la suma hasta obtener
@@ -1340,7 +1263,7 @@ Su tarea es escribir un programa que:
 pregunta al usuario su cumpleaños (en el formato AAAAMMDD, AAAADDMM o MMDDAAAA - en realidad, el orden de los dígitos
 no importa) emite el dígito de vida para la fecha.
 """
-text = input("Inserta Tu cumpleaños: ") # 19991229 || 20000101
+text = input("Inserta Tu cumpleaños: ")  # 19991229 || 20000101
 suma = 0
 fin = False
 while not fin:
@@ -1349,7 +1272,7 @@ while not fin:
     text = str(suma)
     suma = 0
     fin = True if len(text) == 1 else False
-print(f'digito de la vida: {text}') #6 ||v 4
+print(f'digito de la vida: {text}')  # 6 || 4
 
 
 # ***********************************
@@ -1371,6 +1294,7 @@ def number_to_string(argument):
 
 
 number_to_string(0)
+
 # ***********************************
 # ******** LISTA ###############
 # ***********************************
@@ -1422,18 +1346,16 @@ list_3 = list_2
 del list_1[0]
 del list_2[0]
 
-print(list_3) # ['C']
-
+print(list_3)  # ['C']
 
 list_1 = ["A", "B", "C"]
 list_2 = list_1
 list_3 = list_2
 
 del list_1[0]
-del list_2 # borra el apuntador
+del list_2  # borra el apuntador
 
-print(list_3) # ["B", "C"]
-
+print(list_3)  # ["B", "C"]
 
 # Intersección
 a = [1, 2, 3]
@@ -1456,8 +1378,7 @@ for i in range(length // 2):
 
 print(my_list)
 
-#bubble sort
-
+# ++++  bubble sort ++++++++++
 my_list = []
 swapped = True
 num = int(input("How many elements do you want to sort: "))
@@ -1476,9 +1397,7 @@ while swapped:
 print("\nSorted:")
 print(my_list)
 
-
-# ..... metodos propios de pytohn para ordenat y dar la vuelta a una lista
-
+# ******** métodos propios de phyton para ordenar y dar la vuelta a una lista
 my_list = [8, 10, 6, 2, 4]
 my_list.sort()
 print(my_list)
@@ -1488,11 +1407,8 @@ print(lst)
 
 lst.reverse()
 
-
-
-
-#SOLUCIONAR EL ERROR DE LAS LISTAS!!!!!!
-# list_2 = list_1 no estas copiando el contenido
+# SOLUCIONAR EL ERROR DE LAS LISTAS!!!!!!
+# list_2 = list_1 no estás copiando el contenido
 # sino la dirección de memoria donde está alojado
 # Copying the entire list.
 list_1 = [1]
@@ -1505,53 +1421,45 @@ my_list = [10, 8, 6, 4, 2]
 new_list = my_list[1:3]
 print(new_list)
 
-
 # ***********************************
 # ******** compresión listas *************
 # ***********************************
-#1. List comprehension allows you to create new lists from existing ones in a concise and elegant way. The syntax of a list comprehension looks as follows:
-#[expression for element in list if conditional]
-#which is actually an equivalent of the following code:
-#for element in list:
-#    if conditional:
-#        expression
-#Here's an example of a list comprehension - the code creates a five-element list filled with with the first five natural numbers raised to the power of 3:
-
+'''
+# 1 La comprensión de listas le permite crear nuevas listas a partir de las existentes de una manera concisa y elegante. 
+La sintaxis de un la comprensión de la lista se ve de la siguiente manera:
+[expresión para el elemento en la lista si es condicional] que en realidad es un equivalente del siguiente código:
+for elemento en la lista:
+ si es condicional:
+        expresión
+Aquí hay un ejemplo de comprensión de una lista: el código crea una lista de cinco elementos llena con los primeros 
+cinco números naturales elevados a la potencia de 3:'''
 cubed = [num ** 3 for num in range(5)]
 print(cubed)  # outputs: [0, 1, 8, 27, 64]
 
-# Comprensión de listas es una forma de crear nuevas listas basadas en la lista
-# existente. Ofrece una sintaxis más corta siendo más compacta y
-# rápida que las otras funciones y bucles utilizados para crear una lista.
-# Por ejemplo,
-
+# Comprensión de listas es una forma de crear nuevas listas basadas en la lista existente. Ofrece una sintaxis más corta
+# siendo más compacta y rápida que las otras funciones y bucles utilizados para crear una lista. Por ejemplo,
 py_list = ['a-1', 'b-2', 'c-3', 'a-4']
 r = [s for s in py_list if "a" in s]
-print(r)
-# Producción: ['a-1', 'a-4']
-# En el código anterior, la comprensión de listas se utiliza para buscar
-# cadenas que tengan a en la lista py_list. Tenga en cuenta que escribir
-# el mismo código utilizando otras funciones o bucles
-# habría llevado más tiempo, ya que se requiere más código para su
-# implementación, pero la comprensión de listas resuelve ese problema.
-# También podemos usar la comprensión de listas para
-# encontrar cadenas que contengan múltiples valores específicos, es decir,
-# podemos encontrar cadenas que contengan “a” y “b”
-# en py_list combinando las dos comprensiones. Por ejemplo,
+print(r) # Producción: ['a-1', 'a-4']
+
+# En el código anterior, la comprensión de listas se utiliza para buscar cadenas que tengan a en la lista py_list. Tenga
+# en cuenta que escribir el mismo código utilizando otras funciones o bucles habría llevado más tiempo, ya que se
+# requiere más código para su implementación, pero la comprensión de listas resuelve ese problema. También podemos usar
+# la comprensión de listas para encontrar cadenas que contengan múltiples valores específicos, es decir, podemos
+# encontrar cadenas que contengan “a” y “b” en py_list combinando las dos comprensiones. Por ejemplo,
 
 py_list = ['a-1', 'b-2', 'c-3', 'a-4', 'b-8']
 q = ['a', 'b']
 r = [s for s in py_list if any(xs in s for xs in q)]
-print(r)
-# Producción: ['a-1', 'b-2', 'a-4','b-8']
+print(r) # Producción: ['a-1', 'b-2', 'a-4','b-8']
 
-#Eliminar duplicados y ordenar
+# ++++  Eliminar duplicados y ordenar +++++++++++++
 lst = [10, 1, 2, 4, 4, 1, 4, 2, 6, 2, 9, 10]
 lst = [lst[l] for l in range(len(lst)) if lst[l] not in lst[0:l]]
 lst.sort()
-print(lst) # [1, 2, 4, 6, 9, 10]
+print(lst)  # [1, 2, 4, 6, 9, 10]
 
-#anidados
+# ++++   anidados ++++++++++
 EMPTY = "-"
 ROOK = "ROOK"
 board = []
@@ -1567,11 +1475,10 @@ board[7][7] = ROOK
 
 print(board)
 
-#tiempo por hora por mes
+# ++++ tiempo por hora por mes ++++++++++
 temps = [[0.0 for h in range(24)] for d in range(31)]
 #
 # The matrix is magically updated here.
-
 
 highest = -100.0
 
@@ -1579,49 +1486,38 @@ for day in temps:
     for temp in day:
         if temp > highest:
             highest = temp
-
 print("The highest temperature was:", highest)
 
-#tridimensional (ejemplo hotel 3 edificios de 15 plqntas con 20 habitaciones true o false ocupadas
-#The first index (0 through 2) selects one of the buildings; the second (0 through 14) selects the floor,
-# the third (0 through 19) selects the room number. All rooms are initially free.
+# ********  tridimensional
+# (ejemplo hotel 3 edificios de 15 plantas con 20 habitaciones true o false ocupadas
+# El primer índice (0 a 2) selecciona uno de los edificios; el segundo (0 a 14) selecciona el piso,
+# el tercero (0 a 19) selecciona el número de habitación. Todas las habitaciones son inicialmente libres.
 rooms = [[[False for r in range(20)] for f in range(15)] for t in range(3)]
-#Check if there are any vacancies on the 15th floor of the third building:
+# Check if there are any vacancies on the 15th floor of the third building:
 
 vacancy = 0
-
 for room_number in range(20):
     if not rooms[2][14][room_number]:
         vacancy += 1
 
-# Utilice la función filter() para obtener una cadena específica
-# en una lista de Python La función filter() filtra el iterable dado con
-# la ayuda de una función que comprueba si cada elemento satisface alguna
-# condición o no. Devuelve un iterador que aplica la comprobación para cada
-# uno de los elementos del iterable. Por ejemplo,
+# ******** función filter()
+# para obtener una cadena específica en una lista de Python La función filter() filtra el iterable dado con la ayuda de
+# una función que comprueba si cada elemento satisface alguna condición o no. Devuelve un iterador que aplica la
+# comprobación para cada uno de los elementos del iterable. Por ejemplo,
 
 py_lst = ['a-1', 'b-2', 'c-3', 'a-4']
 filter(lambda x: 'a' in x, py_lst)
-print(filter(lambda x: 'a' in x, py_lst))
-# Producción:<filter object at 0x7fd36c1905e0> Tenga en cuenta que la salida
-# anterior es un objeto de tipo filtro-iterador
-# ya que la función filter() devuelve un iterador en lugar de una lista.
-# Podemos usar la función list() como se muestra en el código siguiente
-# para obtener una lista.
-
-
-
-list(filter(lambda x: 'a' in x, py_lst))
-
-
-# Producción:['a-1','a-4']
-# En el código anterior, hemos utilizado filter()
-# para encontrar una cadena con valores específicos en la lista py_list.
+print(filter(lambda x: 'a' in x, py_lst)) # Producción:<filter object at 0x7fd36c1905e0> Tenga en cuenta que la salida
+# anterior es un objeto de tipo filtro-iterador ya que la función filter() devuelve un iterador en lugar de una lista.
+# Podemos usar la función list() como se muestra en el código siguiente para obtener una lista.
+list(filter(lambda x: 'a' in x, py_lst)) # Producción:['a-1','a-4']
+# En el código anterior, hemos utilizado filter() para encontrar una cadena con valores específicos en la lista py_list.
 
 
 # ***********************************
 # ******** Tuplas ###############
 # ***********************************
+
 # lista son modificables, insertables, modificables, guarda el orden
 # Tupla son inmutables, puedes añadir pero no quitar
 # ( PARÉNTESIS EN VEZ DE [
@@ -1632,7 +1528,7 @@ one_element_tuple_2 = 1.,
 # si quitamos la coma no tendríamos tuplas sino variables normales
 tupla_1 = (1, 2, 4, 8)
 tupla_2 = 1., .5, .25, .125
-t = tuple([1,2])
+t = tuple([1, 2])
 
 print(tupla_1)
 print(tupla_2)
@@ -1674,7 +1570,7 @@ print(t1, t2, t3)
 # t1 se convierte en t2, t2 se convierte en t3 y t3 se convierte en t1.
 # Pueden ser variables, no solo literales y si están en el lado derecho expresiones
 
-# DESEMPAQUETAR TUPLA
+# ********  DESEMPAQUETAR TUPLA
 tup = 1, 2, 3
 a, b, c = tup
 
@@ -1685,7 +1581,7 @@ tup = 1, 2, 3, 2, 4, 5, 6, 2, 7, 2, 8, 9
 duplicado = tup.count(2)
 
 print(duplicado)
-# MODIFICAR TUPLA
+# ********  MODIFICAR TUPLA
 #
 # no buena praxis, si cogemos tupla es porque q
 # frutas[0] = 'Pera' # falla porque es una tupla
@@ -1694,7 +1590,7 @@ frutaslista[0] = 'Pera'  # Como es una lista si podemos modificarlo
 frutas = tuple(frutaslista)  # convertimos la lista a tupla y asignamos
 print('\n', frutas)  # por la sentencia de arriba forzamos el \n
 
-# Ejercicio tupla y lista
+# ++++  Ejercicio tupla y lista ++++++++++
 # Dada la siguiente tupla, crear una lista que sólo incluya los números menor que 5 utilizando un ciclo for:
 tupla = (13, 1, 8, 3, 2, 5, 8)
 lista = []
@@ -1702,8 +1598,6 @@ for t in tupla:
     if t < 5:
         lista.append(t)
 print(lista, end=' ')
-
-
 
 
 # ***********************************
@@ -1801,18 +1695,16 @@ copy_my_dictionary = my_dictionary.copy()
 my_dictionary.clear()
 print(copy_my_dictionary) # {'A': 1, 'B': 2}
 
-#The sorted() function
-#Do you want it sorted? Just enrich the for loop to get such a form:
-
+# sorted()
 dictionary = {"cat": "chat", "dog": "chien", "horse": "cheval"}
 
 for key in sorted(dictionary.keys()):
     print(key, "->", dictionary[key])
 
-#The sorted() function will do its best - the output will look like this:
-#cat -> chat
-#dog -> chien
-#horse -> cheval
+# La función sorted() hará lo mejor que pueda - la salida se verá así:
+# cat -> chat
+# dog -> chien
+# horse -> cheval
 
 # 2 DICCIONARIOS en 1 !
 d1 = {'Adam Smith': 'A', 'Judy Paxton': 'B+'}
@@ -1824,28 +1716,21 @@ for item in (d1, d2):
 
 print(d3)
 
-#
-# TUPLAS + DICCIONARIOS
-#
-
+# ********  TUPLAS + DICCIONARIOS
 # De tupla a diccionario
 colors = (("green", "#008000"), ("blue", "#0000FF"))
 colors_dictionary = dict(colors)
 print(colors_dictionary)
 
-
-
-# Las tuplas y los diccionarios pueden trabajar juntos Hemos preparado un ejemplo simple,
-# que muestra cómo las tuplas y los diccionarios pueden trabajar juntos. Imaginemos el siguiente
-# problema: necesita un programa para evaluar los puntajes promedio de los estudiantes;
-# el programa debe pedir el nombre del estudiante, seguido de su puntaje único;
-# los nombres podrán introducirse en cualquier orden; ingresar un nombre vacío finaliza
-# la introducción de los datos (nota 1: ingresar una puntuación vacía generará la excepción ValueError,
-# pero no se preocupe por eso ahora, verá cómo manejar tales casos cuando hablemos de excepciones
-# en la segunda parte de la serie de cursos Python Essentials)
+# Las tuplas y los diccionarios pueden trabajar juntos Hemos preparado un ejemplo simple, que muestra cómo las tuplas y
+# los diccionarios pueden trabajar juntos. Imaginemos el siguiente problema: necesita un programa para evaluar los
+# puntajes promedio de los estudiantes; el programa debe pedir el nombre del estudiante, seguido de su puntaje único;
+# los nombres podrán introducirse en cualquier orden; ingresar un nombre vacío finaliza la introducción de los datos
+# (nota 1: ingresar una puntuación vacía generará la excepción ValueError, pero no se preocupe por eso ahora, verá cómo
+# manejar tales casos cuando hablemos de excepciones en la segunda parte de la serie de cursos Python Essentials)
 # A continuación, se debe emitir una lista de todos los nombres, junto con la puntuación media evaluada.
 
-# Diccionario con media de las notas de los alumnos
+# ++++  Diccionario con media de las notas de los alumnos +++++++++
 school_class = {}
 
 while True:
@@ -1874,44 +1759,38 @@ for name in sorted(school_class.keys()):
 # ***********************************
 # ******** Funciones #############
 # ***********************************
-# definir función def. 1º definir, después llamar (DEBAJO)
-# miFunción también notación de camello
-#La asignación de un valor al mensaje de nombre hace que Python olvide su rol anterior.
-# La función denominada anteriomente deja de estar disponible
-# si no ponemos llamamos a return, que devuelve la ejecución a donde estaba antes de la
-# llamada a la función se ejecuta implícitamente al final, se puede usar para terminar
-# la ejecución de la función a demanda
-# Una variable existente fuera de una función tiene un alcance dentro de los cuerpos
-# de las funciones, excluyendo aquellos de ellos que definen una variable del mismo nombre.
-# También significa que el alcance de una variable existente fuera de una función se admite
-# solo cuando se obtiene su valor (lectura). La asignación de un valor obliga a la creación
-# de la propia variable de la función.
+# definir función def. 1º definir, después llamar (DEBAJO) miFunción también notación de camello La asignación de un
+# valor al mensaje de nombre hace que Python olvide su rol anterior. La función denominada anteriomente deja de estar
+# disponible si no ponemos llamamos a return, que devuelve la ejecución a donde estaba antes de la llamada a la función
+# se ejecuta implícitamente al final, se puede usar para terminar la ejecución de la función a demanda Una variable
+# existente fuera de una función tiene un alcance dentro de los cuerpos de las funciones, excluyendo aquellos de ellos
+# que definen una variable del mismo nombre. También significa que el alcance de una variable existente fuera de una
+# función se admite solo cuando se obtiene su valor (lectura). La asignación de un valor obliga a la creación de la
+# propia variable de la función.
 
 def my_function():
-    print("Do I know that variable?", var)
+    print("Do I know that variable?", var)  # Do I know that variable? 1
 
 
 var = 1
 my_function()
-print(var)
-#Do I know that variable? 1
-#1
+print(var)  # 1
 
 
-def my_function():
+def my_function():  # Do I know that variable? 2
     var = 2
-    print("Do I know that variable?", var)
+    print("Do I know that variable?", var)  # 2
 
 
 var = 1
 my_function()
 print(var)
-#Do I know that variable? 2
-# 1
 
-#Hay un método especial de Python que puede ampliar el alcance de una variable de una manera
-# que incluye los cuerpos de las funciones (incluso si desea no solo leer los valores,
-# sino también modificarlos). Tal efecto es causado por una palabra clave llamada global:
+# Hay un método especial de Python que puede ampliar el alcance de una variable de una manera que incluye los cuerpos
+# de las funciones (incluso si desea no solo leer los valores, sino también modificarlos). Tal efecto es causado por una
+# palabra clave llamada global:
+
+
 def my_function():
     global var
     var = 2
@@ -1919,86 +1798,100 @@ def my_function():
 
 
 var = 1
-my_function()
-print(var)
+my_function() # Do I know that variable? 2
+print(var) # 2
 
-#Do I know that variable? 2
-#2
 
 def mi_func(nombre, apellido):  # parámetro la variable con la que se define
     if nombre == '':
         return
     print(nombre, apellido)  # forma parte lo que está dentro de la indentación
 
+
 mi_func('Jesus', 'Gomez')  # argumento valor que le paso
 
-# si una función no devuelve un determinado valor mediante una cláusula de expresión return,
-# se supone que implícitamente devuelve None.
+
+# si una función no devuelve un determinado valor mediante una cláusula de expresión return, se supone que
+# implícitamente devuelve None.
 def strange_function(n):
     if(n % 2 == 0):
         return True
+
+
 print(strange_function(2))
 print(strange_function(1))
 
-#******* Pasando el argumento con un valor predefinido si no se introduce
+# ******* Pasando el argumento con un valor predefinido si no se introduce
+
+
 def introduction(first_name, last_name="Smith"):
     print("Hello, my name is", first_name, last_name)
+
+
 introduction("Henry")
 introduction("James", "Doe")
 
+
 def suma(n=0, m: int = 0) -> int:  # = x valor por defecto -> pista :pista
     return n + m
+
 
 re = suma()
 print(f'Resultado de suma: {re}')
 print(f'Resultado de suma: {suma(6, 8)}')  # Podemos llamar a la función
 
-# la siguiente función da error porque un argumento sin valor por defecto va antes que uno que si.
-# deben ir todos los que tienen valor sin defecto antes
-#def add_numbers(a, b=2, c):
+# La siguiente función da error porque un argumento sin valor por defecto va antes que uno que si. deben ir todos los
+# que tienen valor sin defecto antes
+
+# def add_numbers(a, b=2, c):
 #    print(a + b + c)
+# add_numbers(a=1, c=3)
+# SyntaxError - a non-default argument (c) follows a default argument (b=2)
 
-#add_numbers(a=1, c=3)
-#SyntaxError - a non-default argument (c) follows a default argument (b=2)
 
-
-#******* Pasando el argumento de palabras clave
-# Python ofrece otra convención para pasar argumentos,
-# donde el significado del argumento está dictado por su nombre,
-# no por su posición: se llama paso de argumentos de palabras clave.
-# Echa un vistazo al fragmento:
+# ******* Pasando el argumento de palabras clave
+# Python ofrece otra convención para pasar argumentos, donde el significado del argumento está dictado por su nombre,
+# no por su posición: se llama paso de argumentos de palabras clave. Echa un vistazo al fragmento:
 def introduction(first_name, last_name):
     print("Hello, my name is", first_name, last_name)
+
 
 introduction(first_name = "James", last_name = "Bond")
 introduction(last_name = "Skywalker", first_name = "Luke")
 
-#Puede mezclar ambas modos si lo desea: solo hay una regla inquebrantable:
-# debe poner los argumentos posicionales antes que los argumentos de palabras clave.
 
+# Puede mezclar ambas modos si lo desea: solo hay una regla inquebrantable: debe poner los argumentos posicionales antes
+# que los argumentos de palabras clave.
 def adding(a, b, c):
     print(a, "+", b, "+", c, "=", a + b + c)
-adding(4, 3, c = 2)
 
 
-# ******** definir funcion cuando NO sabemos cuantas variables vamos a recibir
+adding(4, 3, c=2)
+
+
+# ******** definir función cuando NO sabemos cuantas variables vamos a recibir
 # lo toma como una tupla
 def listarNombres(*nombres):  # en docu oficial *args pero no tienes que elegir ese nombre
     for nombre in nombres:
         print(nombre)
 
+
 listarNombres('Pablo', 'Pablito', 'Pablete', 'Juanete')
 
 
-#++++++++++#Es legal, y posible, tener una variable con el mismo nombre que el parámetro de una función.
-# El fragmento ilustra el fenómeno:
+# ******** Es legal, y posible, tener una variable con el mismo nombre que el parámetro de una función.El fragmento
+# ilustra el fenómeno:
+
+
 def message(number):
     print("Enter a number:", number)
+
 
 number = 1234
 message(1)
 print(number)
-# Una situación como esta activa un mecanismo
+
+# Una situación como está activa un mecanismo
 # llamado shadowing: El parámetro x sombrea cualquier variable del mismo nombre,
 # pero...... sólo dentro de la función que define el parámetro.
 # El parámetro denominado number es una entidad completamente diferente de la variable
@@ -2006,7 +1899,9 @@ print(number)
 # resultado: Introduzca un número: 1
 # 1234
 
-# Indice de masa corporal
+# ++++ Indice de masa corporal +++++++
+
+
 def IMC(weight, height):
     if height < 1.0 or height > 2.5 or \
     weight < 20 or weight > 200:
@@ -2017,9 +1912,11 @@ def IMC(weight, height):
 
     return weight / height ** 2
 
+
 print(IMC(352.5, 1.65))
 
-# ******** EJERCICIO FUNCIONES
+
+# ++++  EJERCICIO FUNCIONES ++++++
 #   Función con argumentos variables para sumar todos los valores recibidos
 def suma(*args):
     x = 0
@@ -2031,7 +1928,7 @@ def suma(*args):
 print(suma(1, 2, 3, 4, 5, 6, 7, 8))
 
 
-# ******** EJERCICIO FUNCIONES 2
+# ++++  EJERCICIO FUNCIONES 2 ++++++++
 #  Función con argumentos variables para multiplicar los valores
 def mult(*args):
     a = 1
@@ -2047,8 +1944,7 @@ def mult(*args):
 print(mult(1, 2, 3, 'l', 4, 5, 6, 'ñ'))
 
 
-# ******** funcion que permite recibir diccionarios
-
+# ++++  funcion que permite recibir diccionarios ++++++++
 def listarTerminos(**terminos):  # (**Kwargs)
     for llave, valor in terminos.items():
         print(f'{llave}:{valor}')
@@ -2058,7 +1954,7 @@ listarTerminos(IDE='blabla', PK='blublu')
 listarTerminos(A=16, PK='blublu')
 
 
-# ******** Funcion lista
+# ++++   Funcion lista +++++++++
 def desplegarNombres(nombres):
     for nombre in nombres:
         print(nombre)
@@ -2071,28 +1967,28 @@ desplegarNombres('carlos')  # Itera los caracteres, es decir el str
 desplegarNombres((6, 8))  # Como es una tupla no falla, lista como hemos visto idem
 desplegarNombres([6, 9])
 
-# ******** Funcion Es primo
+
+# ++++   Función Es primo ++++++
 def is_prime(num):
     r = True
     for i in range(2,num):
-       if i % 2 == 0:
-           r = False
-           break
+        if i % 2 == 0:
+            r = False
+            break
     return r
-#
-# Write your code here.
-#
+
 
 for i in range(1, 20):
-	if is_prime(i + 1):
-			print(i + 1, end=" ")
-print() # 2 3 5 7 11 13 17 19
+    if is_prime(i + 1):
+        print(i + 1, end=" ")
+print()  # 2 3 5 7 11 13 17 19
 
-# Palíndromo
+# ++++   Palíndromo +++++++++
 '''suponga que una cadena vacía no es un palíndromo;
 tratar las letras mayúsculas y minúsculas como iguales;
 los espacios no se tienen en cuenta durante la verificación; trátelos como inexistentes;
 hay más de unas pocas soluciones correctas; trate de encontrar más de una.'''
+
 
 def palindromo(string):
     string = string.upper().replace(' ','')
@@ -2104,9 +2000,10 @@ def palindromo(string):
             break
     print(frase)
 
+
 palindromo('Ten animals I slam in a net')
 
-# Anagrama
+# ++++   Anagrama +++++++
 '''Un anagrama es una nueva palabra formada al reorganizar las letras de una palabra, usando todas las letras originales
 exactamente una vez. Por ejemplo, las frases "seguridad ferroviaria" y "cuentos de hadas" son anagramas,
  mientras que "yo soy" y "tú eres" no lo son.
@@ -2115,6 +2012,7 @@ pide al usuario dos textos separados; comprueba si los textos introducidos son a
 suponga que dos cadenas vacías no son anagramas; tratar las letras mayúsculas y minúsculas como iguales;
 los espacios no se tienen en cuenta durante la verificación; trátelos como inexistentes Pruebe su código usando los
 datos que le hemos proporcionado.'''
+
 
 def palindromo(string,string2):
     string = string.upper().replace(' ', '')
@@ -2129,12 +2027,11 @@ def palindromo(string,string2):
             break
     print(frase)
 
+
 palindromo('Listen','Silent')
 
-# ***********************************
-# ******** ejemplo funciones variables  *************
-# ***********************************
 
+# ++++   ejemplo funciones variables  +++++++
 def printer(*args, **dics):
     for arg in args:
         print(arg)
@@ -2145,9 +2042,8 @@ def printer(*args, **dics):
 
 printer(1, 2, 3, 'll', a='lol', b='lal')
 
-
+# ******** Problema listas en Funciones ####
 """
-#### Problema listas en Funciones
 El siguiente ejemplo arrojará algo de luz sobre el problema:
 
 def my_function(my_list_1):
@@ -2157,11 +2053,9 @@ def my_function(my_list_1):
     print("Print #3:", my_list_1)
     print("Print #4:", my_list_2)
 
-
 my_list_2 = [2, 3]
 my_function(my_list_2)
 print("Print #5:", my_list_2)
-
 
 salida:
 
@@ -2172,9 +2066,7 @@ Print #4: [2, 3]
 Print #5: [2, 3]
 output
 
-It seems that the former rule still works.
-
-Finally, can you see the difference in the example below:
+Parece que la regla anterior todavía funciona. Finalmente, puedes ver la diferencia en el siguiente ejemplo:
 
 def my_function(my_list_1):
     print("Print #1:", my_list_1)
@@ -2189,10 +2081,8 @@ my_function(my_list_2)
 print("Print #5:", my_list_2)
 
 
-No cambiamos el valor del parámetro my_list_1 (ya sabemos que no afectará al argumento), 
-sino que modificamos la lista identificada por él. 
-El resultado puede ser sorprendente. Ejecute el código y verifique:
-
+No cambiamos el valor del parámetro my_list_1 (ya sabemos que no afectará al argumento), sino que modificamos la lista 
+identificada por él. El resultado puede ser sorprendente. Ejecute el código y verifique:
 
 Print #1: [2, 3]
 Print #2: [2, 3]
@@ -2201,14 +2091,13 @@ Print #4: [3]
 Print #5: [3]
 output
 
-si el argumento es una lista, cambiar el valor del parámetro correspondiente no afecta a la lista (recuerde: 
-las variables que contienen listas se almacenan de una manera diferente a los escalares), 
-Pero si cambia una lista identificada por el parámetro (nota: ¡la lista, no el parámetro!), 
-La lista reflejará el cambio.
+si el argumento es una lista, cambiar el valor del parámetro correspondiente no afecta a la lista (recuerde: las 
+variables que contienen listas se almacenan de una manera diferente a los escalares), Pero si cambia una lista 
+identificada por el parámetro (nota: ¡la lista, no el parámetro!), La lista reflejará el cambio.
 """
 
-# Es Triangulo y es triangulo equilátero
 
+# ++++  Es Triángulo y es triángulo equilátero +++++++
 def is_a_triangle(a, b, c):
     return a + b > c and b + c > a and c + a > b
 
@@ -2235,6 +2124,7 @@ def is_a_right_triangle(a, b, c):
 print(is_a_right_triangle(5, 3, 4))
 print(is_a_right_triangle(1, 3, 4))
 
+
 def heron(a, b, c):
     p = (a + b + c) / 2
     return (p * (p - a) * (p - b) * (p - c)) ** 0.5
@@ -2248,17 +2138,16 @@ def area_of_triangle(a, b, c):
 
 print(area_of_triangle(1., 1., 2. ** .5))
 
-# ******** Conversión de Temperatura
-# Realizar dos funciones para convertir de grados celsius a fahrenheit y viceversa.
-# Función 1. Recibir un parámetro llamado celcius y regresar el valor equivalente a fahrenheit
-# La función se llama: celsius_fahrenheit(celsius)
-# La fórmula para convertir de celsius a fahrenheit es: celsius * 9/5 + 32
-# Función 2. Recibir un parámetro llamado fahrenheit y regresar el valor equivalente a celsius:
-# fahrenheit_celsius(fahrenheit)
-# La fórmula para convertir de fahrenheit a celsius es:  (fahrenheit-32) * 5/9
-# Los valores los debe proporcionar el usuario, utilizando la función input y convirtiendolo a tipo float.
-# Deben hacer al menos dos pruebas, una donde conviertan de grados celcius a grados fahrenheit,
-# y otra donde conviertan de grados fahrenheit a grados celsius y mandar a imprimir los resultados.
+# ++++    Conversión de Temperatura +++++++
+# Realizar dos funciones para convertir de grados celsius a fahrenheit y viceversa. Función 1. Recibir un parámetro
+# llamado celscius y regresar el valor equivalente a fahrenheit  La función se llama: celsius_fahrenheit(celsius)
+# La fórmula para convertir de celsius a fahrenheit es: celsius * 9/5 + 32 Función 2. Recibir un parámetro llamado
+# fahrenheit y regresar el valor equivalente a celsius: fahrenheit_celsius(fahrenheit)
+# La fórmula para convertir de fahrenheit a celsius es:  (fahrenheit-32) * 5/9 Los valores los debe proporcionar el
+# usuario, utilizando la función input y convirtiéndolo a tipo float. Deben hacer al menos dos pruebas, una donde
+# conviertan de grados celscius a grados fahrenheit, y otra donde conviertan de grados fahrenheit a grados celsius y
+# mandar a imprimir los resultados.
+
 
 def celsius_fahrenheit(celsius):
     return (celsius * 1.8) + 32
@@ -2276,36 +2165,36 @@ grados = float(input('introduce la temperatura en grados celsius para convertir 
 celsius = fahrenheit_celsius(grados)
 print(f'Son {celsius} ºC')
 
-# ******** ejercicio función año bisisesto.
-#Debe retornar True si el año es bisisto, False en caso contrario
 
+# ++++    ejercicio función año bisisesto. +++++
+# Debe retornar True si el año es bisisto, False en caso contrario
 def is_year_leap(year):
     r = False
     if year % 4 == 0: # divisible entre 4
-        # salvo que sea año secular -último de cada siglo, terminado en «00»-, en cuyo caso también ha de ser divisible entre 400.
+        # salvo que sea año secular -último de cada siglo, terminado en «00»-, en cuyo caso también ha de ser divisible
+        # entre 400.
         if str(year)[-2:] != '00' or (str(year)[-2:] == '00' and year % 400 == 0):
             r=True
     return r
 
+
 test_data = [1900, 2000, 2016, 1987]
 test_results = [False, True, True, False]
 for i in range(len(test_data)):
-	yr = test_data[i]
-	print(yr,"->",end="")
-	result = is_year_leap(yr)
-	if result == test_results[i]:
-		print("OK")
-	else:
-		print("Failed")
+    yr = test_data[i]
+    print(yr,"->",end="")
+    result = is_year_leap(yr)
+    if result == test_results[i]:
+        print("OK")
+    else:
+        print("Failed")
 
 
-# EJERCIO FUNCION PANTALLA DE 13 LED (NUMEROS)
+# ++++     EJERCIO FUNCION PANTALLA DE 13 LED (NUMEROS) ++++++
 ''' Su tarea es escribir un programa que pueda simular el trabajo de un dispositivo de siete pantallas, aunque
 utilizará LED individuales en lugar de segmentos. Cada dígito se construye a partir de 13 LED, puede ser de cualquier
 longitud de números
-
-input: 9081726354
-Sample output:
+input: 9081726354 --> output:
 ### ### ###   # ### ### ### ### ### # #
 # # # # # #   #   #   # #     # #   # #
 ### # # ###   #   # ### ### ### ### ###
@@ -2394,13 +2283,13 @@ def pantalla(str):
         print('', end=' ')
     print()
 
+
 pantalla('9081726354')
 
-#Versión con menos codigo pero mas complejidad (n*n vs MIA 5*n)
-
+# Versión con menos codigo pero mas complejidad (n*n vs MIA 5*n)
 # using a list containing patterns （0~9）
 
-list=[['###', '# #', '# #', '# #', '###'],
+list= [['###', '# #', '# #', '# #', '###'],
 [' #', ' #', ' #', ' #', ' #'],
 ['###', '  #', '###', '#  ', '###'],
 ['###', '  #', '###', '  #', '###'],
@@ -2412,12 +2301,14 @@ list=[['###', '# #', '# #', '# #', '###'],
 ['###', '# #', '###', '  #', '###']
 ]
 
+
 def print_number(num):
     string = str(num)
     for i in range(0,5):
         for character in string:
             print(list[int(character)][i],end = ' ')
         print()
+
 
 print_number(int(input("Enter the number you wish to display: ")))
 
@@ -2426,7 +2317,7 @@ print_number(int(input("Enter the number you wish to display: ")))
 # ******** FUNCIONES RECURSIVAS
 # ***********************************
 
-# Factorial
+# ++++     Factorial +++++++
 # 5! = 5 * 4 * 3 * 2 * 1
 # 5! = 5 * 4 * 3 * 2
 # 5! = 5 * 4 * 6
@@ -2448,6 +2339,7 @@ def factorial_function(n):
 for n in range(1, 6):  # testing
     print(n, factorial_function(n))
 
+
 # con recursividad
 def factorial(numero):
     if numero == 1:  # El factorial de 1 es 1 CASO BASE
@@ -2458,8 +2350,9 @@ def factorial(numero):
 
 print(factorial(5))
 
-# Fibonacci
-#fib_1 = 1
+
+# ++++    Fibonacci ++++++
+# fib_1 = 1
 # fib_2 = 1
 # fib_3 = 1 + 1 = 2
 # fib_4 = 1 + 2 = 3
@@ -2484,6 +2377,7 @@ def fib(n):
 for n in range(1, 10):  # testing
     print(n, "->", fib(n))
 
+
 # con recursividad:
 def fib(n):
     if n < 1:
@@ -2493,19 +2387,16 @@ def fib(n):
     return fib(n - 1) + fib(n - 2)
 
 
-# ******** EJERCICIO RECURSIVIDAD SUMA
-# Imprimir números de 5 a 1 de manera descendente usando funciones recursivas.
-# Puede ser cualquier valor positivo, ejemplo, si pasamos el valor de 5,
-# debe imprimir: 5 4 3 2 1 Si se pasa el valor de 3, debe imprimir:
-# 3 2 1 Si se pasan valores negativos no imprime nada
-
+# ++++     EJERCICIO RECURSIVIDAD SUMA ++++++++++
+# Imprimir números de 5 a 1 de manera descendente usando funciones recursivas. Puede ser cualquier valor positivo,
+# ejemplo, si pasamos el valor de 5, debe imprimir: 5 4 3 2 1 Si se pasa el valor de 3, debe imprimir: 3 2 1 Si se
+# pasan valores negativos no imprime nada
 def imprimeNumerosPositivos(numero):
     try:
         numero = int(numero)
         if numero > 0:
             print(numero)
             imprimeNumerosPositivos(numero - 1)
-
     except:
         print("Debes introducir un número")
 
@@ -2514,28 +2405,22 @@ imprimeNumerosPositivos(16)
 
 
 # ******** EJERCICIO Calculadora de impuestos
-# Crear una función para calcular el total de un pago incluyendo un impuesto aplicado.
-# La función se llama calcular_total()
-# La función recibe dos parámetros:
+# Crear una función para calcular el total de un pago incluyendo un impuesto aplicado.La función se llama
+# calcular_total() La función recibe dos parámetros:
 # 1. pago_sin_impuesto
 # 2. impuesto (Ej. Valor de 10, significa 10% de impuesto, Valor de 16 significa el 16% de impuesto)
 # La función debe regresar el total del pago incluyendo el porcentaje de impuesto proporcionado.
 # Ej. Si llamamos a la función calcular_total(1000, 16) debe retornar el valor 1,160.0
 # Los valores los debe proporcionar el usuario y se procesados con la función input, convirtiendolos a tipo float.
-
 def calculadoraImpuestos(numero, impuesto):
     return valor * (1 + impuesto / 100)
 
 
 #    return valor + valor*(impuesto/100)
-
-
 valor = float(input('introduce un valor'))
 impuesto = float(input('introduce el impuesto para el valor introducido'))
 resultado = calculadoraImpuestos(valor, impuesto)
 print(f'Pago con impuesto: {resultado}')
-
-
 
 
 # ***********************************
@@ -2557,8 +2442,8 @@ print(x(5, 6, 2))
 nombre_completo = lambda n, a: n.strip().title() + " " + a.strip().title()
 print(nombre_completo("   jesus", "   GOMEZ"))
 
-# Ordenar lista por apellido split separa por el espacio y empezamos por el
-# final hasta ese espacio, lower todo a minusculas por si acaso
+# Ordenar lista por apellido split separa por el espacio y empezamos por el final hasta ese espacio, lower todo a
+#  minúsculas por si acaso
 lista = ["Jesus Gomez", "María Macanás", "Marisa Baños", "Maria Canovas"]
 lista.sort(key=lambda name: name.split(" ")[-1].lower())
 print(lista)
@@ -2581,8 +2466,6 @@ print(mytripler(11))
 
 
 # función constructora de ecuaciones cuadráticas
-
-
 def constructor_ecuación_cuadrática(a, b, c):
     """
     :return: devuelve la función f(x) = ax^2 +bx + c
@@ -2626,7 +2509,7 @@ print(m.pi)
 from math import sin as s, cos as cc # podemos poner alias de los from también
 print(s(3), cc(16))
 
-# **************** dir() ########
+# ****** dir()
 #La función devuelve una lista ordenada alfabéticamente que contiene todos los nombres de entidades disponibles
 # en el módulo identificado por un nombre pasado a la función como argumento: dir(módulo)
 import math
@@ -2637,7 +2520,8 @@ for name in dir(math):
     print(name, end="\t")
 
 
-# # **************** math ######## modulo de matemáticas
+# ***** math
+# modulo de matemáticas
 math.sin(x)     # el seno de x;
 math.cos(x)     # el coseno de x;
 math.tan(x)     # la tangente de x.
@@ -2671,7 +2555,7 @@ math.trunc(x)   # el valor de x truncado a un entero (ten cuidado, no es un equi
 math.factorial(x) # devuelve x! (x tiene que ser una integral y no una negativa)
 math.hypot(x, y) # devuelve la longitud de la hipotenusa de un triángulo rectángulo con las longitudes de las piernas iguales a x e y (igual que sqrt(pow(x, 2) + pow(y, 2)) pero más precisa)
 
-# **************** random ######## modulo de numeros aleatorios
+# ********* random  modulo de números aleatorios
 #Un generador de números aleatorios toma un valor llamado semilla,
 # lo trata como un valor de entrada, calcula un número "aleatorio" basado en él (el método depende de un algoritmo elegido) y produce un nuevo valor de semilla.
 from random import random, seed, randrange, randint, choice, sample
@@ -2696,6 +2580,7 @@ randint(left, right)
 # incluso si el número de invocaciones posteriores no es mayor que el ancho del rango especificado.
 # Afortunadamente, hay una mejor solución que escribir su propio código para verificar la singularidad de los números "dibujados".
 
+
 choice(sequence) # La primera variante elige un elemento "aleatorio" de la secuencia de entrada y lo devuelve.
 sample(sequence, elements_to_choose) # Elige algunos de los elementos de entrada, devolviendo una lista  del tamaño
 # indicado con la opción. Los elementos de la muestra se colocan en orden aleatorio
@@ -2706,9 +2591,10 @@ print(sample(my_list, 5))
 print(sample(my_list, 10))
 
 
-# **************** platform ######## info sist operativo
-
-# El módulo de plataforma le permite acceder a los datos de la plataforma subyacente, es decir, hardware, sistema operativo e información de versión del intérprete.
+# ****** platform
+# información del sistema operativo
+# El módulo de plataforma le permite acceder a los datos de la plataforma subyacente, es decir, hardware, sistema
+# operativo e información de versión del intérprete.
 from platform import platform
 platform(aliased = False, terse = False)
 # aliased → cuando se establece en True (o cualquier valor distinto de cero) puede hacer que la función presente
@@ -2731,40 +2617,39 @@ print(python_version_tuple())   # ('3', '11', '0'), la mayor parte de la versió
 # ***********************************
 # ******** Paquetes #############
 # ***********************************
-#
-# Un módulo es una especie de contenedor lleno de funciones
-# Paquete: Agrupa sus módulos con un rol similar a una carpeta / directorio en el mundo de los archivos.
-# Si creamos un módulo (un archivo.py )aunque sea vacío y lo importamos en otro,
-# Aparece una nueva subcarpeta,  __pycache__. Dentro  Hay un archivo llamado module.cpython-xy.pyc donde x e y
-# son dígitos derivados de su versión de Python (por ejemplo, serán 3 y 8 si usa Python 3.8).
-# El nombre del archivo es el mismo que el nombre de su módulo (módulo aquí).
-# La parte después del primer punto dice qué implementación de Python ha creado el archivo (CPython aquí)
-# y su número de versión. La última parte (pyc) proviene de las palabras Python y compilado.
-# el contenido es completamente ilegible para los humanos.
-# Tiene que ser así, ya que el archivo está destinado solo para uso de Python.
-# Cuando Python importa un módulo por primera vez, traduce su contenido en una forma algo compilada.
-# Cuando se importa un módulo, Python ejecuta implícitamente su contenido.
-# Le da al módulo la oportunidad de inicializar algunos de sus aspectos internos.
-# Python recuerda los módulos importados y omite silenciosamente todas las importaciones posteriores.
-# Cuando ejecuta un archivo directamente, su variable __name__ se establece en __main__;
-# Cuando un archivo se importa como un módulo, su variable __name__ se establece en el nombre del archivo (excluyendo.py)
+'''
+Un módulo es una especie de contenedor lleno de funciones Paquete: Agrupa sus módulos con un rol similar a una carpeta 
+/ directorio en el mundo de los archivos. Si creamos un módulo (un archivo.py )aunque sea vacío y lo importamos en otro,
+Aparece una nueva subcarpeta,  __pycache__. Dentro  Hay un archivo llamado module.cpython-xy.pyc donde x e y. son dígitos 
+derivados de su versión de Python (por ejemplo, serán 3 y 8 si usa Python 3.8). El nombre del archivo es el mismo 
+que el nombre de su módulo (módulo aquí). La parte después del primer punto dice qué implementación de Python ha creado 
+el archivo (CPython aquí) y su número de versión. La última parte (pyc) proviene de las palabras Python y compilado.
+El contenido es completamente ilegible para los humanos. Tiene que ser así, ya que el archivo está destinado solo para 
+uso de Python. Cuando Python importa un módulo por primera vez, traduce su contenido en una forma algo compilada.
+Cuando se importa un módulo, Python ejecuta implícitamente su contenido. Le da al módulo la oportunidad de inicializar 
+algunos de sus aspectos internos.
+Python recuerda los módulos importados y omite silenciosamente todas las importaciones posteriores. Cuando ejecuta un 
+archivo directamente, su variable __name__ se establece en __main__; Cuando un archivo se importa 
+como un módulo, su variable __name__ se establece en el nombre del archivo (excluyendo.py)
+'''
 if __name__ == "__main__":
     print("I prefer to be a module.")
 else:
     print("I like to be a module.")
-# variables privadas: precediendo el nombre de la variable con _ (un guión bajo) o __ (dos guiones bajos),
-# pero recuerde, es solo una convención. Los usuarios de su módulo pueden obedecerlo o no.
-# the line starting with #! instructs the OS how to execute the contents of the file,  Esta convención no tiene ningún efecto bajo MS Windows.
-# ( para python es un comentario) ejemplo
+'''  
+variables privadas: precediendo el nombre de la variable con _ (un guión bajo) o __ (dos guiones bajos),
+pero recuerde, es solo una convención. Los usuarios de su módulo pueden obedecerlo o no.
+la línea que comienza con #! indica al sistema operativo cómo ejecutar el contenido del archivo,Esta convención no 
+tiene ningún efecto bajo MS Windows. ( para python es un comentario)
 
-# path: variable especial (en realidad una lista) que almacena todas las ubicaciones (carpetas/directorios)
-# que se buscan para encontrar un módulo que ha sido solicitado por la instrucción de importación está en el módulo sys
-
-# Python explora estas carpetas en el orden en que aparecen en la lista:
-# si el módulo no se puede encontrar en ninguno de estos directorios, la importación falla.
-# De lo contrario, se tendrá en cuenta la primera carpeta
-# que contenga un módulo con el nombre deseado (si alguna de las carpetas restantes contiene un módulo con ese nombre, se ignorará).
-
+path: variable especial (en realidad una lista) que almacena todas las ubicaciones (carpetas/directorios) que se buscan 
+para encontrar un módulo que ha sido solicitado por la instrucción de importación está en el módulo sys Python explora 
+estas carpetas en el orden en que aparecen en la lista:
+si el módulo no se puede encontrar en ninguno de estos directorios, la importación falla.
+De lo contrario, se tendrá en cuenta la primera carpeta
+que contenga un módulo con el nombre deseado (si alguna de las carpetas restantes contiene un módulo con ese nombre, 
+se ignorará).
+ '''
 import sys
 
 for p in sys.path:
@@ -2782,20 +2667,20 @@ for p in sys.path:
 sys.path.append('..\\modules') # Añadimos El nombre relativo de la carpeta \\, para añadir al path, es un ejemplo
 
 # La inicialización de un módulo se realiza mediante un código independiente (que no forma parte de ninguna función)
-# ubicado dentro del archivo del módulo. Como un paquete no es un archivo, esta técnica es inútil para inicializar paquetes.
-# En su lugar, debe usar un truco diferente: Python espera que haya un archivo con un nombre muy único dentro de la carpeta
-# del paquete: __init__.py. El contenido del archivo se ejecuta cuando se importa cualquiera de los módulos del paquete.
-# Si no desea ninguna inicialización especial, puede dejar el archivo vacío, pero no debe omitirlo.
+# ubicado dentro del archivo del módulo. Como un paquete no es un archivo, esta técnica es inútil para inicializar
+# paquetes. En su lugar, debe usar un truco diferente: Python espera que haya un archivo con un nombre muy único dentro
+# de la carpetadel paquete: __init__.py. El contenido del archivo se ejecuta cuando se importa cualquiera de los
+# módulos del paquete. No desea ninguna inicialización especial, puede dejar el archivo vacío, pero no debe omitirlo.
 
 # pregunta
-#Some additional and necessary packages are stored inside the D:\Python\Project\Modules directory.
-# Write a code ensuring that the directory is traversed by Python in order to find all requested modules.
+# Algunos paquetes adicionales y necesarios se almacenan dentro del directorio D:\Python\Project\Modules.
+# Escriba un código que garantice que Python recorre el directorio para encontrar todos los módulos solicitados.
 import sys
 
 # note the double backslashes! (windows)
-
 sys.path.append("D:\\Python\\Project\\Modules")
 
+'''
 # The directory mentioned in the previous exercise contains a sub-tree of the following structure:
 # abc
 #  |__ def
@@ -2804,21 +2689,21 @@ sys.path.append("D:\\Python\\Project\\Modules")
 # write an import directive letting you use all the mymodule entities.
 
 # import abc.def.mymodule
-
-
-# PyPI es el repositorio central de python, pip ( pip install packages) la herramienta para usarlo, permite resolver las depdendencias entre modulos
+# PyPI es el repositorio central de python, pip (pip install packages) la herramienta para usarlo, permite resolver 
+# las depdendencias entre modulos.
 # pip help, ayuda de pip,
 # pip help, install ayuda especifica para instalar
 # pip list, version de pip y de la herramienta
 # pip show package_name, te da información sobre los paquetes INSTALADOS, ej pip show pip. dentro
 # de el Requires: y Required-by, por convención te dice sus dependencias , qué paquetes son necesarios para utilizar
 # correctamente el paquete (Requiere:) qué paquetes necesitan que el paquete se utilice correctamente (Requerido por:)
-# pip search anystring , El anystring proporcionado busca en el directorio ( repo)  los nombres de todos los paquetes; Las cadenas de resumen
-# de todos los paquetes, no diferencia mayusculas de minusculas
+# pip search anystring , El anystring proporcionado busca en el directorio ( repo)  los nombres de todos los paquetes; 
+# Las cadenas de resumen de todos los paquetes, no diferencia mayusculas de minusculas
 # --user  a la hora de instalar un paquete con --user solo lo instalamos para el usuario ( no necesita privilegios)
 # y sin el en el sistema, ej # pip install pygame (admin) y +  --user lo comentado
 # -U update, versión específica pip install pygame==1.9.2
 # pip uninstall package_name desistalar paquetes
+'''
 
 # ***********************************
 # ******** CLASES #############
@@ -2828,11 +2713,8 @@ sys.path.append("D:\\Python\\Project\\Modules")
 # Posee Atributos y Métodos
 # Persona.py
 
-
 class Person:
     pass  # Palabra reservada para poder crear la función o clase sin contenido
-
-
 print(type(Person))
 
 
@@ -2866,7 +2748,7 @@ persona2 = Persona('Pedro', 'Baños', 45)
 persona2.mostrar_detalle()
 persona1.mostrar_detalle()
 
-# MODIFICAR ATRIBUTO DE LA CLASE #############
+# ******** MODIFICAR ATRIBUTO DE LA CLASE
 
 # (no es recomendable, mejor por métodos por encapsulamiento)
 persona1.nombre = 'Jesus'
@@ -2877,14 +2759,14 @@ persona1.mostrar_detalle()  # Lo común
 # Podemos llamar al método de la clase referenciando al objeto
 Persona.mostrar_detalle(persona1)
 
-# Añadir atributos ****************************
+# ******** Añadir atributos
 # Ventaja de python y POO podemos añadir atributos al objeto en cualquier momento
 # No se van a compartir con el resto de objetos
 persona1.telefono = '968888888'
 print(persona1.telefono)
 
 
-# Ejericio POO Aritmética #############
+# ++++++ Ejericio POO Aritmética ++++++++++
 class Aritmetica:
     # Docstring: documentación para nuestra clase
     """
@@ -2915,7 +2797,7 @@ print(aritmetica1.multiplicar())
 print(f'división {aritmetica1.dividir():.2f}')  # .2f indicar cuantos decimales mostrar
 
 
-# Ejericio POO rectangulo #############
+# ++++++ Ejericio POO rectangulo ++++++++
 
 class Rectangulo:
 
@@ -2934,7 +2816,7 @@ rectangulo1 = Rectangulo()
 rectangulo1.imprime_area()
 
 
-# Ejercicio POO cubo #############
+# ++++++ Ejercicio POO cubo ++++++
 
 class Cubo:
 
@@ -2962,7 +2844,7 @@ print(f'El volumen es: {cubo1.volumen()}')
 #   Aunque no deberíamos el lenguaje si te deja, es una sugerencia
 #   Con __ si que omite la modificación del valor (no falla) es menos comun y falla al sacarlo
 # ************************
-# ROBUSTECER METODO INIT ############
+# ******** ROBUSTECER METODO INIT
 
 class Persona:
 
@@ -2976,13 +2858,13 @@ class Persona:
         self.valores = valores
         self.terminos = terminos
 
-    # MÉTODOS #############
+    # ********  MÉTODOS
     def mostrar_detalle(self):  # en los métodos de instancia siempre vamos a meter la referencia self
         # AL encontrarnos dentro de la clase nos referimos con self al atributo
         print(
             f'Persona: {self.__nombre} {self.apellido}  que tiene {self.edad} años,  con {self.valores} y diccionario {self.terminos}')
 
-    # SOBREESCRITURA **************
+    # ********  SOBREESCRITURA
     def __str__(self):  # estamos sobrescribiendo la clase str de la clase padre
 
         return f'Persona: {self.__nombre} {self.apellido}  que tiene {self.edad} años'
@@ -3022,8 +2904,7 @@ class Persona:
         # metemos un identificador de que estamos eliminando
 
 
-# LLamada pasandole tupla y diccionario #############
-
+# ********  LLamada pasandole tupla y diccionario
 # Despues de los 3 valores principales, cualquier valor sera de la tupla
 # hasta que le metamos clave=valor
 # OJO PRIMERO LAS TUPLAS Y LUEGO LOS DICCIONARIOS
@@ -3050,8 +2931,7 @@ if __name__ == '__main__':
     print('Me ejecuto solo si estoy dentro del modulo donde lo defino')
     # esto sirve para codigos de prueba dentro del modulo
 
-# DESTRUCTORES #
-#
+# ********  DESTRUCTORES
 print('Creación de objetos'.center(50, '-'))  # con .center(50, '-') centramos
 # lo que imprimimos metiendo - hasta 50 caracteres
 persona1 = Persona('Fran', 'Villa', 33)
@@ -3059,7 +2939,6 @@ persona1.mostrar_detalle()
 
 print('Eliminación objetos'.center(50, '-'))
 del persona1  # eliminción explicita
-
 
 # Es raro en python por la existencia del concepto del reoclector de basura
 # Esto es porque todos los objetos que no estén apuntados por una varable se van
@@ -3077,7 +2956,7 @@ class Empleado(Persona):  # con (Padre) indicamos en la declaración que heredam
         # con super().__init__(atributos padre) estamos inicializando los atr padre
         self.sueldo = sueldo
 
-    # SOBREESCRITURA
+    # ********  SOBREESCRITURA
     def __str__(self):  # estamos sobrescribiendo la clase str de la clase padre
         # no tenemos visibilidad sin sobrescribir sobre sueldo porque por defecto
         # estaríamos usando el __str__ de Persona por lo que sobreescribimos
@@ -3091,8 +2970,7 @@ print(empleado1.sueldo)
 print(empleado1)
 
 
-# Ejercicio Herencia en Python ***********
-# ****************************
+# +++++++ Ejercicio Herencia en Python ++++++
 # Definir una clase padre llamada Vehiculo y dos clases hijas llamadas Coche y
 # Bicicleta, las cuales heredan de la clase Padre Vehiculo
 
@@ -3212,7 +3090,7 @@ class FiguraGeometrica(ABC):  # al extender de ABC es abstracta
             self._ancho = 0
         print(f'Valor erróneo para alto, no se modifica: {alto}')
 
-    # METODO ABSTRACTO
+    # ********   METODO ABSTRACTO
     @abstractmethod
     def area(self):
         pass  # sin implementación
@@ -3365,8 +3243,7 @@ class Matematicas:
 print(Matematicas.PI)
 
 
-# ******** Ejercicio contador de clases ##########
-#
+# ++++++ Ejercicio contador de clases +++++++
 class Personac:
     __contador_personas = 0  # lo podemos usar de un fichero o bbdd si lo calculamos....
 
@@ -3393,22 +3270,17 @@ print(persona2)
 # ***********************************
 # ******** Diseño de clases ##########
 # ***********************************
-# UML - Undefined modeling lenguaje, realizado con umlet (umletino.com)
-# Simulación de venta de productos agregarla a una orden
-# como si tuviéramos un ticket de venta en el cual vamos
-# a vender varios productos y se van a agregar a una orden
-# A partir de esa orden vamos a calcular el total de todos
-# los productos que se han vendido utilizando el precio
-# de producto para ello la clase de producto va a tener: id_producto mediante un contador
-# nombre, precio ( nos permitirá obtener el total del ticket generado por producto
-# agregado orden
-# metodo str para imprimir los atributos
-# por cada producto que creemos lo vamos a agregar a la clase de orden, como hemos comentado
-# ****** RELACION AGREGACION ******* mediante una lista de objetos de tipo producto al que se agregará
-# podremos tener varias ordenes y cada una de productos
-# tendremos un contador de ordenes, ID , str
-# la primera clase que se recomienda crear es la que no tiene relación con ninguna, en este
-# caso producto ya que orden puede recibir un listado de productos
+# UML - Undefined modeling lenguaje, realizado con umlet (umletino.com) Simulación de venta de productos agregarla
+# a una orden como si tuviéramos un ticket de venta en el cual vamos a vender varios productos y se van a agregar a una
+# orden A partir de esa orden vamos a calcular el total de todos los productos que se han vendido utilizando el precio
+# de producto para ello la clase de producto va a tener: id_producto mediante un contador nombre, precio ( nos permitirá
+# obtener el total del ticket generado por producto agregado, orden metodo str para imprimir los atributos por cada
+# producto que creemos lo vamos a agregar a la clase de orden, como hemos comentado
+
+# ****** RELACION AGREGACION
+# mediante una lista de objetos de tipo producto al que se agregarápodremos tener varias ordenes y cada una de productos
+# tendremos un contador de ordenes, ID , str la primera clase que se recomienda crear es la que no tiene relación con
+# ninguna, en este caso producto ya que orden puede recibir un listado de productos
 
 class Producto:
     __contador_productos = 0
@@ -3628,7 +3500,8 @@ imprimir_detalles(gerente)
 # ***********************************
 # ********  LABORATORIO Mundo PC ##########
 # ***********************************
-# diagrama uml en https://www.udemy.com/course/universidad-python-desde-cero-hasta-experto-django-flask-rest-web/learn/lecture/26667098#overview
+# diagrama uml en
+# https://www.udemy.com/course/universidad-python-desde-cero-hasta-experto-django-flask-rest-web/learn/lecture/26667098#overview
 # _ protegido (#)
 # __privado
 # orden que contiene computadoras, las cual tiene monitor telcado
@@ -3852,8 +3725,6 @@ print(orden1)
 
 
 # Refactorizando ejercicio
-
-
 class OrdenRefactor:
     contadorOrdenes = 0
 
@@ -3940,8 +3811,7 @@ finally:  # Siempre se ejecuta incluso si se lanza una excepción
 
 
 # podemos manejas varias excepciones deben ir de más específico a más genérico
-# Si ponemos la mas general al principio no se manejarán las mas específicas
-
+# Si ponemos la más general al principio no se manejarán las mas específicas
 # 2: Excepción propia
 
 
@@ -3966,6 +3836,7 @@ else:  # solo se ejecuta si no se lanza NINGUNA excepción
 finally:  # Siempre se ejecuta incluso si se lanza una excepción
     print('Continuamos')
     print(f'Resultado: {resultado}')
+
 
 # ***********************************
 # ********  Manejo de Archivos ##########
@@ -4039,7 +3910,7 @@ finally:
     archivo2.close()
     archivo.close()
 
-# ********  Archivos  con with ##########
+# ********  Archivos  con with
 # existe una sintaxis simplificada que automáticamente va  abrir y a cerrar
 # nuestro archivo automáticamente sin tener que cerrarlo después
 # se ejecutan de forma dinámica con __enter__ ( para abrirlo )
@@ -4087,10 +3958,7 @@ with Manejo_archivos('prueba.txt') as archivo:
 
 
 
-# ***********************************
-# ********  Ejercicio catálogo películas ##########
-# ***********************************
-#
+# ++++++ Ejercicio catálogo películas +++++++++
 import os
 #Dominio
 
@@ -4167,6 +4035,7 @@ while opcion != 4:
         print(f'Ocurrió un error {e}')
         opcion = None
 
+
 def number_to_string(argument):
     match argument:
         case 0:
@@ -4182,36 +4051,17 @@ def number_to_string(argument):
 number_to_string(4)
 
 
-##############################
-# desafío Edube 1: 3 en raya
-##############################
+# ++++++++ desafío Edube 1: 3 en raya +++++++++++++
 """
-the computer (i.e., your program) should play the game using 'X's;
-the user (e.g., you) should play the game using 'O's;
-the first move belongs to the computer − it always puts its first 'X' in the middle of the board;
-all the squares are numbered row by row starting with 1 (see the example session below for reference)
-the user inputs their move by entering the number of the square they choose − the number must be valid, i.e.,
-it must be an integer, it must be greater than 0 and less than 10,
- and it cannot point to a field which is already occupied;
-the program checks if the game is over − there are four possible verdicts: the game should continue,
- the game ends with a tie, you win, or the computer wins;
-the computer responds with its move and the check is repeated;
-don't implement any form of artificial intelligence − a random field choice made by the computer is good enough for the game.
-The example session with the program may look as follows:
-
-+-------+-------+-------+
-|       |       |       |
-|   1   |   2   |   3   |
-|       |       |       |
-+-------+-------+-------+
-|       |       |       |
-|   4   |   X   |   6   |
-|       |       |       |
-+-------+-------+-------+
-|       |       |       |
-|   7   |   8   |   9   |
-|       |       |       |
-+-------+-------+-------+
+la computadora (es decir, su programa) debe jugar el juego usando 'X'; el usuario (p. ej., usted) debe jugar el juego 
+usando 'O'; el primer movimiento pertenece a la computadora: siempre pone su primera 'X' en el medio del tablero;
+todos los cuadrados están numerados fila por fila comenzando con 1 (consulte la sesión de ejemplo a continuación como 
+referencia) el usuario ingresa su movimiento ingresando el número del cuadrado que elige; el número debe ser válido, es decir,
+debe ser un número entero, debe ser mayor que 0 y menor que 10, y no puede apuntar a un campo que ya está ocupado;
+el programa verifica si el juego ha terminado: hay cuatro veredictos posibles: el juego debe continuar, el juego termina 
+en empate, tú ganas o la computadora gana; la computadora responde con su jugada y se repite la verificación;
+no implemente ninguna forma de inteligencia artificial: una elección de campo aleatoria hecha por la computadora es lo 
+suficientemente buena para el juego. La sesión de ejemplo con el programa puede tener el siguiente aspecto:
 Enter your move: 1
 +-------+-------+-------+
 |       |       |       |
@@ -4256,22 +4106,21 @@ Enter your move: 7
 +-------+-------+-------+
 You won!
 
-Requirements
-Implement the following features:
+Requisitos
+Implemente las siguientes características:
 
-the board should be stored as a three-element list, while each element is another three-element list
-(the inner lists represent rows) so that all of the squares may be accessed using the following syntax:
+el tablero debe almacenarse como una lista de tres elementos, mientras que cada elemento es otra lista de tres elementos
+(las listas internas representan filas) para que se pueda acceder a todos los cuadrados usando la siguiente sintaxis:
 
-board[row][column]
-each of the inner list's elements can contain 'O', 'X', or a digit representing the square's number
- (such a square is considered free)
-the board's appearance should be exactly the same as the one presented in the example.
-implement the functions defined for you in the editor.
+tablero[fila][columna]
+cada uno de los elementos de la lista interna puede contener 'O', 'X' o un dígito que represente el número del cuadrado
+ (tal cuadrado se considera libre)la apariencia del tablero debe ser exactamente igual a la presentada en el ejemplo.
+implementar las funciones definidas para usted en el editor.
 
-Drawing a random integer number can be done by utilizing a Python function called randrange().
-The example program below shows how to use it (the program prints ten random numbers from 0 to 8).
-Note: the from-import instruction provides access to the randrange function defined
-within an external Python module callled random.
+Se puede dibujar un número entero aleatorio utilizando una función de Python llamada randrange().
+El programa de ejemplo a continuación muestra cómo usarlo (el programa imprime diez números aleatorios del 0 al 8).
+Nota: la instrucción from-import proporciona acceso a la función randrange definida
+dentro de un módulo externo de Python llamado random.
 
 from random import randrange
 
@@ -4319,6 +4168,7 @@ def enter_move(board):
         except Exception as e:
             print(e)
     return board
+
 
 def make_list_of_free_fields(board):
     # The function browses the board and builds a list of all the free squares;
@@ -4414,9 +4264,7 @@ if __name__ == '__main__':
 
 
 
-##############################
-# DESAFIO DAMAVIS
-##############################
+# +++++++ DESAFIO DAMAVIS +++++++
 class SnakeException(Exception):
     def __init__(self, mensaje):
         self.message = mensaje
