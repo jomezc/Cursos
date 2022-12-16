@@ -2078,6 +2078,30 @@ def palindromo(string):
 
 palindromo('Ten animals I slam in a net')
 
+# Anagrama
+'''Un anagrama es una nueva palabra formada al reorganizar las letras de una palabra, usando todas las letras originales
+exactamente una vez. Por ejemplo, las frases "seguridad ferroviaria" y "cuentos de hadas" son anagramas,
+ mientras que "yo soy" y "tú eres" no lo son.
+
+pide al usuario dos textos separados; comprueba si los textos introducidos son anagramas e imprime el resultado.
+suponga que dos cadenas vacías no son anagramas; tratar las letras mayúsculas y minúsculas como iguales;
+los espacios no se tienen en cuenta durante la verificación; trátelos como inexistentes Pruebe su código usando los
+datos que le hemos proporcionado.'''
+
+def palindromo(string,string2):
+    string = string.upper().replace(' ', '')
+    string2 = string2.upper().replace(' ', '')
+    frase = 'Es un anagrama'
+    for a in range(len(string) - 1):
+        if not string[a] in string2:
+            frase = 'No es un anagrama'
+        string2 = string2.replace(string[a], '', 1)
+        string = string[a:]
+        if frase[0] == 'N' or len(string) != len(string2):
+            break
+    print(frase)
+
+palindromo('Listen','Silent')
 
 # ***********************************
 # ******** ejemplo funciones variables  *************
