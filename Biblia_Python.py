@@ -1318,7 +1318,7 @@ Ejemplo de entrada:
 195743862 431865927 876192543 387459216 612387495 549216738 763524189 928671354 254938671 -> Salida de muestra: No
 """
 tablero9x9 = input('Introduce tu jugada:').split()
-# subcuadrados = [[[[tablero9x9[y+zz][x+z] for x in range(3)] for y in range(3)] for z in range(0, 9, 3)] for zz in range(0, 9, 3)]
+# s = [[[[tablero9x9[y+zz][x+z] for x in range(3)] for y in range(3)] for z in range(0, 9, 3)] for zz in range(0, 9, 3)]
 comprobacion = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 try:
     for j in range(len(tablero9x9)):
