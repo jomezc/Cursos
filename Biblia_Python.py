@@ -1317,8 +1317,31 @@ Ejemplo de entrada:
 Ejemplo de entrada:
 195743862 431865927 876192543 387459216 612387495 549216738 763524189 928671354 254938671 -> Salida de muestra: No
 """
+tablero9x9 = input('Introduce tu jugada:').split()
+# subcuadrados = [[[[tablero9x9[y+zz][x+z] for x in range(3)] for y in range(3)] for z in range(0, 9, 3)] for zz in range(0, 9, 3)]
+comprobacion = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+try:
+    for j in range(len(tablero9x9)):
+        # comprobamos la fila and comprobamos la columna
+        if not (sorted(tablero9x9[j]) == comprobacion
+                or sorted(''.join([tablero9x9[0][j], tablero9x9[1][j], tablero9x9[2][j], tablero9x9[3][j],
+                                   tablero9x9[4][j], tablero9x9[5][j], tablero9x9[6][j], tablero9x9[7][j],
+                                   tablero9x9[8][j]])) == comprobacion):
+            raise Exception('No')
+    # comprobamos los subcuadrados
+    for zz in range(0, 9, 3):
+        for z in range(0, 9, 3):
+            subcuadrados = ''
+            for y in range(3):
+                for x in range(3):
+                    subcuadrados += tablero9x9[y + zz][x + z]
+            if sorted(subcuadrados) != comprobacion:
+                raise Exception('No')
+except Exception as e:
+    print(e)
+else:
+    print('yes')
 
-input('Introduce una entrada')
 
 # ***********************************
 # ******** match ###################
