@@ -2782,6 +2782,8 @@ sys.path.append("D:\\Python\\Project\\Modules")
 # ******** CLASES #############
 # ***********************************
 # Una clase es como una plantilla de la cual podemos sacar objetos (instancias)
+# Una clase es un conjunto de objetos. Un objeto es un ser que pertenece a una clase. Un objeto es una encarnación de
+# los requisitos, rasgos y cualidades asignados a una clase específica.
 # Ejemplo clase -> Persona, instancias juan y carlos
 # Posee Atributos y Métodos
 # Persona.py
@@ -3021,7 +3023,11 @@ del persona1  # eliminción explicita
 # ***********************************
 # ******** HERENCIA ##########
 # ***********************************
-# Todas las clases heredan de object
+
+# Todas las clases heredan de object, La jerarquía crece de arriba a abajo, como las raíces de los árboles, no las ramas
+# Cualquier objeto enlazado a un nivel específico de una jerarquía de clases hereda todos los rasgos (así como los
+# requisitos y cualidades) definidos dentro de cualquiera de las superclases. La clase padre del objeto puede definir
+# nuevos rasgos (así como requisitos y cualidades) que serán heredados por cualquiera de sus subclases.
 class Empleado(Persona):  # con (Padre) indicamos en la declaración que heredamos
     def __init__(self, nombre, apellido, edad, sueldo):
         # tenemos que inicializar los atributos del padre
@@ -3836,15 +3842,21 @@ print(OrdenRefactor(ordA, ordB))
 # ***********************************
 # ********  Excepciones ##########
 # ***********************************
+'''
 # Manejo de errores
-# en python Tenemos la clase base BaseException
-# de ella hereda Exception
-# de la cual cuelgan más:
-#   AritmeticError ,
-#   OSError (FileNotFoundError, PermissionError)
-#   RuntimeError,
-#   LookupError (IndexError, KeyError),
-#   SyntaxError
+en python Tenemos la clase base BaseException: 
+la más general (abstracta) de todas las excepciones de Python - todas las demás excepciones están incluidas en esta; 
+se puede decir que las siguientes dos ramas excepto son equivalentes:
+de ella hereda Exception
+    de la cual cuelgan más:
+        AritmeticError, abstracta(ZeroDivisionError)
+        OSError abstracta(FileNotFoundError, PermissionError)
+        RuntimeError,
+        LookupError abstracta(IndexError, KeyError),
+        SyntaxError
+
+Si desea controlar dos o más excepciones de la misma manera, puede usar la siguiente sintaxis:
+'''
 while True:
     try:
         number = int(input("Enter an int number: "))
@@ -3871,12 +3883,14 @@ try:
     a = int(input('Primer numero: '))
     b = int(input('Segundo numero: '))
     resultado = a / b
-except ZeroDivisionError as e:
+except ZeroDivisionError as e:  # División entre 0
     print(f'ZeroDivisionError Ocurrió un error: {e}, {type(e)}')
-except TypeError as e:
+except TypeError as e:  # Error de tipo de datos
     print(f'TypeError Ocurrió un error: {e}, {type(e)}')
-except Exception as e:
+except Exception as e:  # hija de BaseException ( la más general)
     print(f'Exception Ocurrió un error: {e}, {type(e)}')
+except:  # general, en este caso solo cogería KeyboardInterrupt o BaseException
+    print('no')
 else:  # solo se ejecuta si no se lanza NINGUNA excepción
     print('No se arrojó ninguna excepción')  # 10 / 2 es ok, se arroja:  No se arrojó ninguna excepción
 finally:  # Siempre se ejecuta incluso si se lanza una excepción
@@ -3910,6 +3924,190 @@ else:  # solo se ejecuta si no se lanza NINGUNA excepción
 finally:  # Siempre se ejecuta incluso si se lanza una excepción
     print('Continuamos')
     print(f'Resultado: {resultado}')
+
+'''
+IndexError
+Location: BaseException ← Exception ← LookupError ← IndexError
+Una excepción concreta que se genera cuando se intenta acceder al elemento de una secuencia inexistente (por ejemplo, 
+el elemento de una lista)
+'''
+the_list = [1, 2, 3, 4, 5]
+ix = 0
+do_it = True
+
+while do_it:
+    try:
+        print(the_list[ix])
+        ix += 1
+    except IndexError:
+        do_it = False
+
+print('Done')
+
+'''
+ArithmeticError
+Location: BaseException ← Exception ← ArithmeticError
+Una excepción abstracta que incluye todas las excepciones causadas por operaciones aritméticas como la división cero 
+o el dominio no válido de un argumento
+'''
+
+def bad_fun(n):
+    # return 1 / n
+    raise ZeroDivisionError
+try:
+    bad_fun(0)
+except ArithmeticError:
+    print("What happened? An exception was raised!")
+
+print("THE END.")
+
+# al ejecutarlo : 
+# What happened? An error?
+# THE END.
+'''
+la excepción planteada puede cruzar los límites de la función y el módulo, 
+y viajar a través de la cadena de invocación en busca de una cláusula excepto coincidente capaz de manejarla. 
+Si no existe tal cláusula, la excepción permanece sin manejar, y Python resuelve el problema de su manera estándar: 
+terminando su código y emitiendo un mensaje de diagnóstico.
+
+raise es una palabra clave. La instrucción le permite: Simular la generación de excepciones reales (por ejemplo, 
+para probar su estrategia de manejo) manejar parcialmente una excepción y hacer que otra parte del código sea 
+responsable de completar el manejo (separación de preocupaciones).
+'''
+def bad_fun(n):
+    try:
+        return n / 0
+    except:
+        print("I did it again!")
+        raise  # !!!!!
+
+
+try:
+    bad_fun(0)
+except ArithmeticError:
+    print("I see!")
+
+#salida de ejecución:
+#I did it again!
+#I see!
+#THE END.
+'''
+La instrucción de aumento también se puede utilizar de la siguiente manera (tenga en cuenta la ausencia del nombre de 
+la excepción, solo raise): este tipo de instrucción de elevación puede usarse SOLO dentro  de la rama except; Usarlo en
+cualquier otro contexto causa un error. 
+La instrucción volverá a generar inmediatamente la misma excepción que se maneja actualmente.
+Gracias a esto, puede distribuir el manejo de excepciones entre diferentes partes del código. en el ejemplo anterior 
+ZeroDivisionError se genera dos veces: 
+Primero, dentro de la parte Try del código (esto es causado por la división cero real) 
+Segundo, dentro de la parte excepto por la instrucción de elevación.
+
+AssertionError 
+BaseException ← Exception ← AssertionError 
+Una excepción concreta provocada por la instrucción assert cuando su argumento se evalúa como False, None, 0 o 
+una cadena vacía ( si es true o valor no 0 no hará nada)
+
+una excepción AssertionError protege el código para que no produzca resultados no válidos y muestra claramente 
+la naturaleza del error; el papel de un airbag.
+'''
+import math
+
+x = float(input("Enter a number: "))  # -1-> File "main.py", line 4, in <module> \n assert x >= 0.0 \n AssertionError
+
+assert x >= 0.0
+
+x = math.sqrt(x)
+
+print(x)
+
+'''
+KeyboardInterrupt 
+BaseException ← KeyboardInterrupt
+Una excepción concreta planteada cuando el usuario utiliza un atajo de teclado diseñado para 
+terminar la ejecución de un programa (Ctrl-C en la mayoría de los sistemas operativos); Si el control de esta excepción 
+no conduce a la finalización del programa, el programa continúa su ejecución. Nota: esta excepción no se deriva de la 
+clase Exception. Este ejmplo no temrina al finalizar con control c
+'''
+from time import sleep
+seconds = 0
+while True:
+    try:
+        print(seconds)
+        seconds += 1
+        sleep(1)
+    except KeyboardInterrupt:
+        print("Don't do that!")
+
+'''
+MemoryError
+BaseException ← Exception ← MemoryError
+# Una excepción concreta planteada cuando una operación no se puede completar debido a la falta de memoria libre.'''
+string = 'x'
+try:
+    while True:
+        string = string + string
+        print(len(string))
+except MemoryError:
+    print('This is not funny!')
+'''
+OverflowError
+BaseException ← Exception ← ArithmeticError ← OverflowError
+Ubicación: BaseException ← Exception ← ArithmeticError ← OverflowError 
+una excepción concreta que se produce cuando una operación produce un número demasiado grande para almacenarse 
+correctamente'''
+from math import exp
+
+ex = 1
+
+try:
+    while True:
+        print(exp(ex)) # values of exp(k), k = 1, 2, 4, 8, 16, ...
+        ex *= 2
+except OverflowError:
+    print('The number is too big.')
+'''
+ImportError
+Location: BaseException ← Exception ← StandardError ← ImportError
+Description: Una excepción concreta que se produce cuando se produce un error en una operación de importación
+'''
+try:
+    import math
+    import time
+    import abracadabra
+
+except:
+    print('One of your imports has failed.')
+'''
+KeyError Ubicación: BaseException ← Exception ← LookupError ← KeyError Descripción: una excepción concreta que se 
+produce cuando se intenta acceder al elemento inexistente de una colección (por ejemplo, el elemento de un diccionario)
+'''
+dictionary = { 'a': 'b', 'b': 'c', 'c': 'd' }
+ch = 'a'
+
+try:
+    while True:
+        ch = dictionary[ch]
+        print(ch)
+except KeyError:
+    print('No such key:', ch)
+
+
+# +++++ Ejercicio comprobador de rango numérico
+def read_int(prompt, mi, ma):
+    while True:
+        v = input(prompt)
+        try:
+            v = int(v)
+            if not mi <= v <= ma:
+                raise Exception(f'Error: the value is not within permitted range ({mi}..{ma})')
+            return v
+        except ValueError:
+            print('wrong input')
+        except Exception as e:
+            print(e)
+
+
+v = read_int("Enter a number from -10 to 10: ", -10, 10)
+print("The number is:", v)
 
 
 # ***********************************
