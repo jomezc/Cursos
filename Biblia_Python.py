@@ -2793,7 +2793,31 @@ La definición comienza con la clase de palabra clave. La palabra clave va segui
 clase. no lo confunda con el nombre del objeto, son dos cosas diferentes.
 El acto de crear un objeto de la clase seleccionada también se denomina instanciación (ya que el objeto se convierte en
 una instancia de la clase).
-# Persona.py'''
+# Persona.py
+'''
+# ++++++ Ejemplo pila en versión procedimental VS por clases ++++++
+stack = []
+
+def push(val):
+    stack.append(val)
+
+def pop():
+    val = stack[-1]
+    del stack[-1]
+    return val
+
+push(3)
+push(2)
+push(1)
+
+print(pop())  # 1
+print(pop())  # 2
+print(pop())  # 3
+
+
+# ++++++ Ejemplo Persona +++++
+
+
 
 class Person:
     pass  # Palabra reservada para poder crear la función o clase sin contenido
