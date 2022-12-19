@@ -2795,30 +2795,7 @@ El acto de crear un objeto de la clase seleccionada también se denomina instanc
 una instancia de la clase).
 # Persona.py
 '''
-# ++++++ Ejemplo pila en versión procedimental VS por clases ++++++
-stack = []
-
-def push(val):
-    stack.append(val)
-
-def pop():
-    val = stack[-1]
-    del stack[-1]
-    return val
-
-push(3)
-push(2)
-push(1)
-
-print(pop())  # 1
-print(pop())  # 2
-print(pop())  # 3
-
-
 # ++++++ Ejemplo Persona +++++
-
-
-
 class Person:
     pass  # Palabra reservada para poder crear la función o clase sin contenido
 print(type(Person))
@@ -3082,8 +3059,8 @@ print(empleado1)
 
 
 # +++++++ Ejercicio Herencia en Python ++++++
-# Definir una clase padre llamada Vehiculo y dos clases hijas llamadas Coche y
-# Bicicleta, las cuales heredan de la clase Padre Vehiculo
+# Definir una clase padre llamada Vehículo y dos clases hijas llamadas Coche y
+# Bicicleta, las cuales heredan de la clase Padre Vehíuculo
 
 class Vehiculo:
     def __init__(self, color, ruedas):
@@ -3112,7 +3089,7 @@ class Vehiculo:
 
 class Coche(Vehiculo):
     def __init__(self, color, velocidad):
-        super().__init__(color, 4)
+        super().__init__(color, 4) # en curso cert no habla de super()
         self._velocidad = str(velocidad) + 'km/hr'
 
     def __str__(self):
@@ -3149,6 +3126,172 @@ print(coche1)
 
 bicicleta1 = Bicicleta('blanca', 'montaña')
 print(bicicleta1)
+
+# ++++++ Ejemplo pila en versión procedimental VS por clases ++++++
+
+stack = []
+
+def push(val):
+    stack.append(val)
+
+def pop():
+    val = stack[-1]
+    del stack[-1]
+    return val
+
+push(3)
+push(2)
+push(1)
+
+print(pop())  # 1
+print(pop())  # 2
+print(pop())  # 3
+
+# +++++ Parte clases
+
+class Stack:
+    def __init__(self):
+        self.__stack_list = []
+
+    def push(self, val):
+        self.__stack_list.append(val)
+
+    def pop(self):
+        val = self.__stack_list[-1]
+        del self.__stack_list[-1]
+        return val
+
+stack_object = Stack()
+stack_object.push(3)
+stack_object.push(2)
+stack_object.push(1)
+print(stack_object.pop())
+print(stack_object.pop())
+print(stack_object.pop())
+
+'''hemos utilizado la notación punteada, al igual que cuando se invocan métodos; Esta es la convención general para 
+acceder a las propiedades de un objeto: debe nombrar el objeto, poner un punto (.) después de él y especificar el 
+nombre de la propiedad deseada; ¡No uses paréntesis! No desea invocar un método, desea acceder a una propiedad'''
+
+
+class AddingStack(Stack):
+    # Python te obliga a invocar explícitamente el constructor de una superclase
+    def __init__(self):
+        Stack.__init__(self)  # se recomienda invocar el constructor de la superclase antes de cualquier otra
+        # inicialización que desee realizar dentro de la subclase
+        self.__sum = 0
+
+class AddingStack(Stack):
+    def __init__(self):
+        Stack.__init__(self)
+        self.__sum = 0
+
+    def get_sum(self):
+        return self.__sum
+
+    def push(self, val):
+        self.__sum += val
+        Stack.push(self, val)
+
+    def pop(self):
+        val = Stack.pop(self)
+        self.__sum -= val
+        return val
+
+
+stack_object = AddingStack()
+
+for i in range(5):
+    stack_object.push(i)
+print(stack_object.get_sum())
+
+for i in range(5):
+    print(stack_object.pop())
+
+
+class CountingStack(Stack):
+    def __init__(self):
+        Stack.__init__(self)
+        self.__counter = 0
+
+    def get_counter(self):
+        return self.__counter
+
+    def pop(self):
+        self.__counter += 1
+        Stack.pop(self)
+
+
+stk = CountingStack()
+for i in range(100):
+    stk.push(i)
+    stk.pop()
+print(stk.get_counter())
+
+class QueueError(Exception):
+    def __init__(self,mensaje):
+        self.messaje = mensaje
+
+
+class Queue:
+    def __init__(self):
+        self.__cola = []
+
+    def put(self, elem):
+        self.__cola.append(elem)
+
+    def get(self):
+        try:
+            re = self.__cola[0]
+            del self.__cola[0]
+            return re
+        except QueueError as e:
+            print(e)
+
+# versión curso
+    def __init__(self):
+        self.queue = []
+
+    def put(self, elem):
+        self.queue.insert(0, elem)
+
+    def get(self):
+        if len(self.queue) > 0:
+            elem = self.queue[-1]
+            del self.queue[-1]
+            return elem
+
+que = Queue()
+que.put(1)
+que.put("dog")
+que.put(False)
+try:
+    for i in range(4):
+        print(que.get())
+except:
+    print("Queue error") #1 dog False Queue error
+
+
+class SuperQueue(Queue):
+    def __init__(self):
+        Queue.__init__(self)
+
+    def isempty(self):
+        st = True
+        if len(self.queue) > 0:
+            st = False
+        return st
+
+
+que = SuperQueue()
+que.put(1)
+que.put("dog")
+que.put(False)
+for i in range(4):
+    if not que.isempty():
+        print(que.get())
+    else:
+        print("Queue empty")  # 1 dog False Queue empty
 
 # ***********************************
 # ******** HERENCIA MULTIPLE y ABSTRACTA ##########
@@ -3275,6 +3418,71 @@ print(Cuadrado.mro())
 # ***********************************
 # ******** Variable de clase, Métodos estáticos y método de clase ##########
 # ***********************************
+'''
+variables de instancia:
+Este tipo de propiedad de clase existe cuando y solo cuando se crea y agrega explícitamente a un objeto. 
+Esto se puede hacer durante la inicialización del objeto, realizada por el constructor. Tal enfoque tiene algunas 
+consecuencias importantes:
+- diferentes objetos de la misma clase pueden poseer diferentes conjuntos de propiedades;
+- debe haber una manera de verificar de manera segura si un objeto específico posee la propiedad que desea utilizar 
+    (a menos que desee provocar una excepción; siempre vale la pena considerarlo)
+- cada objeto tiene su propio conjunto de propiedades: no interfieren entre sí de ninguna manera.
+- Las variables de instancia están perfectamente aisladas entre sí.
+'''
+class ExampleClass:
+    def __init__(self, val = 1):
+        self.first = val
+
+    def set_second(self, val):
+        self.second = val
+
+
+example_object_1 = ExampleClass()
+
+example_object_2 = ExampleClass(2)
+example_object_2.set_second(3)
+
+example_object_3 = ExampleClass(4)
+example_object_3.third = 5  # propiedad al vuelo, permitido
+
+print(example_object_1.__dict__)  # {'first': 1}
+print(example_object_2.__dict__)  # {'first': 2, 'second': 3}
+print(example_object_3.__dict__)  # {'first': 4, 'third': 5}
+'''Los objetos de Python, cuando se crean, están dotados de un pequeño conjunto de propiedades y métodos predefinidos. 
+Cada objeto los tiene, los quieras o no. Uno de ellos es una variable llamada __dict__ (es un diccionario). La variable
+contiene los nombres y valores de todas las propiedades (variables) que el objeto lleva actualmente.'''
+class ExampleClass:
+    def __init__(self, val = 1):
+        self.__first = val
+
+    def set_second(self, val = 2):
+        self.__second = val
+
+
+example_object_1 = ExampleClass()
+example_object_2 = ExampleClass(2)
+
+example_object_2.set_second(3)
+
+example_object_3 = ExampleClass(4)
+example_object_3.__third = 5
+
+
+print(example_object_1.__dict__)
+print(example_object_2.__dict__)
+print(example_object_3.__dict__)
+
+'''Cuando Python ve que desea agregar una variable de instancia a un objeto y lo va a hacer dentro de cualquiera de los 
+métodos del objeto, altera la operación de la siguiente manera:
+- pone un nombre de clase antes de su nombre;
+- pone un guión bajo adicional al principio.
+Es por eso que __first se convierte en _ExampleClass__first. 
+'''
+print(example_object_1._ExampleClass__first)  # 1
+'''
+y obtendrá un resultado válido sin errores ni excepciones. Como puede ver, hacer que una propiedad sea privada es 
+limitado. La manipulación no funcionará si agrega una variable de instancia privada fuera del código de clase. 
+En este caso, se comportará como cualquier otra propiedad ordinaria.'''
 # los atributos son independientes, corresponden a cada instancia
 # las variables de clase se comparten
 # porque se asocian con la clase en si misma y se comparte con todos los objetos.
