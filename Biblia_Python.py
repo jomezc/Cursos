@@ -3452,8 +3452,11 @@ print(example_object_3.__dict__)  # {'first': 4, 'third': 5}
 Cada objeto los tiene, los quieras o no. Uno de ellos es una variable llamada __dict__ (es un diccionario). La variable
 contiene los nombres y valores de todas las propiedades (variables) que el objeto lleva actualmente.'''
 class ExampleClass:
+    counter = 0
     def __init__(self, val = 1):
         self.__first = val
+        ExampleClass.counter += 1
+
 
     def set_second(self, val = 2):
         self.__second = val
@@ -3467,10 +3470,9 @@ example_object_2.set_second(3)
 example_object_3 = ExampleClass(4)
 example_object_3.__third = 5
 
-
-print(example_object_1.__dict__)
-print(example_object_2.__dict__)
-print(example_object_3.__dict__)
+print(example_object_1.__dict__)  # {'_ExampleClass__first': 1}
+print(example_object_2.__dict__)  # {'_ExampleClass__first': 2, '_ExampleClass__second': 3}
+print(example_object_3.__dict__)  # {'_ExampleClass__first': 4, '__third': 5}
 
 '''Cuando Python ve que desea agregar una variable de instancia a un objeto y lo va a hacer dentro de cualquiera de los 
 métodos del objeto, altera la operación de la siguiente manera:
@@ -3483,9 +3485,26 @@ print(example_object_1._ExampleClass__first)  # 1
 y obtendrá un resultado válido sin errores ni excepciones. Como puede ver, hacer que una propiedad sea privada es 
 limitado. La manipulación no funcionará si agrega una variable de instancia privada fuera del código de clase. 
 En este caso, se comportará como cualquier otra propiedad ordinaria.'''
+class ExampleClass:
+    __counter = 0
+    def __init__(self, val = 1):
+        self.__first = val
+        ExampleClass.__counter += 1
+
+
+example_object_1 = ExampleClass()
+example_object_2 = ExampleClass(2)
+example_object_3 = ExampleClass(4)
+
+print(example_object_1.__dict__, example_object_1._ExampleClass__counter)  # {'_ExampleClass__first': 1} 3
+print(example_object_2.__dict__, example_object_2._ExampleClass__counter)  # {'_ExampleClass__first': 2} 3
+print(example_object_3.__dict__, example_object_3._ExampleClass__counter)  # {'_ExampleClass__first': 4} 3
+
+
 # los atributos son independientes, corresponden a cada instancia
-# las variables de clase se comparten
-# porque se asocian con la clase en si misma y se comparte con todos los objetos.
+# las variables de clase se comparten porque se asocian con la clase en si misma y se comparte con todos los objetos.
+# Las variables de clase son una propiedad que existe en una sola copia y se almacena fuera de cualquier objeto. NO se
+# muestran en el __dict__ de un objeto y siempre presenta el mismo valor en todas las instancias de clase (objetos)
 # Esto es porque la clase se carga en memoria al pasar la parte del programa
 # cuando creamos un objeto se carga en memoria la variable instancia y podemos acceder
 # todos los objetos pueden acceder a la variable de clase
