@@ -2781,12 +2781,19 @@ sys.path.append("D:\\Python\\Project\\Modules")
 # ***********************************
 # ******** CLASES #############
 # ***********************************
-# Una clase es como una plantilla de la cual podemos sacar objetos (instancias)
-# Una clase es un conjunto de objetos. Un objeto es un ser que pertenece a una clase. Un objeto es una encarnación de
-# los requisitos, rasgos y cualidades asignados a una clase específica.
-# Ejemplo clase -> Persona, instancias juan y carlos
-# Posee Atributos y Métodos
-# Persona.py
+'''
+Una clase es como una plantilla de la cual podemos sacar objetos (instancias)
+Una clase es un conjunto de objetos. Un objeto es un ser que pertenece a una clase. Un objeto es una encarnación de
+los requisitos, rasgos y cualidades asignados a una clase específica.
+Ejemplo clase -> Persona, instancias juan y carlos
+Posee Atributos y Métodos
+La clase recién definida se convierte en una herramienta que puede crear nuevos objetos. La herramienta tiene que ser 
+utilizada explícitamente, bajo demanda.
+La definición comienza con la clase de palabra clave. La palabra clave va seguida de un identificador que nombrará la 
+clase. no lo confunda con el nombre del objeto, son dos cosas diferentes.
+El acto de crear un objeto de la clase seleccionada también se denomina instanciación (ya que el objeto se convierte en
+una instancia de la clase).
+# Persona.py'''
 
 class Person:
     pass  # Palabra reservada para poder crear la función o clase sin contenido
@@ -2945,13 +2952,13 @@ class Persona:
         return f'Persona: {self.__nombre} {self.apellido}  que tiene {self.edad} años'
 
     # get nos permite recuperar el valor y set modificarlos
-    @property  # es un decorador, encapsula el atributo y lo hace accesible solo desde el metodo
+    @property  # es un decorador, encapsula el atributo y lo hace accesible solo desde el método
     # entonces se hace accesible como un atributo (no tenemos que poner ())
     def nombre(self):
         return self.__nombre
 
     @nombre.setter  # con este decorador debemos indicar el nombre del atributo sin _
-    # y .setter porque va a modificar el valor seguimos llámandolo si parentesis
+    # y .setter porque va a modificar el valor seguimos llamándolo si paréntesis
     # si lo comentamos no podemos modificar el valor si es con __ o no debemos si es con _
     def nombre(self, nombre):
         self.__nombre = nombre
@@ -2993,18 +3000,18 @@ persona2.edad = 25
 print(f'Persona: {persona2.nombre} {persona2.apellido} , con edad {persona2.edad}')
 del persona2  # Llamamos al método dunder y hará
 
-# Si lo creamos en un archivo podemos acceder a este modulo desde otro archivo
+# Si lo creamos en un archivo podemos acceder a este módulo desde otro archivo
 # si hemos llamado el archivo Clases.py y queremos importar la clase persona
-# ponemos: from Clases import Persona | si queremos todas : from Clases import *
+# ponemos: from Clases import Persona | si queremos todas: from Clases import *
 
-# __name__ es una propiedad que indica nombre del modulo
-# si lo ejecutamos desde el propio archivo donde aparece pondra main
+# __name__ es una propiedad que indica nombre del módulo
+# si lo ejecutamos desde el propio archivo donde aparece pondrá main
 # si no el nombre dle archivo
 print(__name__)
 
 if __name__ == '__main__':
     print('Me ejecuto solo si estoy dentro del modulo donde lo defino')
-    # esto sirve para codigos de prueba dentro del modulo
+    # esto sirve para códigos de prueba dentro del módulo
 
 # ********  DESTRUCTORES
 print('Creación de objetos'.center(50, '-'))  # con .center(50, '-') centramos
@@ -3016,8 +3023,8 @@ print('Eliminación objetos'.center(50, '-'))
 del persona1  # eliminción explicita
 
 
-# Es raro en python por la existencia del concepto del reoclector de basura
-# Esto es porque todos los objetos que no estén apuntados por una varable se van
+# Es raro en python por la existencia del concepto del recolector de basura
+# Esto es porque todos los objetos que no estén apuntados por una variable se van
 # a destruir de forma automática y al finalizar el programa igual
 
 # ***********************************
@@ -3122,7 +3129,7 @@ print(bicicleta1)
 # ***********************************
 # ******** HERENCIA MULTIPLE y ABSTRACTA ##########
 # ***********************************
-# ABSTRACTA no se pueden crear instancias de ella ( figura = FiguraGeometrica() )
+# ABSTRACTA no se pueden crear instancias de ella (figura = FiguraGeometrica() )
 # Obliga a las clases hijas a realizar una implementación
 # ABC = Abstract Base clase base para convertir una clase en abstracta
 from abc import ABC, abstractmethod
@@ -3130,7 +3137,7 @@ from abc import ABC, abstractmethod
 
 class FiguraGeometrica(ABC):  # al extender de ABC es abstracta
     def __init__(self, ancho, alto):
-        # añadimos comprobación de entrada con valor numerico positico
+        # añadimos comprobación de entrada con valor numérico positivo
         if self.__validar_valor(ancho):
             self._ancho = ancho
         else:
@@ -3353,12 +3360,12 @@ print(persona2)
 # UML - Undefined modeling lenguaje, realizado con umlet (umletino.com) Simulación de venta de productos agregarla
 # a una orden como si tuviéramos un ticket de venta en el cual vamos a vender varios productos y se van a agregar a una
 # orden A partir de esa orden vamos a calcular el total de todos los productos que se han vendido utilizando el precio
-# de producto para ello la clase de producto va a tener: id_producto mediante un contador nombre, precio ( nos permitirá
-# obtener el total del ticket generado por producto agregado, orden metodo str para imprimir los atributos por cada
+# de producto para ello la clase de producto va a tener: id_producto mediante un contador nombre, precio (nos permitirá
+# obtener el total del ticket generado por producto agregado, orden método str para imprimir los atributos por cada
 # producto que creemos lo vamos a agregar a la clase de orden, como hemos comentado
 
 # ****** RELACION AGREGACION
-# mediante una lista de objetos de tipo producto al que se agregarápodremos tener varias ordenes y cada una de productos
+# mediante una lista de objetos de tipo prod al que se agregará podremos tener varias órdenes y cada una de productos
 # tendremos un contador de ordenes, ID , str la primera clase que se recomienda crear es la que no tiene relación con
 # ninguna, en este caso producto ya que orden puede recibir un listado de productos
 
@@ -3585,7 +3592,7 @@ imprimir_detalles(gerente)
 # _ protegido (#)
 # __privado
 # orden que contiene computadoras, las cual tiene monitor telcado
-# y raton ( los dos últimos pertenecen a dispositivo de entrada)
+# y ratón ( los dos últimos pertenecen a dispositivo de entrada)
 
 class DispositivoEntrada:  # RESPONSABILIDAD crear objetos de tipo DispositivoEntrada
     def __init__(self, tipo_entrada, marca):
@@ -4126,10 +4133,10 @@ print("The number is:", v)
 # "t" por defecto, texto | "b" binario ( imágenes por ejemplo)
 # Si estamos en otra carpeta podemos especificar la misma
 # En windows, como \ es un carácter especial tenemos
-# que poner otro \ para salvarlo e indicar que no es un carácter especial por eso es 'c:\\ ( en la 1º)
+# que poner otro \ para salvarlo e indicar que no es un carácter especial por eso es 'c:\\ (en la 1º)
 # en mac o linux como es / no hace falta
 try:
-    # OPEN **** puede abrir un archivo nuevo (si no existe) o existente y puede escribir en el o leer
+    # OPEN **** puede abrir un archivo nuevo (si no existe) o existente y puede escribir en él, o leer
     archivo = open('prueba.txt', 'w', encoding='utf8')  # encoding ='utf8' hace que permita acentos
     # WRITE **** escribir en un archivo ya abierto claro
     archivo.write('Agregamos información al archivo\n')
@@ -4203,7 +4210,7 @@ class Manejo_archivos:
     def __init__(self, nombre):
         self.nombre = nombre
 
-    # estamos encapsulando el codigo en el metodo enter
+    # estamos encapsulando el código en el método enter
     # que se llamara automáticamente al momento de abrir el recurso
     # con utilizar with se manda a llamar enter
     # y al dejar de ejecutar se llama a exit
