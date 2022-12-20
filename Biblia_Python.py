@@ -3426,11 +3426,9 @@ Esto se puede hacer durante la inicialización del objeto, realizada por el cons
 consecuencias importantes:
 - diferentes objetos de la misma clase pueden poseer diferentes conjuntos de propiedades;
 - debe haber una manera de verificar de manera segura si un objeto específico posee la propiedad que desea utilizar 
-    (a menos que desee provocar una excepción; siempre vale la pena considerarlo)
 - cada objeto tiene su propio conjunto de propiedades: no interfieren entre sí de ninguna manera.
 - Las variables de instancia están perfectamente aisladas entre sí.
 '''
-
 class ExampleClass:
     def __init__(self, val = 1):
         self.first = val
@@ -3567,11 +3565,11 @@ print(hasattr(example_object, 'a'))  # True
 print(hasattr(ExampleClass, 'b'))  # False
 print(hasattr(ExampleClass, 'a'))  # True
 
-# los atributos son independientes, corresponden a cada instancia
+# Los atributos son independientes, corresponden a cada instancia
 # las variables de clase se comparten porque se asocian con la clase en si misma y se comparte con todos los objetos.
 # Las variables de clase son una propiedad que existe en una sola copia y se almacena fuera de cualquier objeto. NO se
-# muestran en el __dict__ de un objeto y siempre presenta el mismo valor en todas las instancias de clase (objetos)
-# Esto es porque la clase se carga en memoria al pasar la parte del programa
+# muestran en el __dict__ de un objeto ( no hablamos del de la clase) y siempre presenta el mismo valor en todas las
+# instancias de clase (objetos). Esto es porque la clase se carga en memoria al pasar la parte del programa
 # cuando creamos un objeto se carga en memoria la variable instancia y podemos acceder
 # todos los objetos pueden acceder a la variable de clase
 # El contexto dinámico si puede acceder al estático pero no al revés
@@ -3595,15 +3593,15 @@ class MiClase:
         return f'El método estático dice: Pavo real, el valor de variable clase: {MiClase.variables_clase}'
         # si podemos acceder a la variable de clase de forma indirecta, pero no recibe la referencia
 
-    # un método de clase, sin embargo si que recibe un contexto de clase
+    # un método de clase, sin embargo, sí que recibe un contexto de clase
     # recibe un parámetro cls que significa class (podría ser cualquiera, pero se recomienda)
     @classmethod
     # contexto estático !!
     def metodo_clase(cls):
         print(cls.variables_clase)  # recibe correctamente la referencia de nuestra clase
 
-    def metodo_instancia(self):  # contexto dinamico !!
-        self.metodo_clase()  # podemos acceder al contexto estatico
+    def metodo_instancia(self):  # contexto dinámico !!
+        self.metodo_clase()  # podemos acceder al contexto estático
 
 
 print(MiClase.variables_clase)  # no hace falta crear una instancia para consultarla
@@ -3617,7 +3615,7 @@ print(objeto2.variables_clase)
 # Como en python todas clas clases son objetos, podremos en cualquier momento
 # añadir una variable de clase "al vuelo"
 MiClase.variables_clase2 = 'valor variable clase 2'
-print(MiClase.variables_clase2)  # directamente no se puede (sin nombre clase)
+print(MiClase.variables_clase2)  # Directamente no se puede (sin nombre clase)
 print(objeto2.variables_clase2)
 print(MiClase.metodo_estatico())
 MiClase.metodo_clase()
