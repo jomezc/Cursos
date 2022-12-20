@@ -2949,6 +2949,138 @@ cubo1 = Cubo(ancho, profundo, alto)
 print(f'El volumen es: {cubo1.volumen()}')
 
 
+# +++++ Ejercicio tiempo +++++++
+
+#def convert(x: int) -> str:
+#    x = str(x)
+#    if len(x) == 1:
+#        x = '0' + x
+#    return x
+
+
+class Timer:
+    def __init__( self, hours=0, minutes=0, seconds=0 ):
+        self.__hours = hours
+        self.__minutes = minutes
+        self.__seconds = seconds
+
+    def __str__(self):
+        #return convert(self.__hours) + ':' + convert(self.__minutes) + ':' + convert(self.__seconds)
+        # 02d formatea un número entero (d) en un campo de ancho mínimo 2 (2), con relleno de cero a la izquierda (0 inicial):
+        return f'{self.__hours:02d}:{self.__minutes:02d}:{self.__seconds:02d}'
+    def next_second(self):
+        self.__seconds += 1
+        if self.__seconds == 60:
+            self.__seconds = 0
+            self.__minutes += 1
+        if self.__minutes == 60:
+            self.__minutes = 0
+            self.__hours += 1
+        if self.__hours == 24:
+            self.__hours = 0
+
+    def prev_second(self):
+        if self.__seconds == 0:
+            self.__seconds = 60
+            self.__seconds -= 1
+        if self.__minutes == 0:
+            self.__minutes = 60
+            self.__minutes -= 1
+        if self.__hours == 0:
+            self.__hours = 24
+            self.__hours -=1
+
+timer = Timer(23, 59, 59)
+print(timer)
+timer.next_second()
+print(timer)
+timer.prev_second()
+print(timer)
+
+# ++++++ Ejercicio dias de la semana ++++
+class WeekDayError(Exception):
+    def __init__(self):
+        Exception.__init__(self)
+        self.message = "Sorry, I can't serve your request."
+
+
+class Weeker:
+    days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+    def __init__(self, day):
+        if day not in Weeker.days:
+            raise WeekDayError
+        self.day = day
+
+    def __str__(self):
+        return self.day
+
+    def add_days(self, n):
+        current = Weeker.days.index(self.day)
+        current = (current + n) % 7
+        self.day = Weeker.days[current]
+
+    def subtract_days(self, n):
+        current = Weeker.days.index(self.day)
+        current = current - n if n <= current else 7 - ((n - current) % 7)
+        self.day = Weeker.days[current]
+
+
+try:
+    weekday = Weeker('Mon')
+    print(weekday)
+    weekday.add_days(15)
+    print(weekday)
+    weekday.subtract_days(23)
+    print(weekday)
+    weekday = Weeker('Monday')
+except WeekDayError as e:
+    print(e.message)
+
+# ++++++ Ejercicio puntos cartesianos y triangulo por distancia +++++
+import math
+
+
+class Point:
+    def __init__(self, x: float = 0.0, y: float = 0.0):
+        self.__x = x
+        self.__y = y
+
+    def getx(self):
+        return self.__x
+
+    def gety(self):
+        return self.__y
+
+    def distance_from_xy(self, x, y):
+        a = self.__x - x
+        b = self.__y - y
+        return math.hypot(a, b)
+
+    def distance_from_point(self, point):
+        x = point.getx()
+        y = point.gety()
+        return self.distance_from_xy(x, y)
+
+
+point1 = Point(0, 0)
+point2 = Point(1, 1)
+print(point1.distance_from_point(point2))
+print(point2.distance_from_xy(2, 0))
+
+class Triangle:
+    def __init__(self, vertice1, vertice2, vertice3):
+        self.__vertice1 = vertice1.distance_from_point(vertice2)
+        self.__vertice2 = vertice2.distance_from_point(vertice3)
+        self.__vertice3 = vertice3.distance_from_point(vertice1)
+
+    def perimeter(self):
+        return self.__vertice1 + self.__vertice2 + self.__vertice3
+
+
+triangle = Triangle(Point(0, 0), Point(1, 0), Point(0, 1))
+print(triangle.perimeter())
+
 # ***********************************
 # ******** ENCAPSULAMIENTO, GET y SET y DESTRUCTORES ##########
 # ***********************************
@@ -3060,11 +3192,24 @@ del persona1  # eliminción explicita
 # ***********************************
 # ******** HERENCIA ##########
 # ***********************************
+'''
+Todas las clases heredan de object, La jerarquía crece de arriba a abajo, como las raíces de los árboles, no las ramas
+Cualquier objeto enlazado a un nivel específico de una jerarquía de clases hereda todos los rasgos (así como los 
+requisitos y cualidades) definidos dentro de cualquiera de las superclases. La clase padre del objeto puede definir
+nuevos rasgos (así como requisitos y cualidades) que serán heredados por cualquiera de sus subclases.
+issubclass(ClassOne, ClassTwo) La función devuelve True si ClassOne es una subclase de ClassTwo y False en caso 
+contrario, IMPORTANTE, cada clase se considera una subclase de sí misma.
 
-# Todas las clases heredan de object, La jerarquía crece de arriba a abajo, como las raíces de los árboles, no las ramas
-# Cualquier objeto enlazado a un nivel específico de una jerarquía de clases hereda todos los rasgos (así como los
-# requisitos y cualidades) definidos dentro de cualquiera de las superclases. La clase padre del objeto puede definir
-# nuevos rasgos (así como requisitos y cualidades) que serán heredados por cualquiera de sus subclases.
+Como ya sabes, un objeto es una encarnación de una clase. Esto significa que el objeto es como un pastel horneado 
+con una receta que se incluye dentro de la clase. puede ser crucial si el objeto tiene (o no tiene) ciertas 
+características. En otras palabras, si es un objeto de cierta clase o no.
+
+Tal hecho podría ser detectado por la función llamada isinstance(): isinstance(nombreObjeto, NombreClase) que 
+devuelve True si el objeto es una instancia de la clase, o False en caso contrario. Ser una instancia 
+de una clase significa que el objeto (el pastel) ha sido preparado utilizando una receta contenida en la clase o en una 
+de sus superclases.
+
+'''
 class Empleado(Persona):  # con (Padre) indicamos en la declaración que heredamos
     def __init__(self, nombre, apellido, edad, sueldo):
         # tenemos que inicializar los atributos del padre
@@ -3085,7 +3230,8 @@ empleado1 = Empleado('Juan', 'garcia', 23, 5000)
 print(empleado1.nombre)
 print(empleado1.sueldo)
 print(empleado1)
-
+print(issubclass(Empleado, Persona))  # True porque empleado es subclase de persona
+print(isinstance(empleado1, Persona))  # True porque el objeto empleado1 es instancia de la clase Persona
 
 # +++++++ Ejercicio Herencia en Python ++++++
 # Definir una clase padre llamada Vehículo y dos clases hijas llamadas Coche y
@@ -3707,6 +3853,36 @@ print(Classy.__dict__)
 # {'__module__': '__main__', 'varia': 1, '__init__': <function Classy.__init__ at 0x7f4b4b66d320>, 'method': <function Classy.method at 0x7f4b4b66d3b0>, '_Classy__hidden': <function Classy.__hidden at 0x7f4b4b66d440>, '__dict__': <attribute '__dict__' of 'Classy' objects>, '__weakref__': <attribute '__weakref__' of 'Classy' objects>, '__doc__': None}
 
 
+# ******** Obtención y establecimiento del valor de un atributo de una clase desde fuera.
+'''introspección, que es la capacidad de un programa para examinar el tipo o las propiedades de un objeto en tiempo de 
+ejecución; reflexión, que va un paso más allá, y es la capacidad de un programa para manipular los valores, 
+propiedades y/o funciones de un objeto en tiempo de ejecución.
+
+La función de ejemplo llamada incIntsI() obtiene un objeto de cualquier clase, escanea su contenido para encontrar todos
+los atributos enteros con nombres que comienzan con i y los incrementa en uno.
+
+'''
+class MyClass:
+    pass
+
+
+obj = MyClass()  # define una clase muy simple y rellenamos con atributos
+obj.a, obj.b, obj.i, obj.ireal, obj.integer, obj.z = 1, 2, 3, 3.5, 4, 5
+
+
+def incIntsI(obj):  # función comentada
+    for name in obj.__dict__.keys():  # recorremos el dict
+        if name.startswith('i'):  # si un nombre comienza con i.
+            val = getattr(obj, name)  # usa la función getattr() para obtener su valor actual
+            if isinstance(val, int):  # verifique si el valor es de tipo entero y use la función isinstance() para ello
+                setattr(obj, name, val + 1)
+                '''# setattr(); la función toma tres argumentos: un objeto, el nombre de la propiedad (como una cadena) 
+                y el nuevo valor de la propiedad. '''
+
+
+print(obj.__dict__)
+incIntsI(obj)
+print(obj.__dict__)
 
 
 # +++++++++++++ Ejercicios teóricos +++++++++++++:
