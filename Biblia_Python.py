@@ -2803,8 +2803,15 @@ print(type(Person))
 
 class Persona:  # this == self se puede usar ambos
     # init método inicializador, similar a un constructor, en python está oculto y se llama por el lenguaje
-    # Permite agregar e inicializar atributos
+    # Permite agregar e inicializar atributos, es decir, inicializar correctamente su estado interno,
+    # crear variables de instancia, instanciar cualquier otro objeto si se necesita su existencia, etc.
+    # está obligado a tener el parámetro self (se establece automáticamente, como de costumbre);
+    # puede (pero no es necesario) tener más parámetros además de uno mismo; si esto sucede, la forma en que se usa el
+    # nombre de la clase para crear el objeto debe reflejar la definición de __init__;
+    # no puede devolver un valor
+    # no se puede invocar directamente ni desde el objeto ni desde dentro de la clase
     def __init__(self, nombre, apellido, edad):
+
         # Self: Es una referencia al objeto que se va a crear
         # | __x__ es un método dunder
         # *args si queremos pasar una tupla de elementos variable
@@ -2819,6 +2826,8 @@ class Persona:  # this == self se puede usar ambos
 
     # MÉTODOS #############
     def mostrar_detalle(self):  # en los métodos de instancia siempre vamos a meter la referencia self
+        # El parámetro self se utiliza para obtener acceso a las variables de clase e instancia del objeto.
+        # así como otros métodos de la clase
         # AL encontrarnos dentro de la clase nos referimos con self al atributo
         print(f'Persona: {self.nombre} {self.apellido}  que tiene {self.edad} años')
 
@@ -2848,6 +2857,26 @@ Persona.mostrar_detalle(persona1)
 persona1.telefono = '968888888'
 print(persona1.telefono)
 
+# Metodos "ocultos"
+class Classy:
+    def visible(self):
+        print("visible")
+
+    def __hidden(self):
+        print("hidden")
+
+
+obj = Classy()
+obj.visible() # visible
+
+try:
+    obj.__hidden()
+except:
+    print("failed") # failed
+
+obj._Classy__hidden()  # hidden
+
+# un método cuyo nombre comienza con __ está (parcialmente) oculto, podremos acceder con obj._Classy__hidden().
 
 # ++++++ Ejericio POO Aritmética ++++++++++
 class Aritmetica:
@@ -3574,6 +3603,8 @@ print(hasattr(ExampleClass, 'a'))  # True
 # todos los objetos pueden acceder a la variable de clase
 # El contexto dinámico si puede acceder al estático pero no al revés
 
+
+
 class MiClase:
     # si definimos una variable fuera del método init se crea una variable de clase
     # los atributos se declaran dentro de __init__
@@ -3622,6 +3653,62 @@ MiClase.metodo_clase()
 objeto1.metodo_clase()  # se pasa cls auto
 objeto1.metodo_instancia()
 
+print(MiClase.__name__)  # MiClase
+print(type(objeto1).__name__)  # MiClase
+print(MiClase.__module__)  # __main__ al problarlo en main.py
+print(type(objeto1).__module__)  # __main__ al problarlo en main.py
+'''
+__name__ es un string que contiene el nombre de la clase, solo lo tienen las clases no los objetos
+__module__ almacena el nombre del módulo que contiene la definición de la clase
+__bases__ es una tupla. La tupla contiene clases (no nombres de clases) que son superclases directas para la clase.
+por efecto apunta a Object
+sólo las clases lo tienen'''
+
+class SuperOne:
+    pass
+
+
+class SuperTwo:
+    pass
+
+
+class Sub(SuperOne, SuperTwo):
+    pass
+
+
+def printBases(cls): # diseñado para presentar claramente el contenido de la tupla.
+    print('( ', end='')
+
+    for x in cls.__bases__:
+        print(x.__name__, end=' ')
+    print(')')
+
+
+printBases(SuperOne)  # ( object )
+printBases(SuperTwo)  # ( object )
+printBases(Sub)  # ( SuperOne SuperTwo )
+
+# ++++++++++  ejemplo __dict__ ++++++++
+class Classy:
+    varia = 1
+    def __init__(self):
+        self.var = 2
+
+    def method(self):
+        pass
+
+    def __hidden(self):
+        pass
+obj = Classy()
+
+print(obj.__dict__)  # {'var': 2}
+print(Classy.__dict__)
+
+# {'__module__': '__main__', 'varia': 1, '__init__': <function Classy.__init__ at 0x7f4b4b66d320>, 'method': <function Classy.method at 0x7f4b4b66d3b0>, '_Classy__hidden': <function Classy.__hidden at 0x7f4b4b66d440>, '__dict__': <attribute '__dict__' of 'Classy' objects>, '__weakref__': <attribute '__weakref__' of 'Classy' objects>, '__doc__': None}
+
+
+
+
 # +++++++++++++ Ejercicios teóricos +++++++++++++:
 # ¿Cuáles de las propiedades de clase de Python son variables de instancia y cuáles son variables de clase?
 # ¿Cuáles de ellos son privados?
@@ -3642,6 +3729,8 @@ version_2._Python__venomous = not version_2._Python__venomous
 # Escriba una expresión que verifique si el objeto versión_2 contiene una propiedad de instancia llamada constrictor
 # (¡sí, constrictor!).
 hasattr(version_2, 'constrictor')
+
+
 
 # ***********************************
 # ******** constantes python ##########
