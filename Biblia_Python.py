@@ -3213,9 +3213,10 @@ de sus superclases.
 class Empleado(Persona):  # con (Padre) indicamos en la declaración que heredamos
     def __init__(self, nombre, apellido, edad, sueldo):
         # tenemos que inicializar los atributos del padre
-        super().__init__(nombre, apellido, edad)
+        super().__init__(nombre, apellido, edad) # no necesitamos saber el nombre ni hacer referencia a self
         # super metodo que nos permite acceder a los atributos del padre
         # con super().__init__(atributos padre) estamos inicializando los atr padre
+        # Persona.__init__(self, nombre, apellido, edad)  # sería lo mismo
         self.sueldo = sueldo
 
     # ********  SOBREESCRITURA
@@ -3232,6 +3233,43 @@ print(empleado1.sueldo)
 print(empleado1)
 print(issubclass(Empleado, Persona))  # True porque empleado es subclase de persona
 print(isinstance(empleado1, Persona))  # True porque el objeto empleado1 es instancia de la clase Persona
+
+
+'''
+objeto_uno is  objeto_dos 
+
+El operador is verifica si dos variables (objeto_uno y objeto_dos aquí) se refieren al mismo objeto.No olvide que las 
+variables no almacenan los objetos en sí, sino solo los identificadores que apuntan a la memoria interna de Python. 
+Asignar un valor de una variable de objeto a otra variable no copia el objeto, sino solo su identificador. Es por esto 
+que un operador como is puede ser muy útil en circunstancias particulares.
+
+'''
+
+
+class SampleClass:
+    def __init__(self, val):
+        self.val = val
+
+
+object_1 = SampleClass(0)
+object_2 = SampleClass(2)
+object_3 = object_1
+object_3.val += 1
+
+print(object_1 is object_2)  # False
+print(object_2 is object_3)  # False
+print(object_3 is object_1)  # True
+print(object_1.val, object_2.val, object_3.val)  # 1 2 1
+
+string_1 = "Mary had a little "
+string_2 = "Mary had a little lamb"
+string_1 += "lamb"
+
+print(string_1 == string_2, string_1 is string_2)  # Ture False
+'''
+Los resultados prueban que object_1 y object_3 son en realidad los mismos objetos, mientras que string_1 y string_2 
+no lo son, a pesar de que su contenido es el mismo.
+'''
 
 # +++++++ Ejercicio Herencia en Python ++++++
 # Definir una clase padre llamada Vehículo y dos clases hijas llamadas Coche y
@@ -3547,7 +3585,7 @@ class Cuadrado(FiguraGeometrica, Color):
         # la primera clase que encuentra es la que va a llamar
         # si pasamos dos parámetros se llamara a la FiguraGeometrica y si pasamos 1 a Color
         # esta forma, confusion
-        # super().__init__(self, lado, lado)
+        # super().__init__(lado, lado)
         FiguraGeometrica.__init__(self, lado, lado)
         Color.__init__(self, color)
         # con self estamos pasando la referencia de la clase hija de la clase de cuadrado por usar el attr
@@ -3883,6 +3921,26 @@ def incIntsI(obj):  # función comentada
 print(obj.__dict__)
 incIntsI(obj)
 print(obj.__dict__)
+
+# ******* Propiedades y atributos
+'''Podemos acceder a las variables de clase y a las variables de instancia de la superclase desde la subclase'''
+class Super:
+    a = 0
+    def __init__(self):
+        self.supVar = 11
+
+
+class Sub(Super):
+    b = 1
+    def __init__(self):
+        super().__init__()
+        self.subVar = 12
+
+
+obj = Sub()
+
+print(obj.subVar, obj.b)
+print(obj.supVar, obj.a)
 
 
 # +++++++++++++ Ejercicios teóricos +++++++++++++:
