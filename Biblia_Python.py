@@ -3411,13 +3411,14 @@ print(rectangulo1)
 
 # MRO - Method resolution Order, para ver en que orden de resolución en que se van a ejecutar
 # Si cambiamos el orden en que se hereda cambiaría. Nos indica el orden en que ira buscando
-# Los metodos por ejemplo
+# Los métodos por ejemplo
 print(Cuadrado.mro())
 
 
 # ***********************************
 # ******** Variable de clase, Métodos estáticos y método de clase ##########
 # ***********************************
+
 '''
 variables de instancia:
 Este tipo de propiedad de clase existe cuando y solo cuando se crea y agrega explícitamente a un objeto. 
@@ -3429,6 +3430,7 @@ consecuencias importantes:
 - cada objeto tiene su propio conjunto de propiedades: no interfieren entre sí de ninguna manera.
 - Las variables de instancia están perfectamente aisladas entre sí.
 '''
+
 class ExampleClass:
     def __init__(self, val = 1):
         self.first = val
@@ -3438,7 +3440,6 @@ class ExampleClass:
 
 
 example_object_1 = ExampleClass()
-
 example_object_2 = ExampleClass(2)
 example_object_2.set_second(3)
 
@@ -3448,9 +3449,11 @@ example_object_3.third = 5  # propiedad al vuelo, permitido
 print(example_object_1.__dict__)  # {'first': 1}
 print(example_object_2.__dict__)  # {'first': 2, 'second': 3}
 print(example_object_3.__dict__)  # {'first': 4, 'third': 5}
+
 '''Los objetos de Python, cuando se crean, están dotados de un pequeño conjunto de propiedades y métodos predefinidos. 
 Cada objeto los tiene, los quieras o no. Uno de ellos es una variable llamada __dict__ (es un diccionario). La variable
 contiene los nombres y valores de todas las propiedades (variables) que el objeto lleva actualmente.'''
+
 class ExampleClass:
     counter = 0
     def __init__(self, val = 1):
@@ -3500,6 +3503,69 @@ print(example_object_1.__dict__, example_object_1._ExampleClass__counter)  # {'_
 print(example_object_2.__dict__, example_object_2._ExampleClass__counter)  # {'_ExampleClass__first': 2} 3
 print(example_object_3.__dict__, example_object_3._ExampleClass__counter)  # {'_ExampleClass__first': 4} 3
 
+''' las variables de clase existen incluso cuando no se ha creado ninguna instancia de clase (objeto).
+Veamos la diferencia entre estas dos variables __dict__, la de la clase y la del objeto.
+Definimos una clase llamada ExampleClass;
+La clase define una variable de clase denominada varia;
+El constructor de la clase establece la variable con el valor del parámetro;
+Nombrar la variable es el aspecto más importante del ejemplo porque:
+Cambiar la asignación a self.varia = val crearía una variable de instancia con el mismo nombre que la de la clase;
+Cambiar la asignación a varia = val operaría en la variable local de un método; 
+La primera línea del código fuera de clase imprime el valor del atributo ExampleClass.varia; nota: usamos el valor 
+antes de que se instancia el primer objeto de la clase.'''
+
+class ExampleClass:
+    varia = 1
+    def __init__(self, val):
+        ExampleClass.varia = val
+
+
+print(ExampleClass.__dict__)
+# {'__module__': '__main__', 'varia': 1, '__init__': <function ExampleClass.__init__ at 0x000001F72AA8A160>, '__dict__': <attribute '__dict__' of 'ExampleClass' objects>, '__weakref__': <attribute '__weakref__' of 'ExampleClass' objects>, '__doc__': None}
+
+example_object = ExampleClass(2)
+
+print(ExampleClass.__dict__)
+# {'__module__': '__main__', 'varia': 2, '__init__': <function ExampleClass.__init__ at 0x000001F72AA8A160>, '__dict__': <attribute '__dict__' of 'ExampleClass' objects>, '__weakref__': <attribute '__weakref__' of 'ExampleClass' objects>, '__doc__': None}
+
+print(example_object.__dict__)  # {}
+
+'''Como puede ver, el __dict__ de la clase contiene muchos más datos que la contraparte de su objeto. La mayoría 
+de ellos son inútiles ahora: el que queremos que revise cuidadosamente muestra el valor actual de varia.
+Tenga en cuenta que el __dict__ del objeto está vacío: el objeto no tiene variables de instancia.
+
+La actitud de Python hacia la creación de instancias de objetos plantea un problema importante: a diferencia de otros 
+lenguajes de programación, no puede esperar que todos los objetos de la misma clase tengan los mismos conjuntos 
+de propiedades.
+
+El objeto creado por el constructor solo puede tener uno de dos atributos posibles: a o b.'''
+class ExampleClass:
+    def __init__(self, val):
+        if val % 2 != 0:
+            self.a = 1
+        else:
+            self.b = 1
+example_object = ExampleClass(1)
+print(example_object.a)
+# print(example_object.b)
+#Al ejecutarlo:... print(example_object.b) \n AttributeError: 'ExampleClass' object has no attribute 'b
+#Python proporciona una función que puede verificar de manera segura si algún objeto/clase contiene una propiedad
+#específica,  hasattr que recibe la clase o objeto y el nombre de la propiedad a comprobar devuelve True o False
+if hasattr(example_object, 'b'):
+    print(example_object.b)
+
+class ExampleClass:
+    a = 1
+    def __init__(self):
+        self.b = 2
+
+
+example_object = ExampleClass()
+
+print(hasattr(example_object, 'b'))  # True
+print(hasattr(example_object, 'a'))  # True
+print(hasattr(ExampleClass, 'b'))  # False
+print(hasattr(ExampleClass, 'a'))  # True
 
 # los atributos son independientes, corresponden a cada instancia
 # las variables de clase se comparten porque se asocian con la clase en si misma y se comparte con todos los objetos.
@@ -3509,6 +3575,7 @@ print(example_object_3.__dict__, example_object_3._ExampleClass__counter)  # {'_
 # cuando creamos un objeto se carga en memoria la variable instancia y podemos acceder
 # todos los objetos pueden acceder a la variable de clase
 # El contexto dinámico si puede acceder al estático pero no al revés
+
 class MiClase:
     # si definimos una variable fuera del método init se crea una variable de clase
     # los atributos se declaran dentro de __init__
@@ -3556,6 +3623,27 @@ print(MiClase.metodo_estatico())
 MiClase.metodo_clase()
 objeto1.metodo_clase()  # se pasa cls auto
 objeto1.metodo_instancia()
+
+# +++++++++++++ Ejercicios teóricos +++++++++++++:
+# ¿Cuáles de las propiedades de clase de Python son variables de instancia y cuáles son variables de clase?
+# ¿Cuáles de ellos son privados?
+class Python:
+    population = 1
+    victims = 0
+    def __init__(self):
+        self.length_ft = 3
+        self.__venomous = False
+# población y víctimas son variables de clase, mientras que longitud y __venomous
+# son variables de instancia (esta última también es privada)
+
+# Vas a negar la propiedad __venomous del objeto version_2, ignorando el hecho de que la propiedad es privada.
+# ¿Cómo harás ésto?
+version_2 = Python()
+version_2._Python__venomous = not version_2._Python__venomous
+
+# Escriba una expresión que verifique si el objeto versión_2 contiene una propiedad de instancia llamada constrictor
+# (¡sí, constrictor!).
+hasattr(version_2, 'constrictor')
 
 # ***********************************
 # ******** constantes python ##########
