@@ -4959,6 +4959,40 @@ Como puede ver, la salida del programa refleja esto, mostrando los contenidos ap
 mi excepción: mi excepción: mi excepción
 ('mi', 'excepción') : ('mi', 'excepción') : ('mi', 'excepción')
 '''
+
+# +++++ ejemplo excepciones propias, jerarquía ++++++
+
+'''Cuando va a construir un universo completamente nuevo lleno de criaturas completamente nuevas que no tienen nada en 
+común con todas las cosas familiares, es posible que desee construir su propia estructura de excepción. Por ejemplo, 
+si trabaja en un gran sistema de simulación destinado a modelar las actividades de una pizzería, puede ser deseable 
+formar una jerarquía separada de excepciones. Puede comenzar a construirlo definiendo una excepción general como una 
+nueva clase base para cualquier otra excepción especializada. Lo hemos hecho de la siguiente forma:
+'''
+class PizzaError(Exception):
+    def __init__(self, pizza, message):
+        Exception.__init__(self, message)
+        self.pizza = pizza
+
+'''
+Nota: vamos a recopilar información más específica aquí que una excepción normal, por lo que nuestro constructor tomará
+dos argumentos:
+- uno especificando una pizza como sujeto del proceso,
+- y otra que contenga una descripción más o menos precisa del problema.
+Como puede ver, pasamos el segundo parámetro al constructor de la superclase y guardamos el primero dentro de nuestra 
+propiedad.
+
+Un problema más específico (como un exceso de queso) puede requerir una excepción más específica. Es posible derivar 
+la nueva clase de la clase PizzaError ya definida, como lo hemos hecho aquí:
+'''
+class TooMuchCheeseError(PizzaError):
+    def __init__(self, pizza, cheese, message):
+        PizzaError._init__(self, pizza, message)
+        self.cheese = cheese
+
+'''
+La excepción TooMuchCheeseError necesita más información que la excepción PizzaError normal, por lo que la agregamos al 
+constructor; el nombre cheese se almacena para su posterior procesamiento.'''
+
 # ***********************************
 # ********  Manejo de Archivos ##########
 # ***********************************
