@@ -4335,6 +4335,107 @@ gerente = Gerente('Emilio', 4500, 'BI')
 imprimir_detalles(empleado)
 imprimir_detalles(gerente)
 
+# ***********************************
+# ******** __iter__ con __next__ ##########
+# ***********************************
+'''llamado iteradores. Cuando usamos for Declaración, Python realmente pone for Las funciones integradas, utilizando 
+iter(objeto):
+'''
+a = [1, 2, 3]
+for i in a:
+    print(a[i])
+'''
+De hecho, dentro de Python se realiza una conversión similar a la siguiente:
+'''
+a = [1, 2, 3]
+for i in iter(a):
+    print(a[i])
+'''
+Con iter Lo que se devuelve es un objeto iterable, que se asigna principalmente a la Función __iter__ de la clase, esta 
+función devuelve una implementación de la función __next__ del Objeto.
+
+Al llamar iter, se genera un objeto de iteración, que requiere __iter__ bebe devolver una implementación del método
+__next__ Objetos, podemos pasar next La función visita el siguiente elemento de este objeto y lanza uno si no desea 
+continuar iterando StopIteration La excepción (for La declaración detectará esta excepción y finalizará automáticamente 
+for), la función myrange es similar al funcionamiento de  range'''
+
+
+class MyRange(object):
+    def __init__(self, end):
+        self.start = 0
+        self.end = end
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.start < self.end:
+            ret = self.start
+            self.start += 1
+            return ret
+        else:
+            raise StopIteration
+
+
+from collections.abc import *
+
+a = MyRange(5)
+print(isinstance(a, Iterable))
+print(isinstance(a, Iterator))
+
+for i in a:
+    print(i)
+
+# ++++++++ ejemplo pregunta modulo +++++
+class I:
+    def __init__(self):
+        self.s = ['abc', '123']
+        self.i = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.i == len(self.s):
+            raise StopIteration
+        v = self.s[self.i]
+        self.i += 1
+        return v
+
+
+for x in I():
+    print(x, end='')  # abc123
+
+
+# ++++++ otro
+class Ex(Exception):
+    def __init__(self, msg):
+        Exception.__init__(self, msg+msg)
+        self.args = (msg,)
+
+
+try:
+    raise Ex('ex')
+except Ex as e:
+    print(e)  # ex
+except Exception as e:
+    print(e)
+
+
+# +++++ otro
+
+try:
+    raise Exception(1, 2, 3)
+except Exception as e:
+    print(len(e.args))  # 3
+
+# ++++++ otro
+class A:
+    def __init__(self):
+        pass
+
+a = A(1)
+print(hasattr(a, 'A'))  # Falla 2 argumentos y solo hemos definido uno!!!
 
 # ***********************************
 # ********  LABORATORIO Mundo PC ##########
@@ -4862,6 +4963,8 @@ def read_int(prompt, mi, ma):
         except ValueError:
             print('wrong input')
         except Exception as e:
+            # as e, le permite interceptar un objeto que lleva información sobre una excepción pendiente.
+            # La propiedad del objeto llamada args (una tupla) almacena todos los argumentos pasados al objeto.
             print(e)
 
 
@@ -4992,6 +5095,49 @@ class TooMuchCheeseError(PizzaError):
 '''
 La excepción TooMuchCheeseError necesita más información que la excepción PizzaError normal, por lo que la agregamos al 
 constructor; el nombre cheese se almacena para su posterior procesamiento.'''
+def make_pizza(pizza, cheese):
+    if pizza not in ['margherita', 'capricciosa', 'calzone']:
+        raise PizzaError(pizza, "no such pizza on the menu")
+    if cheese > 100:
+        raise TooMuchCheeseError(pizza, cheese, "too much cheese")
+    print("Pizza ready!")
+
+for (pz, ch) in [('calzone', 0), ('margherita', 110), ('mafia', 20)]:
+    try:
+        make_pizza(pz, ch)
+    except TooMuchCheeseError as tmce:
+        print(tmce, ':', tmce.cheese)
+    except PizzaError as pe:
+        print(pe, ':', pe.pizza)
+'''
+Hemos combinado las dos excepciones definidas anteriormente y las hemos aprovechado para que funcionen en un pequeño 
+fragmento de código de ejemplo.Uno de estos se genera dentro de la función make_pizza() cuando se descubre cualquiera 
+de estas dos situaciones erróneas: una solicitud de pizza incorrecta o una solicitud de demasiado queso.
+salida:
+Pizza ready!
+too much cheese : 110
+no such pizza on the menu : mafia
+
+'''
+
+# +++++ ejercicio excepciones +++++
+# ¿Cuál es el resultado esperado del siguiente código?
+
+import math
+
+class NewValueError(ValueError):
+    def __init__(self, name, color, state):
+        self.data = (name, color, state)
+
+try:
+    raise NewValueError("Enemy warning", "Red alert", "High readiness")
+except NewValueError as nve:
+    for arg in nve.args:
+        print(arg, end='! ')  # Enemy warning! Red alert! High readiness!
+
+
+
+
 
 # ***********************************
 # ********  Manejo de Archivos ##########
