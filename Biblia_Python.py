@@ -3923,24 +3923,51 @@ incIntsI(obj)
 print(obj.__dict__)
 
 # ******* Propiedades y atributos
-'''Podemos acceder a las variables de clase y a las variables de instancia de la superclase desde la subclase'''
+'''Podemos acceder a las variables de clase y a las variables de instancia de la superclase desde la subclase. 
+Cuando intente acceder a la entidad de cualquier objeto, Python intentará (en este orden):
+- Encontrarlo dentro del objeto mismo
+- Encontrarlo en todas las clases involucradas en la línea de herencia del objeto de abajo hacia arriba
+- si hay más de una clase en una ruta de herencia particular, Python las escanea de izquierda a derecha
+Si ambos de los anteriores fallan, se genera una excepción (AttributeError).
+Python busca una entidad de abajo hacia arriba y está completamente satisfecho con la primera entidad del nombre 
+deseado. Esto quiere decir que si 2 clases tienen una misma variable la buscara primero en el 'padre' y si la encuentra 
+ya esta si no al 'abuelo' '''
+
+
 class Super:
     a = 0
+    x = 'abuelo'
+
     def __init__(self):
         self.supVar = 11
 
 
 class Sub(Super):
     b = 1
+    x = 'padre'
+
     def __init__(self):
         super().__init__()
         self.subVar = 12
 
 
-obj = Sub()
+class Sub2(Super):
+    b = None
+    x = 'PADRE'
 
-print(obj.subVar, obj.b)
-print(obj.supVar, obj.a)
+    def __init__(self):
+        super().__init__()
+        self.subVar = 112
+
+
+class Subsub(Sub, Sub2):
+    pass
+
+
+obj = Subsub()
+
+print(obj.subVar, obj.b, obj.x)  # 12 1 padre
+print(obj.supVar, obj.a)  # 11 0
 
 
 # +++++++++++++ Ejercicios teóricos +++++++++++++:
@@ -4120,6 +4147,69 @@ if __name__ == '__main__':
     print(or2)
     print(f'total orden: {or2.calcular_total()}')
 
+# ****** RELACION COMPOSICION
+'''
+La herencia no es la única forma de construir clases adaptables. Puede lograr los mismos objetivos (no siempre, pero 
+muy a menudo) utilizando una técnica llamada composición.es el proceso de componer un objeto utilizando otros objetos 
+diferentes. Los objetos usados en la composición entregan un conjunto de rasgos deseados (propiedades y/o métodos) por 
+lo que podemos decir que actúan como bloques usados para construir una estructura más complicada.
+
+Puede decirse que: la herencia extiende las capacidades de una clase agregando nuevos componentes y modificando 
+los existentes; en otras palabras, la receta completa está contenida dentro de la propia clase y todos sus ancestros; 
+el objeto toma todas las pertenencias de la clase y hace uso de ellas; La composición proyecta una clase como un 
+contenedor capaz de almacenar y usar otros objetos (derivados de otras clases) donde cada uno de los objetos implementa 
+una parte del comportamiento de una clase deseada.
+
+Ilustremos la diferencia utilizando los vehículos. El enfoque de herencia nos llevó a una jerarquía de clases en la que
+la clase superior conocía las reglas generales que se usaban para girar el vehículo, pero no sabía cómo controlar los 
+componentes apropiados (ruedas u orugas). Las subclases implementaron esta habilidad mediante la introducción de 
+mecanismos especializados. Hagamos (casi) lo mismo, pero usando composición. La clase, sabe cómo girar el vehículo, 
+pero el giro real lo realiza un objeto especializado almacenado en una propiedad llamada controlador. El controlador 
+puede controlar el vehículo manipulando las partes relevantes del vehículo.
+'''
+import time
+
+class Tracks:
+    def change_direction(self, left, on):
+        print("tracks: ", left, on)
+
+
+class Wheels:
+    def change_direction(self, left, on):
+        print("wheels: ", left, on)
+
+
+class Vehicle:
+    def __init__(self, controller):
+        self.controller = controller
+
+    def turn(self, left):
+        self.controller.change_direction(left, True)
+        time.sleep(0.25)
+        self.controller.change_direction(left, False)
+
+
+wheeled = Vehicle(Wheels())
+tracked = Vehicle(Tracks())
+
+wheeled.turn(True)  # wheels:  True True \n wheels:  True False
+tracked.turn(False)  # tracks:  False True tracks:  False False
+'''
+Hay dos clases llamadas Tracks y wheels: saben cómo controlar la dirección del vehículo. También hay una clase llamada 
+Vehículo que puede usar cualquiera de los controladores disponibles (los dos ya definidos o cualquier otro definido 
+en el futuro): el controlador en sí se pasa a la clase durante la inicialización. De esta forma, la capacidad de giro
+del vehículo se compone utilizando un objeto externo, no implementado dentro de la clase de Vehículo.
+En otras palabras, tenemos un vehículo universal y podemos instalarle una u otra.
+
+la herencia múltiple viola el principio de responsabilidad única ya que crea una nueva clase de dos (o más) clases que 
+no saben nada entre sí; sugerimos encarecidamente la herencia múltiple como la última de todas las soluciones posibles: 
+si realmente necesita las muchas funcionalidades diferentes que ofrecen las diferentes clases, la composición puede ser 
+una mejor alternativa.
+'''
+
+
+
+
 # ***********************************
 # ******** Sobrecarga ##########
 # ***********************************
@@ -4180,12 +4270,14 @@ print(p1 - p2)
 # ***********************************
 # ******** Polimorfismo ##########
 # ***********************************
-# Multiples formas en tiempo de ejecución
-# una misma variable puede ejecutar varios métodos de distintos objetos dependiendo del objeto
-# al cual esté apuntando en tiempo en ejecución
-# Si tenemos una variable de una clase que tiene el método str, y otra que tiene gerente y ejecutarse el q sea
-# Es decir ejecutar multiples métodos en tiempo de ejecución dependiendo del objeto al cual esté apuntando
-# se ejecuta uno dependiendo de cuál apunte. En Python no tienen que tener relación
+'''Multiples formas en tiempo de ejecución
+una misma variable puede ejecutar varios métodos de distintos objetos dependiendo del objeto
+al cual esté apuntando en tiempo en ejecución
+Si tenemos una variable de una clase que tiene el método str, y otra que tiene gerente y ejecutarse el q sea
+Es decir ejecutar multiples métodos en tiempo de ejecución dependiendo del objeto al cual esté apuntando
+se ejecuta uno dependiendo de cuál apunte. En Python no tienen que tener relación
+Es La situación en la que la subclase es capaz de modificar el comportamiento de su superclase. Ayuda al desarrollador
+a mantener el código limpio y consistente.'''
 
 class Empleado:
     def __init__(self, nombre, sueldo):
@@ -4776,7 +4868,97 @@ def read_int(prompt, mi, ma):
 v = read_int("Enter a number from -10 to 10: ", -10, 10)
 print("The number is:", v)
 
+# +++++ Ejemplo Arbol de excepciones ++++++
+'''Las excepciones son las clases.
+Todas las excepciones integradas de Python forman una jerarquía de clases. No hay obstáculo para extenderlo si lo 
+encuentras razonable. Este programa vuelca todas las clases de excepción predefinidas en forma de una copia impresa 
+en forma de árbol. Como un árbol es un ejemplo perfecto de una estructura de datos recursiva, una recursión parece 
+ser la mejor herramienta para atravesarla. La función print_exception_tree() toma dos argumentos:
+- un punto dentro del árbol desde el cual comenzamos a atravesar el árbol;
+- un nivel de anidamiento (lo usaremos para construir un dibujo simplificado de las ramas del árbol)
 
+Comencemos desde la raíz del árbol: la raíz de las clases de excepción de Python es la clase BaseException (es una 
+superclase de todas las demás excepciones). Para cada una de las clases encontradas, realice el mismo conjunto de 
+operaciones:
+- imprime su nombre, tomado de la propiedad __name__;
+- iterar a través de la lista de subclases entregadas por el método __subclasses__() e invocar recursivamente 
+  la función print_exception_tree(), incrementando el nivel de anidamiento respectivamente.'''
+def print_exception_tree(thisclass, nest = 0):
+    if nest > 1:
+        print("   |" * (nest - 1), end="")
+    if nest > 0:
+        print("   +---", end="")
+
+    print(thisclass.__name__)
+
+    for subclass in thisclass.__subclasses__():
+        print_exception_tree(subclass, nest + 1)
+
+
+print(BaseException.__subclasses__())  # [<class 'BaseExceptionGroup'>, <class 'Exception'>, <class 'GeneratorExit'>,...
+print(Exception.__subclasses__())  # [<class 'ArithmeticError'>, <class 'AssertionError'>, <class 'AttributeError'>, ...
+# print_exception_tree(BaseException)
+''' BaseException
+   +---BaseExceptionGroup
+   |   +---ExceptionGroup
+   +---Exception
+   |   +---ArithmeticError
+   |   |   +---FloatingPointError
+   |   |   +---OverflowError
+   |   |   +---
+   ...'''
+
+#  ***** detalle de anatomía de excepciones
+
+'''La clase BaseException introduce una propiedad llamada args. Es una tupla diseñada para recopilar todos los 
+argumentos pasados al constructor de la clase. Está vacío si la construcción ha sido invocada sin ningún argumento, o si
+ contiene solo un elemento cuando el constructor obtiene un argumento (aquí no contamos el argumento self), y así 
+ sucesivamente.'''
+def print_args(args):
+    lng = len(args)
+    if lng == 0:
+        print("")
+    elif lng == 1:
+        print(args[0])
+    else:
+        print(str(args))
+
+
+try:
+    raise Exception
+except Exception as e:
+    print(e, e.__str__(), sep=' : ' ,end=' : ')  #  :  :
+    print_args(e.args) #
+
+try:
+    raise Exception("my exception")
+except Exception as e:
+    print(e, e.__str__(), sep=' : ', end=' : ')  # my exception : my exception :
+    print_args(e.args)  # my exception    (ojo lng es 1)
+
+try:
+    raise Exception("my", "exception")
+except Exception as e:
+    print(e, e.__str__(), sep=' : ', end=' : ')  # ('my', 'exception') : ('my', 'exception') :
+    print_args(e.args)  # ('my', 'exception')
+
+'''Hemos usado la función para imprimir el contenido de la propiedad args en tres casos diferentes, donde la excepción 
+de la clase Exception se genera de tres maneras diferentes. Para hacerlo más espectacular, también imprimimos el objeto 
+en sí, junto con el resultado de la invocación de __str__().
+
+El primer caso parece rutinario: solo hay el nombre Exception después de la palabra clave raise. Esto significa que el 
+objeto de esta clase ha sido creado de la forma más rutinaria.
+
+El segundo y tercer caso pueden parecer un poco extraños a primera vista, pero no hay nada extraño aquí: estas son solo 
+las invocaciones del constructor. En la segunda declaración de aumento, el constructor se invoca con un argumento y en 
+la tercera, con dos.
+
+Como puede ver, la salida del programa refleja esto, mostrando los contenidos apropiados de la propiedad args:
+
+  : :
+mi excepción: mi excepción: mi excepción
+('mi', 'excepción') : ('mi', 'excepción') : ('mi', 'excepción')
+'''
 # ***********************************
 # ********  Manejo de Archivos ##########
 # ***********************************
