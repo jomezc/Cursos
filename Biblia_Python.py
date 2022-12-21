@@ -4336,30 +4336,170 @@ imprimir_detalles(empleado)
 imprimir_detalles(gerente)
 
 # ***********************************
-# ******** __iter__ con __next__ ##########
+# ******** Generadores   ##########
 # ***********************************
-'''llamado iteradores. Cuando usamos for Declaración, Python realmente pone for Las funciones integradas, utilizando 
-iter(objeto):
 '''
-a = [1, 2, 3]
-for i in a:
-    print(a[i])
+Un generador de Python es una pieza de código especializado capaz de producir una serie de valores y controlar el
+proceso de iteración. Esta es la razón por la que los generadores se denominan con mucha frecuencia iteradores, y aunque
+algunos pueden encontrar una distinción muy sutil entre estos dos, los trataremos como uno solo. La función range() es,
+de hecho, un generador, que es (de hecho, de nuevo) un iterador.
+
+¿Cuál es la diferencia?
 '''
-De hecho, dentro de Python se realiza una conversión similar a la siguiente:
+for i in range(5):
+    print(i)
+
 '''
-a = [1, 2, 3]
-for i in iter(a):
-    print(a[i])
+Una función devuelve un valor bien definido; puede ser el resultado de una evaluación más o menos compleja de, 
+por ejemplo, un polinomio, y se invoca una vez, solo una vez.
+
+Un generador devuelve una serie de valores y, en general, se invoca (implícitamente) más de una vez.
+
+En el ejemplo, el generador range() se invoca seis veces, proporcionando cinco valores subsiguientes de cero a cuatro 
+y finalmente señalando que la serie está completa.
+
+El protocolo iterador es una forma en la que un objeto debe comportarse para ajustarse a las reglas impuestas por el 
+contexto de las declaraciones for e in. Un objeto que se ajusta al protocolo del iterador se denomina iterador.
+
+Un iterador debe proporcionar dos métodos:
+
+__iter__() que debería devolver el objeto en sí mismo y que se invoca una vez (es necesario para que Python inicie 
+con éxito la iteración)
+__next__() que está destinado a devolver el siguiente valor (primero, segundo, etc.) de la serie deseada: será invocado 
+por las declaraciones for/in para pasar a la siguiente iteración; si no hay más valores para proporcionar, el método 
+debe generar la excepción StopIteration.
+'''
+class Fib:
+    def __init__(self, nn):
+        print("__init__")
+        self.__n = nn
+        self.__i = 0
+        self.__p1 = self.__p2 = 1
+
+    def __iter__(self):
+        print("__iter__")
+        return self
+
+    def __next__(self):
+        print("__next__")
+        self.__i += 1
+        if self.__i > self.__n:
+            raise StopIteration
+        if self.__i in [1, 2]:
+            return 1
+        ret = self.__p1 + self.__p2
+        self.__p1, self.__p2 = self.__p2, ret
+        return ret
+
+
+for i in Fib(10):
+    print(i)
+'''
+Hemos construido una clase capaz de iterar a través de los primeros n valores (donde n es un parámetro del constructor) 
+de los números de Fibonacci.
+
+Permítanos recordarle: los números de Fibonacci (Fibi) se definen de la siguiente manera:
+
+Fib1 = 1
+Fib2 = 1
+Fibi = Fibi-1 + Fibi-2
+
+En otras palabras:
+
+los dos primeros números de Fibonacci son iguales a 1;
+cualquier otro número de Fibonacci es la suma de los dos anteriores (por ejemplo, Fib3 = 2, Fib4 = 3, Fib5 = 5, etc.)
+Vamos a sumergirnos en el código:
+
+líneas 2 a 6: el constructor de la clase imprime un mensaje (lo usaremos para rastrear el comportamiento de la clase), 
+prepara algunas variables (__n para almacenar el límite de la serie, __i para rastrear el número de Fibonacci actual 
+para proporcionar y __p1 junto con __p2 para guardar los dos números anteriores);
+
+líneas 8 a 10: el método __iter__ está obligado a devolver el propio objeto iterador; su propósito puede ser un poco 
+ambiguo aquí, pero no hay misterio; intente imaginar un objeto que no sea un iterador (por ejemplo, es una colección de 
+algunas entidades), pero uno de sus componentes es un iterador capaz de escanear la colección; el método __iter__ debe 
+extraer el iterador y confiarle la ejecución del protocolo de iteración; como puede ver, el método inicia su acción 
+imprimiendo un mensaje;
+
+líneas 12 a 21: el método __next__ es responsable de crear la secuencia; es algo prolijo, pero esto debería hacerlo más 
+legible; primero, imprime un mensaje, luego actualiza la cantidad de valores deseados y, si llega al final de la 
+secuencia, el método interrumpe la iteración al generar la excepción StopIteration; el resto del código es simple y 
+refleja con precisión la definición que le mostramos anteriormente;
+
+las líneas 24 y 25 hacen uso del iterador.
+
+El código produce el siguiente resultado:
+
+__init__
+__iter__
+__próximo__
+1
+__próximo__
+1
+__próximo__
+2
+__próximo__
+3
+…
+
+Mirar:
+
+primero se crea una instancia del objeto iterador;
+a continuación, Python invoca el método __iter__ para obtener acceso al iterador real;
+el método __next__ se invoca once veces: las primeras diez veces producen valores útiles, mientras que la undécima 
+finaliza la iteración.
+
+Hemos construido el iterador Fib en otra clase (podemos decir que lo hemos integrado en la clase Class). Se crea una
+instancia junto con el objeto de Class. El objeto de la clase puede usarse como iterador cuando (y solo cuando) responde
+positivamente a la invocación de __iter__; esta clase puede hacerlo, y si se invoca de esta manera, proporciona un
+objeto capaz de obedecer el protocolo de iteración. Esta es la razón por la que la salida del código es la misma que
+antes, aunque el objeto de la clase Fib no se usa explícitamente dentro del contexto del bucle for.'''
+
+
+class Fib:
+    def __init__(self, nn):
+        self.__n = nn
+        self.__i = 0
+        self.__p1 = self.__p2 = 1
+
+    def __iter__(self):
+        print("Fib iter")
+        return self
+
+    def __next__(self):
+        self.__i += 1
+        if self.__i > self.__n:
+            raise StopIteration
+        if self.__i in [1, 2]:
+            return 1
+        ret = self.__p1 + self.__p2
+        self.__p1, self.__p2 = self.__p2, ret
+        return ret
+
+
+class Class:
+    def __init__(self, n):
+        self.__iter = Fib(n)
+
+    def __iter__(self):
+        print("Class iter")
+        return self.__iter
+
+object = Class(8)  # se inicializa class que asu vez fib
+
+for i in object: # es este for el que llama a iter() que a su vez llama a next
+    print(i)
+
+
+
+# ++++ Ejemplo web +++++
 '''
 Con iter Lo que se devuelve es un objeto iterable, que se asigna principalmente a la Función __iter__ de la clase, esta 
 función devuelve una implementación de la función __next__ del Objeto.
 
 Al llamar iter, se genera un objeto de iteración, que requiere __iter__ bebe devolver una implementación del método
-__next__ Objetos, podemos pasar next La función visita el siguiente elemento de este objeto y lanza uno si no desea 
+__next__ ,  next visita el siguiente elemento de este objeto y lanza uno si no desea 
 continuar iterando StopIteration La excepción (for La declaración detectará esta excepción y finalizará automáticamente 
 for), la función myrange es similar al funcionamiento de  range'''
-
-
 class MyRange(object):
     def __init__(self, end):
         self.start = 0
@@ -4435,6 +4575,8 @@ class A:
         pass
 
 a = A(1)
+
+
 print(hasattr(a, 'A'))  # Falla 2 argumentos y solo hemos definido uno!!!
 
 # ***********************************
@@ -5565,7 +5707,7 @@ if __name__ == '__main__':
 
 
 
-# +++++++ DESAFIO DAMAVIS +++++++
+# +++++++ DESAFIO SNAKE +++++++
 class SnakeException(Exception):
     def __init__(self, mensaje):
         self.message = mensaje
