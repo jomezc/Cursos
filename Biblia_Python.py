@@ -5759,7 +5759,30 @@ try:
 except IOError as e:
     print("I/O error occurred:", strerror(e.errno))
 
+'''
+Cómo leer bytes de un flujo
+El método denominado read() ofrece una forma alternativa de leer el contenido de un archivo binario. Invocado sin 
+argumentos, intenta leer todo el contenido del archivo en la memoria, convirtiéndolo en parte de un objeto recién creado
+de la clase bytes. Esta clase tiene algunas similitudes con bytearray, con la excepción de una diferencia significativa:
+es inmutable. Afortunadamente, no hay obstáculos para crear una matriz de bytes tomando su valor inicial directamente 
+del objeto de bytes, como aquí:'''
+from os import strerror
 
+try:
+    bf = open('file.bin', 'rb')
+    data = bytearray(bf.read())
+    bf.close()
+
+    for b in data:
+        print(hex(b), end=' ')
+
+except IOError as e:
+    print("I/O error occurred:", strerror(e.errno))
+
+'''
+cuidado: no utilizar este tipo de lectura si no se está seguro de que el contenido del archivo se ajuste a la memoria 
+disponible.
+'''
 # ********  Archivos  con with
 '''
 existe una sintaxis simplificada que automáticamente va a abrir y a cerrar nuestro archivo automáticamente sin tener que
