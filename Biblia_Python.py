@@ -4739,6 +4739,109 @@ la misma apariencia de la salida no significa que ambos bucles funcionen de la m
 lista se crea (y se repite) como un todo; en realidad existe cuando se ejecuta el ciclo. En el segundo bucle, no hay 
 ninguna lista: solo hay valores posteriores producidos por el generador, uno por uno.'''
 
+
+# ******* Closures
+'''El cierre es una técnica que permite almacenar valores a pesar de que el contexto en el que han sido creados ya no
+existe.
+'''
+# def outer(par):
+#     loc = par
+#
+#
+# var = 1
+# outer(var)
+# print(var)
+# print(loc)
+'''
+Las últimas dos líneas de este ejemplo causarán una excepción NameError: ni par ni loc son accesibles fuera de la 
+función. Ambas variables existen cuando y solo cuando se ejecuta la función outer().
+'''
+
+
+def outer(par):
+    loc = par
+
+    def inner():
+        return loc
+    return inner
+
+
+var = 1
+fun = outer(var)
+print(fun()) # 1
+'''
+Ahora Hay  nuevo: una función (llamada inner()) dentro de otra función (llamada outer()). Funciona como cualquier otra 
+función, excepto por el hecho de que inner() puede invocarse solo desde outer(). Podemos decir que inner() es la 
+herramienta privada de outer() - ninguna otra parte del código puede acceder a ella.
+- la función inner() devuelve el valor de la variable accesible dentro de su alcance, ya que inner() puede usar 
+cualquiera de las entidades a disposición de outside()
+- la función outer() devuelve la función inner() en sí misma; más precisamente, devuelve una copia de la función inner()
+, la que estaba congelada en el momento de la invocación de outer(); la función congelada contiene su entorno completo, 
+incluido el estado de todas las variables locales, lo que también significa que el valor de loc se conserva con éxito, 
+aunque outer() dejó de existir hace mucho tiempo. La función devuelta durante la invocación de outer() es un cierre.
+
+Un cierre debe ser invocado exactamente de la misma manera en que ha sido declarado. la función inner() no tiene 
+parámetros, por lo que tenemos que invocarla sin argumentos. 
+'''
+def make_closure(par):
+    loc = par
+
+    def power(p):
+        return p ** loc
+    return power
+
+
+fsqr = make_closure(2)
+fcub = make_closure(3)
+for i in range(5):
+    print(i, fsqr(i), fcub(i))
+
+'''
+Es totalmente posible declarar un cierre equipado con un número arbitrario de parámetros, por ejemplo, uno, al igual 
+que la función power(). Esto significa que el cierre no solo hace uso del entorno congelado, sino que también puede 
+modificar su comportamiento al usando valores tomados del exterior. Este ejemplo muestra una circunstancia más 
+interesante: puede crear tantos cierres como desee utilizando el mismo código. Esto se hace con una función llamada 
+make_closure(). En el ejemplo, el primer cierre obtenido de make_closure() define una herramienta que eleva al cuadrado 
+su argumento; el segundo está diseñado para reducir al cubo el argumento.
+Es por eso que el código produce el siguiente resultado:
+0 0 0
+1 1 1
+2 4 8
+3 9 27
+4 16 64
+
+'''
+'''
+PEP 8, la Guía de estilo para el código de Python, recomienda que las lambdas no se asignen a variables, sino que se 
+definan como funciones. Esto significa que es mejor usar una declaración de definición y evitar usar una declaración de
+asignación que vincule una expresión lambda a un identificador. Por ejemplo:
+Escriba una función lambda, establezca el bit menos significativo de su argumento entero y aplíquelo a la función map() 
+para producir la cadena 1 3 3 5 en la consola.
+# Recommended:
+def f(x): return 3*x  # o sea cierre
+# Not recommended:
+f = lambda x: 3*x
+
+La vinculación de lambdas a identificadores generalmente duplica la funcionalidad de la instrucción def. El uso de 
+sentencias def, por otro lado, genera más líneas de código. Es importante entender que la realidad muchas veces gusta
+ de dibujar sus propios escenarios, que no necesariamente siguen las convenciones o recomendaciones formales. Si decide
+ seguirlos o no, dependerá de muchas cosas: sus preferencias, otras convenciones adoptadas, las pautas internas de la 
+ empresa, la compatibilidad con el código existente, etc. Tenga esto en cuenta.
+'''
+
+# +++++++ ejemplo closure +++++
+def tag(tg):
+    tg2 = tg
+    tg2 = tg[0] + '/' + tg[1:]
+
+    def inner(str):
+        return tg + str + tg2
+    return inner
+
+
+b_tag = tag('<b>')
+print(b_tag('Monty Python'))  # <b>Monty Python</b>
+
 # ++++++++ ejemplo pregunta modulo +++++
 class I:
     def __init__(self):
@@ -4789,8 +4892,49 @@ class A:
 
 a = A(1)
 
-
 print(hasattr(a, 'A'))  # Falla 2 argumentos y solo hemos definido uno!!!
+
+# +++++++ otro
+# ¿cual es la salida esperada del siguiente código?
+class Vowels:
+    def __init__(self):
+        self.vow = "aeiouy "  # Yes, we know that y is not always considered a vowel.
+        self.pos = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.pos == len(self.vow):
+            raise StopIteration
+        self.pos += 1
+        return self.vow[self.pos - 1]
+
+vowels = Vowels()
+for v in vowels:
+    print(v, end=' ') # a e i o u y
+
+# +++++++ otro
+#Escriba una función lambda, establezca el bit menos significativo de su argumento entero y aplíquelo a la función
+# map() para producir la cadena 1 3 3 5 en la consola.
+any_list = [1, 2, 3, 4]
+even_list = # Complete the line here.
+print(even_list)
+list(map(lambda n: n | 1, any_list))  # recuerda, | es como un or
+
+
+# +++++++++ otro
+# ¿cual es la salida esperada del siguiente código?
+
+def replace_spaces(replacement='*'):
+    def new_replacement(text):
+        return text.replace(' ', replacement)
+    return new_replacement
+
+
+stars = replace_spaces()
+print(stars("And Now for Something Completely Different")) # And*Now*for*Something*Completely*Different
+
 
 # ***********************************
 # ********  LABORATORIO Mundo PC ##########
