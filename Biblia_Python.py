@@ -2494,9 +2494,101 @@ print(f'Pago con impuesto: {resultado}')
 # ***********************************
 # ********  lambda ##########
 # ***********************************
-# lambda arguments : expression
-#   Una función lambda es una pequeña función anónima.
-#   Una función lambda puede tomar cualquier número de argumentos, pero solo puede tener una expresión.
+'''Una función lambda es una función sin nombre (también puede llamarla función anónima). Por supuesto, tal declaración 
+plantea inmediatamente la pregunta: ¿cómo se usa algo que no se puede identificar? Afortunadamente, no es un problema, 
+ya que puede nombrar dicha función si realmente lo necesita, pero, de hecho, en muchos casos, la función lambda puede 
+existir y funcionar mientras permanece completamente incógnita. La declaración de la función lambda no se parece en nada
+a una declaración de función normal; compruébelo usted mismo:
+
+lambda parameters: expression
+
+Dicha cláusula devuelve el valor de la expresión cuando se tiene en cuenta el valor actual del argumento lambda actual.
+'''
+two = lambda: 2
+sqr = lambda x: x * x
+pwr = lambda x, y: x ** y
+
+for a in range(-2, 3):
+    print(sqr(a), end=" ")
+    print(pwr(a, two()))
+
+'''
+4 4
+1 1
+0 0
+1 1
+4 4
+la primera lambda es una función anónima sin parámetros que siempre devuelve 2. Como la hemos asignado a una variable
+llamada dos, podemos decir que la función ya no es anónima y podemos usar el nombre para invocarla.la segunda es una 
+función anónima de un parámetro que devuelve el valor de su argumento al cuadrado. También lo hemos nombrado como tal.
+la tercera lambda toma dos parámetros y devuelve el valor del primero elevado a la potencia del segundo.
+
+La parte más interesante de usar lambdas aparece cuando puede usarlas en su forma pura, como partes anónimas de código 
+destinadas a evaluar un resultado. Imagine que necesitamos una función (la llamaremos print_function) que imprime los 
+valores de una función dada (otra) para un conjunto de argumentos seleccionados. Queremos que print_function sea 
+universal; debe aceptar un conjunto de argumentos colocados en una lista y una función para evaluar, ambos como 
+argumentos; no queremos codificar nada.
+'''
+def print_function(args, fun):
+    for x in args:
+        print('f(', x,')=', fun(x), sep='')
+
+
+def poly(x):
+    return 2 * x**2 - 4 * x + 2
+
+
+print_function([x for x in range(-2, 3)], poly)
+'''
+Vamos a analizarlo. La función print_function() toma dos parámetros:
+
+el primero, una lista de argumentos para los que queremos imprimir los resultados;
+el segundo, una función que debe ser invocada tantas veces como valores se recogen dentro del primer parámetro.
+Nota: también hemos definido una función llamada poly() - esta es la función cuyos valores vamos a imprimir. El cálculo
+que realiza la función no es muy sofisticado: es el polinomio f(x) = 2x2 - 4x + 2
+
+Luego, el nombre de la función se pasa a print_function() junto con un conjunto de cinco argumentos diferentes: 
+el conjunto se crea con una cláusula de comprensión de lista. El código imprime en varias líneas: f(-2)=18 f(-1)=8 
+f(0)=2 f(1)=0 f(2)=2
+
+¿Podemos evitar definir la función poly(), ya que no la usaremos más de una vez? Sí, podemos: este es el beneficio que 
+puede brindar una lambda.
+'''
+def print_function(args, fun):
+    for x in args:
+        print('f(', x,')=', fun(x), sep='')
+
+print_function([x for x in range(-2, 3)], lambda x: 2 * x**2 - 4 * x + 2)
+'''
+print_function() se ha mantenido exactamente igual, pero no hay función poly(). Ya no lo necesitamos, ya que el 
+polinomio ahora está directamente dentro de la invocación de print_function() en forma de lambda.El código se ha vuelto
+más corto, más claro y más legible.
+'''
+# ******** la función map():
+'''map (función, lista)
+toma dos argumentos: Una función y una lista. el segundo argumento map() puede ser cualquier entidad que se pueda iterar
+(por ejemplo, una tupla o simplemente un generador) map() puede aceptar más de dos argumentos. La función map() aplica 
+la función pasada por su primer argumento a todos los elementos de su segundo argumento y devuelve un iterador que 
+entrega todos los resultados de la función subsiguiente. Puede usar el iterador resultante en un bucle o convertirlo en 
+una lista usando la función list().
+'''
+list_1 = [x for x in range(5)]
+list_2 = list(map(lambda x: 2 ** x, list_1))
+print(list_2)
+
+for x in map(lambda x: x * x, list_2):
+    print(x, end=' ')
+print()
+
+'''
+construye list_1 con valores de 0 a 4; a continuación, usa map junto con la primera lambda para crear una nueva lista 
+en la que todos los elementos se hayan evaluado como 2 elevados a la potencia tomada del elemento correspondiente de 
+list_1; list_2 se imprime entonces; en el siguiente paso, use la función map() nuevamente para hacer uso del generador 
+que devuelve e imprimir directamente todos los valores que entrega; como puede ver, hemos activado la segunda lambda 
+aquí: simplemente cuadra cada elemento de list_2.
+'''
+
+# ++++ Ejemplos +++++
 x = lambda a: a + 10
 print(x(5))
 
@@ -2506,18 +2598,18 @@ print(x(5, 6))
 x = lambda a, b, c: a + b + c
 print(x(5, 6, 2))
 
-# corrector de nombre y apellidos
+
 nombre_completo = lambda n, a: n.strip().title() + " " + a.strip().title()
 print(nombre_completo("   jesus", "   GOMEZ"))
 
-# Ordenar lista por apellido split separa por el espacio y empezamos por el final hasta ese espacio, lower todo a
+# ++++ Ordenar lista por apellido +++++
 #  minúsculas por si acaso
+# split separa por el espacio y empezamos por el final hasta ese espacio, lower todo a
 lista = ["Jesus Gomez", "María Macanás", "Marisa Baños", "Maria Canovas"]
 lista.sort(key=lambda name: name.split(" ")[-1].lower())
 print(lista)
 
 
-# El poder de lambda se muestra mejor cuando los usas como una función anónima dentro de otra función. Digamos que
 # tienes una definición de función que toma un argumento, y ese argumento se multiplicará por un número desconocido:
 def myfunc(n):
     return lambda a: a * n
@@ -4565,7 +4657,7 @@ reanuda la ejecución (no se toma desde cero, como después de la devolución).
 
 Hay una limitación importante: dicha función no debe invocarse explícitamente ya que, de hecho, ya no es una función; 
 es un objeto generador ( si lo imprimes ves que es un objeto generador y lo tienes que llamar desde por ejemplo un for 
-una compresión de listas o incluso una lista! ). 
+una compresión de listas, una lista! e incluso el operador in (como for i in renge(x)). 
 La invocación devolverá el identificador del objeto, no la serie que esperamos del generador.Por las mismas razones, 
 la función anterior (la que tiene la declaración de retorno) solo puede invocarse explícitamente 
 y no debe usarse como generador.
@@ -4581,8 +4673,49 @@ def powers_of_2(n):
 
 t = [x for x in powers_of_2(5)]
 l = list(powers_of_2(3))
+for i in range(20):
+    if i in powers_of_2(8):
+        print(i, end=' ')
 print(t)  # [1, 2, 4, 8, 16]
 print(l)  # [1, 2, 4]
+
+# ++++++++ ejemplo Fibonacci con yield +++++
+
+
+def fibonacci(n):
+    p = pp = 1
+    for i in range(n):
+        if i in [0, 1]:
+            yield 1
+        else:
+            n = p + pp
+            pp, p = p, n
+            yield n
+
+
+fibs = list(fibonacci(10))
+print(fibs)
+
+
+# Compresión de listas y de generadores
+'''Un solo cambio puede convertir cualquier lista de comprensión en un generador.Son los paréntesis. Los corchetes hacen
+una comprensión, los paréntesis hacen un generador. '''
+the_list = [1 if x % 2 == 0 else 0 for x in range(10)]
+the_generator = (1 if x % 2 == 0 else 0 for x in range(10))
+
+for v in the_list:
+    print(v, end=" ")  # 1 0 1 0 1 0 1 0 1 0
+print()
+
+for v in the_generator:
+    print(v, end=" ")  # 1 0 1 0 1 0 1 0 1 0
+print()
+'''
+Aplique la función len() a ambas entidades. len(the_list) se evaluará como 10. Claro y predecible. len(the_generator) 
+generará una excepción TypeError: object of type 'generator' has no len()
+la misma apariencia de la salida no significa que ambos bucles funcionen de la misma manera. En el primer ciclo, la 
+lista se crea (y se repite) como un todo; en realidad existe cuando se ejecuta el ciclo. En el segundo bucle, no hay 
+ninguna lista: solo hay valores posteriores producidos por el generador, uno por uno.'''
 
 # ++++++++ ejemplo pregunta modulo +++++
 class I:
