@@ -4526,6 +4526,64 @@ print(isinstance(a, Iterator))
 for i in a:
     print(i)
 
+# ******* Yield
+'''
+El protocolo del iterador no es particularmente difícil de entender y usar, pero también es indiscutible que el 
+protocolo es bastante inconveniente. La principal incomodidad que trae es la necesidad de guardar el estado de la 
+iteración entre invocaciones posteriores de __iter__. Por ejemplo, el iterador de Fib se ve obligado a almacenar con 
+precisión el lugar en el que se detuvo la última invocación (es decir, el número evaluado y los valores de los dos 
+elementos anteriores). Esto hace que el código sea más grande y menos comprensible.
+
+Esta es la razón por la que Python ofrece una forma mucho más efectiva, conveniente y elegante de escribir iteradores.
+El concepto se basa fundamentalmente en un mecanismo muy específico y poderoso provisto por la palabra clave yield. 
+Puede pensar en la palabra clave yield como un hermano más inteligente de la declaración de devolución, con una 
+diferencia esencial.
+'''
+
+def fun(n):
+    for i in range(n):
+        return i
+'''
+Se ve extraño, ¿no? Está claro que el ciclo for no tiene posibilidad de terminar su primera ejecución, ya que el retorno
+lo romperá irrevocablemente. Además, invocar la función no cambiará nada: el ciclo for comenzará desde cero y se 
+interrumpirá de inmediato. Podemos decir que dicha función no puede guardar y restaurar su estado entre invocaciones 
+posteriores. Esto también significa que una función como esta no se puede usar como generador.
+'''
+
+def fun(n):
+    for i in range(n):
+        yield i
+
+
+for v in fun(5):
+    print(v)  # 0 1 2 3 4
+'''
+Hemos agregado yield en lugar de retorno. Esta pequeña enmienda convierte la función en un generador. En primer lugar, 
+proporciona el valor de la expresión especificada después de la palabra clave yield, al igual que return, pero no pierde 
+el estado de la función. Todos los valores de las variables se congelan y esperan la próxima invocación, cuando se 
+reanuda la ejecución (no se toma desde cero, como después de la devolución).
+
+Hay una limitación importante: dicha función no debe invocarse explícitamente ya que, de hecho, ya no es una función; 
+es un objeto generador ( si lo imprimes ves que es un objeto generador y lo tienes que llamar desde por ejemplo un for 
+una compresión de listas o incluso una lista! ). 
+La invocación devolverá el identificador del objeto, no la serie que esperamos del generador.Por las mismas razones, 
+la función anterior (la que tiene la declaración de retorno) solo puede invocarse explícitamente 
+y no debe usarse como generador.
+'''
+# ++++++++ ejemplo yield +++++
+
+def powers_of_2(n):
+    power = 1
+    for i in range(n):
+        yield power
+        power *= 2
+
+
+t = [x for x in powers_of_2(5)]
+l = list(powers_of_2(3))
+print(t)  # [1, 2, 4, 8, 16]
+print(l)  # [1, 2, 4]
+
 # ++++++++ ejemplo pregunta modulo +++++
 class I:
     def __init__(self):
