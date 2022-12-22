@@ -2574,11 +2574,12 @@ una lista usando la función list().
 '''
 list_1 = [x for x in range(5)]
 list_2 = list(map(lambda x: 2 ** x, list_1))
-print(list_2)
+print(list_2)  # [1, 2, 4, 8, 16]
 
 for x in map(lambda x: x * x, list_2):
     print(x, end=' ')
-print()
+print()  # 1 4 16 64 256
+
 
 '''
 construye list_1 con valores de 0 a 4; a continuación, usa map junto con la primera lambda para crear una nueva lista 
@@ -2587,6 +2588,27 @@ list_1; list_2 se imprime entonces; en el siguiente paso, use la función map() 
 que devuelve e imprimir directamente todos los valores que entrega; como puede ver, hemos activado la segunda lambda 
 aquí: simplemente cuadra cada elemento de list_2.
 '''
+
+# ******** la función filter():
+'''Otra función de Python que puede embellecerse significativamente mediante la aplicación de una lambda es filter().
+
+Espera el mismo tipo de argumentos que map(), pero hace algo diferente: filtra su segundo argumento mientras se guía por
+las direcciones que fluyen de la función especificada como primer argumento (la función se invoca para cada elemento de
+la lista, al igual que en map ()). Los elementos que devuelven True de la función pasan el filtro; los demás son 
+rechazados.
+'''
+from random import seed, randint
+seed()
+data = [randint(-10,10) for x in range(5)]
+filtered = list(filter(lambda x: x > 0 and x % 2 == 0, data))
+print(data)
+print(filtered)
+'''
+Nota: hemos utilizado el módulo radmon para inicializar el generador de números aleatorios (que no debe confundirse 
+con los generadores de los que acabamos de hablar) con la función seed()  y para producir cinco valores enteros 
+aleatorios de -10 a 10 usando la función randint().Luego se filtra la lista y solo se aceptan los números pares y 
+mayores que cero.'''
+
 
 # ++++ Ejemplos +++++
 x = lambda a: a + 10
