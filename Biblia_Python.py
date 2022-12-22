@@ -5679,7 +5679,7 @@ except IOError as e:
     print("I/O error occurred: ", strerror(e.errno))
 
 
-# ******** bytearray
+# ******** bytearray ARCHIVOS BINARIOS
 '''
 Los datos amorfos son datos que no tienen forma o forma específica, son solo una serie de bytes, por ejemplo, gráficos 
 de mapa de bits. Lo más importante de esto es que en el lugar donde tenemos contacto con los datos, no podemos, o 
@@ -5695,8 +5695,70 @@ uno de los constructores disponibles.
 '''
 datos = bytearray(10)  # crea un objeto bytearray capaz de almacenar diez bytes, el constructor llena la matriz con 0.
 '''
+Los bytearrays se parecen a las listas en muchos aspectos. Por ejemplo, son mutables, son un sujeto de la función len() 
+y puede acceder a cualquiera de sus elementos mediante la indexación convencional.Hay una limitación importante: no debe
+establecer ningún elemento de matriz de bytes con un valor que no sea un número entero (la violación de esta regla 
+provocará una excepción TypeError) y no puede asignar un valor que no provenga del rango de 0 a 255 inclusive (a menos 
+que desee provocar una excepción ValueError). Puede tratar cualquier elemento de matriz de bytes como valores enteros, 
+al igual que en el ejemplo del editor.
+'''
+data = bytearray(10)
+
+for i in range(len(data)):
+    data[i] = 10 - i
+
+for b in data:
+    print(hex(b))  # hex convierte a hexadecimal
 
 '''
+escribir una matriz de bytes en un archivo binario
+primero, inicializamos bytearray con valores posteriores a partir de 10; si desea que el contenido del archivo sea 
+claramente legible, reemplace 10 con algo como ord('a') - esto producirá bytes que contienen valores correspondientes 
+a la parte alfabética del código ASCII (no crea que hará que el archivo sea un texto archivo: sigue siendo binario, 
+ya que se creó con un indicador wb); luego, creamos el archivo usando la función open() - la única diferencia en 
+comparación con las variantes anteriores es el modo abierto que contiene la bandera b; el método write() toma su 
+argumento (bytearray) y lo envía (como un todo) al archivo; la corriente se cierra entonces de forma rutinaria.
+El método write() devuelve una cantidad de bytes escritos con éxito. Si los valores difieren de la longitud de los 
+argumentos del método, puede anunciar algunos errores de escritura.
+'''
+from os import strerror
+
+data = bytearray(10)
+
+for i in range(len(data)):
+    data[i] = 10 + i
+
+try:
+    bf = open('file.bin', 'wb')
+    bf.write(data)
+    bf.close()
+except IOError as e:
+    print("I/O error occurred:", strerror(e.errno))
+'''
+Cómo leer bytes de un flujo
+La lectura de un archivo binario requiere el uso de un nombre de método especializado readinto(), ya que el método no 
+crea un nuevo objeto de matriz de bytes, sino que llena uno creado previamente con los valores tomados del archivo 
+binario.
+- el método devuelve el número de bytes leídos con éxito;
+- el método intenta llenar todo el espacio disponible dentro de su argumento; si hay más datos en el archivo que espacio
+ en el argumento, la operación de lectura se detendrá antes del final del archivo; de lo contrario, el resultado del 
+ método puede indicar que la matriz de bytes solo se ha llenado fragmentariamente (el resultado también lo mostrará, y 
+ la parte de la matriz que no está siendo utilizada por los contenidos recién leídos permanece intacta)
+'''
+from os import strerror
+data = bytearray(10)
+
+try:
+    bf = open('file.bin', 'rb')  # abrimos el archivo con el modo descrito como rb;
+    bf.readinto(data)  # leemos su contenido en la matriz de bytes denominada data, de diez bytes de tamaño
+    bf.close()
+
+    for b in data:
+        print(hex(b), end=' ')  # imprimimos el contenido de la matriz de bytes: 0xa 0xb 0xc 0xd 0xe 0xf 0x10 0x11 0x12
+        # 0x13
+except IOError as e:
+    print("I/O error occurred:", strerror(e.errno))
+
 
 # ********  Archivos  con with
 '''
