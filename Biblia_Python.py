@@ -4918,8 +4918,9 @@ for v in vowels:
 #Escriba una función lambda, establezca el bit menos significativo de su argumento entero y aplíquelo a la función
 # map() para producir la cadena 1 3 3 5 en la consola.
 any_list = [1, 2, 3, 4]
-even_list = # Complete the line here.
-print(even_list)
+# even_list = # Complete the line here.
+# print(even_list)
+
 list(map(lambda n: n | 1, any_list))  # recuerda, | es como un or
 
 
@@ -4935,268 +4936,6 @@ def replace_spaces(replacement='*'):
 stars = replace_spaces()
 print(stars("And Now for Something Completely Different")) # And*Now*for*Something*Completely*Different
 
-
-# ***********************************
-# ********  LABORATORIO Mundo PC ##########
-# ***********************************
-# diagrama uml en
-# https://www.udemy.com/course/universidad-python-desde-cero-hasta-experto-django-flask-rest-web/learn/lecture/26667098#overview
-# _ protegido (#)
-# __privado
-# orden que contiene computadoras, las cual tiene monitor telcado
-# y ratón ( los dos últimos pertenecen a dispositivo de entrada)
-
-class DispositivoEntrada:  # RESPONSABILIDAD crear objetos de tipo DispositivoEntrada
-    def __init__(self, tipo_entrada, marca):
-        self._tipo_entrada = tipo_entrada
-        self._marca = marca
-
-    def __str__(self):
-        return f'Marca: {self.marca}, Tipo de entrada: {self.tipo_entrada} '
-
-    @property
-    def tipo_entrada(self):
-        return self._tipo_entrada
-
-    @property
-    def marca(self):
-        return self._marca
-
-    @tipo_entrada.setter
-    def tipoEntrada(self, tipo_entrada):
-        self._tipo_entrada = tipo_entrada
-
-    @marca.setter
-    def marca(self, marca):
-        self._marca = marca
-
-
-class Raton(DispositivoEntrada):  # RESPONSABILIDAD crear objetos de tipo ratón
-    __contador_raton = 0
-
-    def __init__(self, tipo, marca):
-        super().__init__(tipo, marca)
-        self.__id_raton = Raton.contador_raton()
-
-    @classmethod
-    def contador_raton(cls):
-        cls.__contador_raton += 1
-        return cls.__contador_raton
-
-    @property
-    def id_raton(self):
-        return self.__id_raton
-
-    def __str__(self):
-        return f'Ratón: ID {self.id_raton}, {super().__str__()} '
-
-
-class Teclado(DispositivoEntrada):
-    __contador_teclado = 0
-
-    def __init__(self, tipo, marca):
-        super().__init__(tipo, marca)
-        self.__id_teclado = Teclado.contador_teclado()
-
-    @classmethod
-    def contador_teclado(cls):
-        cls.__contador_teclado += 1
-        return cls.__contador_teclado
-
-    @property
-    def id_teclado(self):
-        return self.__id_teclado
-
-    def __str__(self):
-        return f'Teclado: ID {self.id_teclado}, {super().__str__()}'
-
-
-class Monitor:  # RESPONSABILIDAD crear objetos de tipo Monitor
-    __contador_monitores = 0
-
-    def __init__(self, marca, tamaño):
-        self.__id_monitor = Monitor.contador_monitores()
-        self.__marca = marca
-        self.__tamaño = tamaño
-
-    @classmethod
-    def contador_monitores(cls):
-        cls.__contador_monitores += 1
-        return cls.__contador_monitores
-
-    @property
-    def marca(self):
-        return self.__marca
-
-    @property
-    def tamaño(self):
-        return self.__tamaño
-
-    @property
-    def id_monitor(self):
-        return self.__id_monitor
-
-    @marca.setter
-    def marca(self, marca):
-        self.__marca = marca
-
-    @tamaño.setter
-    def tamaño(self, tamaño):
-        self.tamaño = tamaño
-
-    def __str__(self):
-        return f'Monitor: ID {self.id_monitor}, de marca: {self.marca}  y {self.tamaño} pulgadas'
-
-
-class Ordenador:
-    __contador_ordenador = 0
-
-    def __init__(self, nombre, monitor, teclado, raton):
-        self.__id_ordenador = Ordenador.contador_ordenador()
-        self.__nombre = nombre
-        self.__monitor = monitor
-        self.__teclado = teclado
-        self.__raton = raton
-
-    @classmethod
-    def contador_ordenador(cls):
-        cls.__contador_ordenador += 1
-        return cls.__contador_ordenador
-
-    @property
-    def id_ordenador(self):
-        return self.__id_ordenador
-
-    @property
-    def nombre(self):
-        return self.__nombre
-
-    @property
-    def monitor(self):
-        return self.__monitor
-
-    @property
-    def teclado(self):
-        return self.__teclado
-
-    @property
-    def raton(self):
-        return self.__raton
-
-    @nombre.setter
-    def nombre(self, nombre):
-        self.__nombre = nombre
-
-    @teclado.setter
-    def teclado(self, teclado):
-        self.__teclado = teclado
-
-    @raton.setter
-    def raton(self, raton):
-        self.__raton = raton
-
-    def __str__(self):
-        return f'''Ordenador {self.id_ordenador}
-    Nombre: {self.nombre}
-    Monitor: {self.monitor}
-    Teclado: {self.teclado}
-    Ratón: {self.raton}
-'''
-
-    def imprime_ordenador(self):
-        return self.__str__()
-
-
-class Orden:
-    __contador_ordenes = 0
-
-    def __init__(self, ordenadores):
-        self.__id_orden = Orden.contador_ordendes()
-        self.__ordenadores = list(ordenadores)
-
-    @classmethod
-    def contador_ordendes(cls):
-        cls.__contador_ordenes += 1
-        return cls.__contador_ordenes
-
-    @property
-    def id_orden(self):
-        return self.__id_orden
-
-    @property
-    def ordenadores(self):
-        return self.__ordenadores
-
-    @ordenadores.setter
-    def ordenadores(self, ordenadores):
-        self.__ordenadores = ordenadores
-
-    def agregar_ordenador(self, ordenador):
-        self.__ordenadores.append(ordenador)
-
-    def str_ordenadores(self):
-        lista = ''
-        for ordenador in self.__ordenadores:
-            lista += ordenador.imprime_ordenador() + '\n'
-        return lista
-
-    def __str__(self):
-        return f'Orden {self.id_orden}\n{self.str_ordenadores()}'
-
-
-raton1 = Raton('USB', 'Racer')
-telcado1 = Teclado('Calbe', 'Razer')
-monitor1 = Monitor('HP', 27)
-ordenador1 = Ordenador('Dell', monitor1, telcado1, raton1)
-raton2 = Raton('Bluetooth', 'Racer')
-telcado2 = Teclado('Bluetooth', 'Razer')
-monitor2 = Monitor('Samsung', 32)
-ordenador2 = Ordenador('Mac', monitor2, telcado2, raton2)
-raton3 = Raton('Bluetooth', 'Apple')
-telcado3 = Teclado('Bluetooth', 'Apple')
-monitor3 = Monitor('Integrado', 16)
-ordenador3 = Ordenador('Macboockpro', monitor2, telcado2, raton2)
-
-lista_ordandores = [ordenador1, ordenador2]
-orden1 = Orden(lista_ordandores)
-orden1.agregar_ordenador(ordenador3)
-print(orden1)
-
-
-# Refactorizando ejercicio
-class OrdenRefactor:
-    contadorOrdenes = 0
-
-    def __init__(self, *ordenadores):
-        self.__idOrden = OrdenRefactor.contarOrden()
-        self.__ordenadores = list(ordenadores)
-
-    @property
-    def idOrden(self):
-        return self.__idOrden
-
-    @property
-    def ordenadores(self):
-        return self.__ordenadores
-
-    @classmethod
-    def contarOrden(cls):
-        cls.contadorOrdenes += 1
-        return cls.contadorOrdenes
-
-    def agregarOrdenador(self, ordenador):
-        self.ordenadores.add(ordenador)
-
-    def __str__(self):
-        salida = f'Orden {self.idOrden}'
-        for ordenador in self.ordenadores:
-            salida = salida + '\n' + f'{ordenador}'
-        return salida
-
-
-ordA = Ordenador('HP', Monitor('thosiba', '25"'), Teclado('Bluetooth', 'HP'), Raton('Bluetooth', 'Razer'))
-ordB = Ordenador('MACBOOK', Monitor('Apple pro Res', '16"'), Teclado('Bluetooth', 'apple'), Raton('bluetooth', 'Razer'))
-print(OrdenRefactor(ordA, ordB))
 
 # ***********************************
 # ********  Excepciones ##########
@@ -5635,9 +5374,6 @@ except NewValueError as nve:
         print(arg, end='! ')  # Enemy warning! Red alert! High readiness!
 
 
-
-
-
 # ***********************************
 # ********  Manejo de Archivos ##########
 # ***********************************
@@ -5850,6 +5586,265 @@ def number_to_string(argument):
 
 number_to_string(4)
 
+# ++++++++  LABORATORIO Mundo PC ##########
+# diagrama uml en
+# https://www.udemy.com/course/universidad-python-desde-cero-hasta-experto-django-flask-rest-web/learn/lecture/26667098#overview
+# _ protegido (#)
+# __privado
+# orden que contiene computadoras, las cual tiene monitor telcado
+# y ratón ( los dos últimos pertenecen a dispositivo de entrada)
+
+class DispositivoEntrada:  # RESPONSABILIDAD crear objetos de tipo DispositivoEntrada
+    def __init__(self, tipo_entrada, marca):
+        self._tipo_entrada = tipo_entrada
+        self._marca = marca
+
+    def __str__(self):
+        return f'Marca: {self.marca}, Tipo de entrada: {self.tipo_entrada} '
+
+    @property
+    def tipo_entrada(self):
+        return self._tipo_entrada
+
+    @property
+    def marca(self):
+        return self._marca
+
+    @tipo_entrada.setter
+    def tipoEntrada(self, tipo_entrada):
+        self._tipo_entrada = tipo_entrada
+
+    @marca.setter
+    def marca(self, marca):
+        self._marca = marca
+
+
+class Raton(DispositivoEntrada):  # RESPONSABILIDAD crear objetos de tipo ratón
+    __contador_raton = 0
+
+    def __init__(self, tipo, marca):
+        super().__init__(tipo, marca)
+        self.__id_raton = Raton.contador_raton()
+
+    @classmethod
+    def contador_raton(cls):
+        cls.__contador_raton += 1
+        return cls.__contador_raton
+
+    @property
+    def id_raton(self):
+        return self.__id_raton
+
+    def __str__(self):
+        return f'Ratón: ID {self.id_raton}, {super().__str__()} '
+
+
+class Teclado(DispositivoEntrada):
+    __contador_teclado = 0
+
+    def __init__(self, tipo, marca):
+        super().__init__(tipo, marca)
+        self.__id_teclado = Teclado.contador_teclado()
+
+    @classmethod
+    def contador_teclado(cls):
+        cls.__contador_teclado += 1
+        return cls.__contador_teclado
+
+    @property
+    def id_teclado(self):
+        return self.__id_teclado
+
+    def __str__(self):
+        return f'Teclado: ID {self.id_teclado}, {super().__str__()}'
+
+
+class Monitor:  # RESPONSABILIDAD crear objetos de tipo Monitor
+    __contador_monitores = 0
+
+    def __init__(self, marca, tamaño):
+        self.__id_monitor = Monitor.contador_monitores()
+        self.__marca = marca
+        self.__tamaño = tamaño
+
+    @classmethod
+    def contador_monitores(cls):
+        cls.__contador_monitores += 1
+        return cls.__contador_monitores
+
+    @property
+    def marca(self):
+        return self.__marca
+
+    @property
+    def tamaño(self):
+        return self.__tamaño
+
+    @property
+    def id_monitor(self):
+        return self.__id_monitor
+
+    @marca.setter
+    def marca(self, marca):
+        self.__marca = marca
+
+    @tamaño.setter
+    def tamaño(self, tamaño):
+        self.tamaño = tamaño
+
+    def __str__(self):
+        return f'Monitor: ID {self.id_monitor}, de marca: {self.marca}  y {self.tamaño} pulgadas'
+
+
+class Ordenador:
+    __contador_ordenador = 0
+
+    def __init__(self, nombre, monitor, teclado, raton):
+        self.__id_ordenador = Ordenador.contador_ordenador()
+        self.__nombre = nombre
+        self.__monitor = monitor
+        self.__teclado = teclado
+        self.__raton = raton
+
+    @classmethod
+    def contador_ordenador(cls):
+        cls.__contador_ordenador += 1
+        return cls.__contador_ordenador
+
+    @property
+    def id_ordenador(self):
+        return self.__id_ordenador
+
+    @property
+    def nombre(self):
+        return self.__nombre
+
+    @property
+    def monitor(self):
+        return self.__monitor
+
+    @property
+    def teclado(self):
+        return self.__teclado
+
+    @property
+    def raton(self):
+        return self.__raton
+
+    @nombre.setter
+    def nombre(self, nombre):
+        self.__nombre = nombre
+
+    @teclado.setter
+    def teclado(self, teclado):
+        self.__teclado = teclado
+
+    @raton.setter
+    def raton(self, raton):
+        self.__raton = raton
+
+    def __str__(self):
+        return f'''Ordenador {self.id_ordenador}
+    Nombre: {self.nombre}
+    Monitor: {self.monitor}
+    Teclado: {self.teclado}
+    Ratón: {self.raton}
+'''
+
+    def imprime_ordenador(self):
+        return self.__str__()
+
+
+class Orden:
+    __contador_ordenes = 0
+
+    def __init__(self, ordenadores):
+        self.__id_orden = Orden.contador_ordendes()
+        self.__ordenadores = list(ordenadores)
+
+    @classmethod
+    def contador_ordendes(cls):
+        cls.__contador_ordenes += 1
+        return cls.__contador_ordenes
+
+    @property
+    def id_orden(self):
+        return self.__id_orden
+
+    @property
+    def ordenadores(self):
+        return self.__ordenadores
+
+    @ordenadores.setter
+    def ordenadores(self, ordenadores):
+        self.__ordenadores = ordenadores
+
+    def agregar_ordenador(self, ordenador):
+        self.__ordenadores.append(ordenador)
+
+    def str_ordenadores(self):
+        lista = ''
+        for ordenador in self.__ordenadores:
+            lista += ordenador.imprime_ordenador() + '\n'
+        return lista
+
+    def __str__(self):
+        return f'Orden {self.id_orden}\n{self.str_ordenadores()}'
+
+
+raton1 = Raton('USB', 'Racer')
+telcado1 = Teclado('Calbe', 'Razer')
+monitor1 = Monitor('HP', 27)
+ordenador1 = Ordenador('Dell', monitor1, telcado1, raton1)
+raton2 = Raton('Bluetooth', 'Racer')
+telcado2 = Teclado('Bluetooth', 'Razer')
+monitor2 = Monitor('Samsung', 32)
+ordenador2 = Ordenador('Mac', monitor2, telcado2, raton2)
+raton3 = Raton('Bluetooth', 'Apple')
+telcado3 = Teclado('Bluetooth', 'Apple')
+monitor3 = Monitor('Integrado', 16)
+ordenador3 = Ordenador('Macboockpro', monitor2, telcado2, raton2)
+
+lista_ordandores = [ordenador1, ordenador2]
+orden1 = Orden(lista_ordandores)
+orden1.agregar_ordenador(ordenador3)
+print(orden1)
+
+
+# Refactorizando ejercicio
+class OrdenRefactor:
+    contadorOrdenes = 0
+
+    def __init__(self, *ordenadores):
+        self.__idOrden = OrdenRefactor.contarOrden()
+        self.__ordenadores = list(ordenadores)
+
+    @property
+    def idOrden(self):
+        return self.__idOrden
+
+    @property
+    def ordenadores(self):
+        return self.__ordenadores
+
+    @classmethod
+    def contarOrden(cls):
+        cls.contadorOrdenes += 1
+        return cls.contadorOrdenes
+
+    def agregarOrdenador(self, ordenador):
+        self.ordenadores.add(ordenador)
+
+    def __str__(self):
+        salida = f'Orden {self.idOrden}'
+        for ordenador in self.ordenadores:
+            salida = salida + '\n' + f'{ordenador}'
+        return salida
+
+
+ordA = Ordenador('HP', Monitor('thosiba', '25"'), Teclado('Bluetooth', 'HP'), Raton('Bluetooth', 'Razer'))
+ordB = Ordenador('MACBOOK', Monitor('Apple pro Res', '16"'), Teclado('Bluetooth', 'apple'), Raton('bluetooth', 'Razer'))
+print(OrdenRefactor(ordA, ordB))
 
 # ++++++++ desafío Edube 1: 3 en raya +++++++++++++
 """
