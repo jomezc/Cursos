@@ -2821,7 +2821,253 @@ version='Darwin Kernel
 Version 22.2.0: Fri Nov 11 02:03:51 PST 2022; root:xnu-8792.61.2~4/RELEASE_ARM64_T6000', machine='arm64')
 '''
 # name
-'''te da el nombre del sistema operativo'''
+'''te da el nombre del sistema operativo
+posix: obtendrá este nombre si usa Unix;
+nt: obtendrá este nombre si usa Windows;
+java: obtendrá este nombre si su código está escrito en Jython.
+'''
+import os
+print(os.name)  # posix
+# mkdir
+'''le permite crear un directorio. La función mkdir requiere una ruta que puede ser relativa o absoluta.
+my_first_directory - ruta relativa, crea la carpeta en la ruta actual.
+./my_first_directory: ruta relativa, apunta explícitamente al directorio actual. mismo efecto que el caso anterior;
+../my_first_directory — ruta relativa que creará  my_first_directory en el directorio principal del directorio actual;
+/python/my_first_directory: esta es la ruta absoluta que creará el directorio my_first_directory, que a su vez se 
+encuentra en el directorio python en el directorio raíz.
+No podemos crear un directorio si ya existe (FileExistsError). Además del argumento de ruta, opcionalmente el argumento 
+de modo, que especifica los permisos de directorio. Sin embargo, en algunos sistemas, el argumento de modo se ignora.
+Para cambiar los permisos del directorio, recomendamos la función chmod, similar al comando chmod en los sistemas Unix.
+listdir() devuelve una lista con los nombres de los archivos y directorios que se encuentran en la ruta pasada 
+como argumento. Si no se le pasa ningún argumento, se usará el directorio de trabajo actual. Es importante que el 
+resultado de la función listdir omita las entradas '.' y '..'.'''
+import os
+os.mkdir("my_first_directory")
+print(os.listdir())
+
+# makedirs
+'''makedirs permite la creación recursiva de directorios, lo que significa que se crearán todos los directorios de la 
+ruta. Para moverse entre directorios, puede usar una función llamada chdir, que cambia el directorio de trabajo actual a 
+ la ruta especificada.'''
+import os
+os.makedirs("my_first_directory/my_second_directory")
+os.chdir("my_first_directory")
+print(os.listdir())
+
+# getwcd
+'''obtener el directorio completo de trabajo actual Se llama getcwd.'''
+import os
+
+os.makedirs("my_first_directory/my_second_directory")
+os.chdir("my_first_directory")
+print(os.getcwd())
+os.chdir("my_second_directory")
+print(os.getcwd())
+
+'''
+os.mkdir("my_first_directory")
+print(os.listdir())
+os.rmdir("my_first_directory") # eliminar directorio
+os.removedirs("my_first_directory/my_second_directory")  # eliminar directorio y subdirectorios
+print(os.listdir())
+'''
+
+# system
+# Ejecuta el comando pasado como argumento.
+import os
+
+returned_value = os.system("mkdir my_first_directory")
+print(returned_value)
+
+# +++++ buscador de rutas absolutas ++++
+'''Escriba una función o método llamado find que tome dos argumentos llamados path y dir. El argumento ruta debe 
+aceptar una ruta relativa o absoluta a un directorio donde debe comenzar la búsqueda, mientras que el argumento dir 
+debe ser el nombre de un directorio que desea encontrar en la ruta dada. Su programa debería mostrar las rutas 
+absolutas si encuentra un directorio con el nombre dado. La búsqueda en el directorio debe hacerse recursivamente. Esto 
+significa que la búsqueda también debe incluir todos los subdirectorios en la ruta dada.'''
+import os
+
+class DirectorySearcher:
+    def find(self, path, dir):
+        try:
+            os.chdir(path)  # este intento de ir al directorio es lo que hace que corte , caso base cuando ya no sea un
+            # directorio volverá gracias al return de abajo
+        except OSError:
+            # Doesn't process a file that isn't a directory.
+            return
+
+        current_dir = os.getcwd()
+        for entry in os.listdir("."):
+            if entry == dir:
+                print(os.getcwd() + "/" + dir)
+            self.find(current_dir + "/" + entry, dir)  # llamada recursiva
+
+
+directory_searcher = DirectorySearcher()
+directory_searcher.find('Cursos', "cursoscrap")
+
+# ******* datetime
+# date y today
+# Los objetos de esta clase representan una fecha que consiste en el año, el mes y el día.
+from datetime import date
+
+today = date.today()  # today: objeto de fecha que representa la fecha local actual
+
+print("Today:", today)  # 2022-12-23
+print("Year:", today.year)  # 2022
+print("Month:", today.month)  # 12
+print("Day:", today.day)  # 23
+
+my_date = date(2019, 11, 4)  # crear un objeto de tipo fecha necesitas pasar 3 parametros correctos de año, mes y día
+print(my_date)  # 2019-11-04
+
+'''
+La clase de fecha nos brinda la capacidad de crear un objeto de fecha a partir de un timestamp, que es la diferencia 
+entre una fecha determinada (incluida la hora) y el 1 de enero de 1970, 00:00:00 (UTC), expresada en segundos. Para 
+crear un objeto de date a partir de un timestamp, debemos pasar un timestamp de Unix al método fromtimestamp. 
+podemos usar el módulo time, que proporciona funciones relacionadas con el tiempo. Una de ellas es una función llamada 
+time() que devuelve el número de segundos desde el 1 de enero de 1970 hasta el momento actual en forma de número 
+flotante. en los sistemas Unix y Windows, los segundos bisiestos no se cuentan.
+'''
+from datetime import date
+import time
+
+timestamp = time.time()
+print("Timestamp:", timestamp)  # Timestamp: 1671822545.616088
+d = date.fromtimestamp(timestamp)
+print("Date:", d)  # Date: 2022-12-23
+
+'''El módulo de datetime proporciona varios métodos para crear un objeto de fecha. Uno de ellos es el método 
+fromisoformat, que toma una fecha en el formato AAAA-MM-DD conforme a la norma ISO 8601.'''
+from datetime import date
+d = date.fromisoformat('2019-11-04')
+print(d)  # 2019-11-04
+
+# replace()
+'''
+No puedes cambiar los datos con los atributos de year, month y day porque son de solo lectura. En este caso, puede usar 
+el método llamado replace().
+'''
+from datetime import date
+d = date(1991, 2, 5)
+print(d)
+# opcionales los parámetros
+d = d.replace(year=1992, month=1, day=16) # recordar asignar a una variable
+print(d)
+
+#  weekday , isoweekday
+# devuelve el día de la semana de un date 0 es lunes y 6 es Domingo
+from datetime import date
+d = date(2022, 12, 23)
+print(d.weekday())  # 4, viernes
+d.isoweekday()  # devuelve el dia de la semana CON FORMATO ISO 1 LUNES 7 DOMINGO
+
+# time
+'''devuelve la hora time(hour, minute, second, microsecond, tzinfo, fold)
+El parámetro tzinfo está asociado con zonas horarias, mientras que fold con tiempos de pared. No los usaremos durante 
+este curso, pero lo alentamos a que se familiarice con ellos.'''
+from datetime import time
+
+t = time(14, 53, 20, 1)
+print("Time:", t)  # Time: 14:53:20.000001
+print("Hour:", t.hour)  # 14
+print("Minute:", t.minute)  # 53
+print("Second:", t.second)  # 20
+print("Microsecond:", t.microsecond)  # 1
+
+# sleep()
+# suspende la ejecución del programa por el número dado de segundos, acepta sólo un número entero o de coma flotante
+import time
+
+
+class Student:
+    def take_nap(self, seconds):
+        print("I'm very tired. I have to take a nap. See you later.")
+        time.sleep(seconds)
+        print("I slept well! I feel great!")
+
+
+student = Student()
+student.take_nap(5)
+
+# ctime
+# convierte el tiempo en segundos desde el 1 de enero de 1970 a string
+import time
+
+timestamp = 1572879180
+print(time.ctime(timestamp)) # Mon Nov  4 14:53:00 2019
+print(time.ctime()) # current , Fri Dec 23 19:30:15 2022
+
+# gmtime() y localtime()
+''' Algunas de las funciones disponibles en el módulo de tiempo requieren conocimiento de la clase struct_time, pero 
+antes de conocerlas, veamos cómo se ve la clase:
+tiempo.struct_time:
+     tm_year # especifica el año
+     tm_mon # especifica el mes (valor de 1 a 12)
+     tm_mday # especifica el día del mes (valor de 1 a 31)
+     tm_hour # especifica la hora (valor de 0 a 23)
+     tm_min # especifica el minuto (valor de 0 a 59)
+     tm_sec # especifica el segundo (valor de 0 a 61)
+     tm_wday # especifica el día de la semana (valor de 0 a 6)
+     tm_yday # especifica el día del año (valor de 1 a 366)
+     tm_isdst # especifica si se aplica el horario de verano (1: sí, 0: no, -1: no se sabe)
+     tm_zone # especifica el nombre de la zona horaria (valor en forma abreviada)
+     tm_gmtoff # especifica el desplazamiento al este de UTC (valor en segundos)
+
+La clase struct_time también permite el acceso a valores mediante índices. El índice 0 devuelve el valor en tm_year, 
+mientras que el 8 devuelve el valor en tm_isdst. Las excepciones son tm_zone y tm_gmoff, a las que no se puede acceder 
+mediante índices. Veamos cómo usar la clase struct_time en la práctica. Ejecute el código en el editor.
+'''
+import time
+timestamp = 1572879180
+print(time.gmtime(timestamp))
+print(time.localtime(timestamp))
+'''
+time.struct_time(tm_year=2019, tm_mon=11, tm_mday=4, tm_hour=14, tm_min=53, tm_sec=0, tm_wday=0, tm_yday=308, tm_isdst=0)
+time.struct_time(tm_year=2019, tm_mon=11, tm_mday=4, tm_hour=14, tm_min=53, tm_sec=0, tm_wday=0, tm_yday=308, tm_isdst=0)
+producción
+El ejemplo muestra dos funciones que convierten el tiempo transcurrido desde la época de Unix al objeto struct_time. La 
+diferencia entre ellos es que la función gmtime devuelve el objeto struct_time en UTC, mientras que la función localtime
+devuelve la hora local. Para la función gmtime, el atributo tm_isdst siempre es 0.'''
+
+# asctime() and mktime()
+'''
+modulo time tiene funciones que esperan un objeto struct_time o una tupla que almacena valores de acuerdo con los 
+índices presentados anteriormente. 
+'''
+import time
+timestamp = 1572879180
+st = time.gmtime(timestamp)
+print(time.asctime(st))  # Mon Nov  4 14:53:00 2019
+print(time.mktime((2019, 11, 4, 14, 53, 0, 0, 308, 0)))  #1572879180.0
+'''
+La primera de las funciones, llamada asctime, convierte un objeto struct_time o una tupla en una cadena. Tenga en cuenta
+que la función familiar gmtime se usa para obtener el objeto struct_time. Si no proporciona un argumento a la función 
+asctime, se usará la hora devuelta por la función localtime. La segunda función llamada mktime convierte un objeto 
+struct_time o una tupla que expresa la hora local en el número de segundos desde la época de Unix. En nuestro ejemplo, 
+le pasamos una tupla, que consta de los siguientes valores:'''
+
+# datetime
+'''La clase que combina fecha y hora 
+datetime(year, month, day, hour, minute, second, microsecond, tzinfo, fold)'''
+
+from datetime import datetime
+dt = datetime(2019, 11, 4, 14, 53)
+print("Datetime:", dt)  # Datetime: 2019-11-04 14:53:00
+print("Date:", dt.date())  # 2019-11-04
+print("Time:", dt.time())  # 14:53:00
+'''La clase datetime tiene varios métodos que devuelven la fecha y la hora actuales. Estos métodos son:
+today() — devuelve la fecha y hora locales actuales con el atributo tzinfo establecido en Ninguno;
+now() — devuelve la fecha y hora local actual igual que el método today, a menos que le pasemos el argumento opcional 
+tz. El argumento de este método debe ser un objeto de la subclase tzinfo;
+utcnow(): devuelve la fecha y hora UTC actual con el atributo tzinfo establecido en Ninguno.
+'''
+
+from datetime import datetime
+print("today:", datetime.today())  # today: 2022-12-23 20:47:56.821865
+print("now:", datetime.now())  # now: 2022-12-23 20:47:56.821882
+print("utcnow:", datetime.utcnow())  # utcnow: 2022-12-23 19:47:56.821886
+
 # ***********************************
 # ******** Paquetes #############
 # ***********************************
