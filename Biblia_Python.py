@@ -2801,6 +2801,27 @@ print(python_version_tuple())   # ('3', '11', '0'), la mayor parte de la versió
 # El número de nivel de parche.
 # La versión del sistema operativo se proporciona como una cadena
 
+# ****** Os
+# módulo del sistema operativo
+
+# uname
+''' permite obtener información del sistema operativo UNIX, en windows hay que usar uname de platform, info similar
+systemname — almacena el nombre del sistema operativo;
+nodename: almacena el nombre de la máquina en la red;
+release: almacena la release del sistema operativo;
+version: almacena la versión del sistema operativo;
+machine: almacena el identificador de hardware, por ejemplo, x86_6'''
+import os
+print(os.uname())
+'''posix.uname_result(
+sysname='Darwin', 
+nodename='MacBook-Pro-de-Jesus.local',
+release='22.2.0', 
+version='Darwin Kernel 
+Version 22.2.0: Fri Nov 11 02:03:51 PST 2022; root:xnu-8792.61.2~4/RELEASE_ARM64_T6000', machine='arm64')
+'''
+# name
+'''te da el nombre del sistema operativo'''
 # ***********************************
 # ******** Paquetes #############
 # ***********************************
