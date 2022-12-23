@@ -5770,7 +5770,8 @@ from os import strerror
 
 try:
     bf = open('file.bin', 'rb')
-    data = bytearray(bf.read())
+    data = bytearray(bf.read())  # en caso de meter un entero a read() especifica el número máximo de bytes a ser leídos
+                                 # si read(5) lee 5 bytes, los siguientes 5 seguirán esperando ser leídos
     bf.close()
 
     for b in data:
@@ -5783,6 +5784,129 @@ except IOError as e:
 cuidado: no utilizar este tipo de lectura si no se está seguro de que el contenido del archivo se ajuste a la memoria 
 disponible.
 '''
+
+# ++++++ COPIA DE FICHERO BINARIO +++++++++
+from os import strerror
+
+srcname = input("Enter the source file name: ")
+try:
+    src = open(srcname, 'rb')
+except IOError as e:
+    print("Cannot open the source file: ", strerror(e.errno))
+    exit(e.errno)  # detener la ejecución del programa y pasar el código de finalización al sistema operativo
+
+dstname = input("Enter the destination file name: ")
+try:
+    dst = open(dstname, 'wb')
+except Exception as e:
+    print("Cannot create the destination file: ", strerror(e.errno))
+    src.close()
+    exit(e.errno)
+
+buffer = bytearray(65536)  # prepara memoria para pasar la información
+# un buffer de 64kb técnicamente un buffer más grande copia más rapido los elementos Actualmente siempre hay un límite
+# en el que no aumenta el rendimiento
+total = 0.  # contador de bytes copiados
+try:
+    readin = src.readinto(buffer)  # intenta llenar el búfer por primera vez;
+    while readin > 0:  # mientras no recibas bytes en el buffer
+        written = dst.write(buffer[:readin])  # escribe el contenido del buffer en el fichero de destino
+        total += written  # actualiza el contador
+        readin = src.readinto(buffer)  # lee el siguiente trozo al buffer
+except IOError as e:
+    print("Cannot create the destination file: ", strerror(e.errno))
+    exit(e.errno)
+
+print(total, 'byte(s) succesfully written')
+src.close()
+dst.close()
+
+# +++++++ contador tipo diccionario de carácteres de un fichero ++++++
+from os import strerror
+
+myDictionary = {}
+
+try:
+    name = input('Please enter the file name: ')  # pide el nombre del fichero
+    for line in open(name, 'rt', encoding='utf-8'):  # lo abre con codificación utf-8 y recorre las líneas
+        for char in line:   # para cada línea del fichero
+            if char.isalpha():  # si son letras
+                try:
+                    myDictionary[char.lower()] += 1  # intenta aumentar el contador del carácter en el diccionario
+                except KeyError:
+                    myDictionary[char.lower()] = 1   # mete el carácter en el diccionario
+            else:
+                continue
+except IOError as e:
+    print("Unable to read file: ", strerror(e.errno))
+
+for key in sorted(myDictionary.keys()):
+    print(key, '->', myDictionary.get(key))  # imprime el contenido del diccionario
+
+myChars = sorted(myDictionary.keys(), key=lambda x: myDictionary[x], reverse=True)
+# la clave para ordenar es la del diccionario, y lo ordena al revés para que sea desc
+
+try:
+    with open(name + '.hist', 'w') as file:  # abre el fichero de escritura
+        for char in myChars:
+            file.write(char + ' -> ' + str(myDictionary[char]) + '\n')
+except IOError as e:
+    print('IO Error: ', strerror(e.errno))
+
+
+# ++++++++ Ejercicio Lectura de fichero de notas ++++++++
+
+from os import strerror
+
+
+class StudentsDataError(Exception):
+    def __init__(self, message=''):
+        super().__init__(message)
+
+
+class BadLineError(StudentsDataError):
+    def __init__(self, message=''):
+        super().__init__(message)
+
+
+class FileEmptyError(StudentsDataError):
+    def __init__(self, message=''):
+        super().__init__(message)
+
+
+myStudents = {}
+
+try:
+    name = input("Please Enter the file containing Students' data: ")
+    with open(name, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+        if len(lines) == 0:
+            raise FileEmptyError('Empty File Error')
+        for i in range(len(lines)):
+            line = lines[i]
+            columns = line.split()
+
+            if len(columns) != 3:
+                raise BadLineError(f'BadLineError in Line #{i + 1}: {line}')
+
+            try:
+                student = columns[0] + ' ' + columns[1]
+                marks = float(columns[2])
+            except ValueError:
+                raise BadLineError(f'BadLineError in Line #{i + 1}: {line}')
+            try:
+                myStudents[student] += marks
+            except KeyError:
+                myStudents[student] = marks
+
+    for student in sorted(myStudents.keys()):
+        print(f"{student}\t\t\t{myStudents[student]}")
+
+except IOError as e:
+    print('IO Error: ', strerror(e.errno))
+except (BadLineError, FileEmptyError, StudentsDataError) as e:
+    print(e)
+
 # ********  Archivos  con with
 '''
 existe una sintaxis simplificada que automáticamente va a abrir y a cerrar nuestro archivo automáticamente sin tener que
