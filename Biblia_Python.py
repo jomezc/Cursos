@@ -3052,8 +3052,9 @@ le pasamos una tupla, que consta de los siguientes valores:'''
 datetime(year, month, day, hour, minute, second, microsecond, tzinfo, fold)'''
 
 from datetime import datetime
-dt = datetime(2019, 11, 4, 14, 53)
+dt = datetime(2019, 11, 4, 14, 53) # Timestamp: 1572879180.0
 print("Datetime:", dt)  # Datetime: 2019-11-04 14:53:00
+print("Timestamp:", dt.timestamp()) #
 print("Date:", dt.date())  # 2019-11-04
 print("Time:", dt.time())  # 14:53:00
 '''La clase datetime tiene varios métodos que devuelven la fecha y la hora actuales. Estos métodos son:
@@ -3067,6 +3068,316 @@ from datetime import datetime
 print("today:", datetime.today())  # today: 2022-12-23 20:47:56.821865
 print("now:", datetime.now())  # now: 2022-12-23 20:47:56.821882
 print("utcnow:", datetime.utcnow())  # utcnow: 2022-12-23 19:47:56.821886
+
+
+# Formato de fechas - strftime ( cadena )  strptime (objeto datetime)
+'''Todas las clases de módulos de fecha y hora presentadas hasta ahora tienen un método llamado strftime. Este es un
+ método muy importante, porque nos permite devolver la fecha y la hora en el formato que especifiquemos. toma solo un 
+ argumento en forma de cadena que especifica el formato que puede consistir en directivas. Una directiva es una cadena 
+ que consta del carácter % (porcentaje) y una letra minúscula o mayúscula, por ejemplo, la directiva %Y significa el año
+ con el siglo como número decimal.
+'''
+from datetime import date
+d = date(2020, 1, 4)
+print(d.strftime('%Y/%m/%d'))  # 2020/01/04
+'''
+En el ejemplo, pasamos un formato que consta de tres directivas separadas por / (barra oblicua) al método strftime. Por 
+supuesto, el carácter separador puede ser reemplazado por otro carácter, o incluso por una cadena. Puede poner cualquier
+carácter en el formato, pero solo las directivas reconocibles se reemplazarán con los valores apropiados. En nuestro 
+formato hemos usado las siguientes directivas:
+%Y: devuelve el año con el siglo como número decimal. En nuestro ejemplo, esto es 2020.
+%m: devuelve el mes como un número decimal con ceros. En nuestro ejemplo, es 01.
+%d: devuelve el día como un número decimal con ceros. En nuestro ejemplo, es 04.
+
+El formato de hora funciona de la misma manera que el formato de fecha, pero requiere el uso de directivas apropiadas. 
+Echemos un vistazo más de cerca a algunos de ellos en el editor.
+'''
+from datetime import time
+from datetime import datetime
+t = time(14, 53)
+print(t.strftime("%H:%M:%S"))  # 14:53:00
+dt = datetime(2020, 11, 4, 14, 53)
+print(dt.strftime("%y/%B/%d %H:%M:%S"))  # 20/November/04 14:53:00'
+'''
+%H devuelve la hora como un número decimal con ceros, %M devuelve el minuto como un número decimal con ceros, mientras 
+que %S devuelve el segundo como un número decimal con ceros. En nuestro ejemplo, %H se reemplaza por 14, %M por 53 y 
+%S por 00. El segundo formato utilizado combina directivas de fecha y hora. Hay dos directivas nuevas, %Y y %B. 
+La directiva %Y devuelve el año sin un siglo como un número decimal con ceros (en nuestro ejemplo es 20). La directiva 
+%B devuelve el mes como el nombre completo de la configuración regional (en nuestro ejemplo, es noviembre).
+
+La función strftime está disponible en el módulo time. Se diferencia ligeramente de los métodos strftime en las clases 
+proporcionadas por el módulo datetime porque, además del argumento de formato, también puede tomar (opcionalmente) un 
+objeto tupla o struct_time. Si no pasa un objeto tuple o struct_time, el formato se realizará utilizando la hora local 
+actual.'''
+import time
+timestamp = 1572879180
+st = time.gmtime(timestamp)
+print(time.strftime("%Y/%m/%d %H:%M:%S", st))
+print(time.strftime("%Y/%m/%d %H:%M:%S"))
+
+# strptime()
+'''
+Saber cómo crear un formato puede ser útil cuando se usa un método llamado strptime en la clase de fecha y hora. A 
+diferencia del método strftime, crea un objeto de fecha y hora a partir de una cadena que representa una fecha y una 
+hora. El método strptime requiere que especifique el formato en el que guardó la fecha y la hora. 
+'''
+from datetime import datetime
+print(datetime.strptime("2019/11/04 14:53:00", "%Y/%m/%d %H:%M:%S"))  # 2019-11-04 14:53:00
+'''
+En el ejemplo, hemos especificado dos argumentos obligatorios. El primero es una fecha y hora como una cadena: 
+"2019/11/04 14:53:00", mientras que el segundo es un formato que facilita el análisis de un objeto de fecha y hora. 
+Tenga cuidado, porque si el formato que especifica no coincide con la fecha y la hora en la cadena, generará un 
+ValueError. 
+En el módulo time, puede encontrar una función llamada strptime, que analiza una cadena que representa un tiempo en un 
+objeto struct_time. Su uso es análogo al método strptime en la clase datetime:
+
+import time
+print(time.strptime("2019/11/04 14:53:00", "%Y/%m/%d %H:%M:%S"))
+'''
+
+#  Operaciones de fecha y hora
+'''
+Tarde o temprano tendrás que realizar algunos cálculos sobre la fecha y la hora. Afortunadamente, hay una clase llamada 
+timedelta en el módulo de fecha y hora que se creó con ese propósito. Para crear un objeto timedelta, solo reste los 
+objetos date o datetime.
+'''
+from datetime import date
+from datetime import datetime
+
+d1 = date(2020, 11, 4)
+d2 = date(2019, 11, 4)
+print(d1 - d2)  # 366 days, 0:00:00
+dt1 = datetime(2020, 11, 4, 0, 0, 0)
+dt2 = datetime(2019, 11, 4, 14, 53, 0)
+print(dt1 - dt2)  # 365 days, 9:07:00
+'''
+El ejemplo muestra la resta para los objetos de fecha y fecha y hora. En el primer caso, recibimos la diferencia en 
+días, que son 366 días. Tenga en cuenta que también se muestra la diferencia en horas, minutos y segundos. En el 
+segundo caso, recibimos un resultado diferente, porque especificamos el tiempo que se incluyó en los cálculos. Como 
+resultado, recibimos 365 días, 9 horas y 7 minutos.
+
+también puede crear un objeto usted mismo. los argumentos son: días, segundos, microsegundos, milisegundos, minutos, 
+horas y semanas. Cada uno de ellos es opcional y su valor predeterminado es 0. Los argumentos deben ser números enteros 
+o de punto flotante, y pueden ser positivos o negativos. 
+
+'''
+from datetime import timedelta
+delta = timedelta(weeks=2, days=2, hours=3)
+print(delta)  # 16 days, 3:00:00
+'''
+El resultado de 16 días se obtiene convirtiendo el argumento de semanas a días (2 semanas = 14 días) y sumando el 
+argumento de días (2 días). Este es un comportamiento normal, porque el objeto timedelta solo almacena días, segundos y 
+microsegundos internamente. De manera similar, el argumento de la hora se convierte en minutos. Eche un vistazo al 
+'''
+from datetime import timedelta
+delta = timedelta(weeks=2, days=2, hours=3)
+print("Days:", delta.days)  # Días: 16
+print("Seconds:", delta.seconds)  # Segundos: 10800
+print("Microseconds:", delta.microseconds)  # Microsegundos: 0
+'''
+El resultado de 10800 se obtiene convirtiendo 3 horas en segundos. De esta forma, el objeto timedelta almacena los 
+argumentos pasados durante su creación. Las semanas se convierten en días, las horas y los minutos en segundos y los 
+milisegundos en microsegundos.
+'''
+from datetime import timedelta
+from datetime import date
+from datetime import datetime
+delta = timedelta(weeks=2, days=2, hours=2)
+print(delta)  # 16 days, 2:00:00
+delta2 = delta * 2 # se puede multiplicar por un entero
+print(delta2)  # 32 days, 4:00:00
+d = date(2019, 10, 4) + delta2 # sumarlo a un date
+print(d)  # 2019-11-05
+dt = datetime(2019, 10, 4, 14, 53) + delta2  # o a un datetime
+print(dt)  # 2019-11-05 18:53:00
+
+
+# ++++++ ejercicio tiempo
+'''
+Escriba un programa que cree un objeto de fecha y hora para el 4 de noviembre de 2020 a las 14:53:00. El objeto creado 
+debe llamar al método strftime con el formato apropiado para mostrar el siguiente resultado:
+'''
+from datetime import datetime
+my_date = datetime(2020, 11, 4, 14, 53)
+print(my_date.strftime("%Y/%m/%d %H:%M:%S"))  # 2020/11/04 14:53:00
+print(my_date.strftime("%y/%B/%d %H:%M:%S %p"))  # 20/November/04 14:53:00 PM (B mes letrea y p AM o PM)
+print(my_date.strftime("%a, %Y %b %d"))  # Wed, 2020 04 de nov (a día de la semana abreviado, b mes abreviado)
+print(my_date.strftime("%A, %Y %B %d"))  # Wednesday, 2020 November 04 ( A dia de la semana, B mes)
+print(my_date.strftime("Weekday: %w"))  # Weekday: 3 (w, dia de la semana numero)
+print(my_date.strftime("Day of the year: %j"))  # Day of the year: 309 (j numero del año)
+print(my_date.strftime("Week number of the year: %W"))  # (W, número de semana del año)
+
+# ****** Calendar
+'''
+Monday	0	calendar.MONDAY
+Tuesday	1	calendar.TUESDAY
+Wednesday	2	calendar.WEDNESDAY
+Thursday	3	calendar.THURSDAY
+Friday	4	calendar.FRIDAY
+Saturday	5	calendar.SATURDAY
+Sunday	6	calendar.SUNDAY
+Para los meses, los valores enteros están indexados desde 1, es decir, enero está representado por 1 y diciembre por 
+12. Desafortunadamente, no hay constantes que expresen los meses.
+'''
+# calendar
+# permite moestrar el calendario de todo el año
+import calendar
+print(calendar.calendar(2022))
+'''para cambiar el formato de calendario predeterminado, parámetros:
+w – ancho de columna de fecha (predeterminado 2)
+l – número de líneas por semana (predeterminado 1)
+c – número de espacios entre las columnas del mes (predeterminado 6)
+m – número de columnas (predeterminado 3)
+La función de calendario requiere que especifique el año, mientras que los otros parámetros responsables del formato 
+son opcionales. Le animamos a que pruebe estos parámetros usted mismo.
+la función llamada prcal, que también toma los mismos parámetros que la función de calendario, pero no requiere el uso 
+de la función de impresión para mostrar '''
+import calendar
+calendar.prcal(2020)
+
+# month
+'''le permite mostrar un calendario para un mes específico. Su uso es realmente simple, solo necesita especificar el
+año y el mes, formato: w – ancho de columna de fecha (predeterminado 2),l – número de líneas por semana (predeterminado 
+1)'''
+import calendar
+print(calendar.month(2020, 11))
+calendar.prmonth(2020, 11)  # sin print
+
+# setfirstweekday()
+# cambia el primer dia de la semana (por defecto lunes)
+import calendar
+# El método requiere un parámetro que exprese el día de la semana en forma de un valor entero
+calendar.setfirstweekday(calendar.SUNDAY) # puedes usar el 6
+calendar.prmonth(2020, 12)
+'''
+   December 2020
+Su Mo Tu We Th Fr Sa
+       1  2  3  4  5
+ 6  7  8  9 10 11 12
+13 14 15 16 17 18 19
+20 21 22 23 24 25 26
+27 28 29 30 31
+'''
+
+# weekday
+# devuelve el día de la semana para ese año, mes y día
+import calendar
+print(calendar.weekday(2020, 12, 24))  # 3
+
+#  weekheader()
+'''contiene encabezados semanales en forma abreviada, requiere que especifique el ancho en caracteres para un día de 
+la semana. si le pones un valor mayor a 3 pero que no quepan todas las letras seguirá ponendo 3 con mas o menos espacio
+setfirstweekday le afecta'''
+import calendar
+print(calendar.weekheader(3))  # Mon Tue Wed Thu Fri Sat Sun
+print(calendar.weekheader(10))  #   Monday    Tuesday   Wednesday   Thursday    Friday    Saturday    Sunday
+
+#  años bisiestos
+import calendar
+print(calendar.isleap(2020)) # True o False si el año es bisiesto
+print(calendar.leapdays(2010, 2020))  # 3, el numero de años bisiestos
+
+# Clases para crear calendarios
+'''
+calendar.Calendar: proporciona métodos para preparar los datos del calendario para formatear;
+calendar.TextCalendar: se utiliza para crear calendarios de texto regulares;
+calendar.HTMLCalendar: se utiliza para crear calendarios HTML;
+calendar.LocalTextCalendar: es una subclase de la clase calendar.TextCalendar. El constructor de esta clase toma el 
+                            parámetro locale, que se utiliza para devolver los meses y los nombres de los días de la 
+                            semana apropiados.
+calendar.LocalHTMLCalendar: es una subclase de la clase calendar.HTMLCalendar. El constructor de esta clase toma el 
+                            parámetro locale, que se utiliza para devolver los meses y los nombres de los días de la 
+                            semana apropiados.
+
+El constructor de la clase Calendario toma un parámetro opcional llamado primer día de la semana, por defecto igual a 0 
+(lunes) hasta 6, podemos usar las constantes ya conocidas. El ejemplo de código usa el método de la clase Calendar 
+denominado iterweekdays, que devuelve un iterador para los números de los días de la semana. El primer valor devuelto 
+siempre es igual al valor de la propiedad firstweekday. Debido a que en nuestro ejemplo el primer valor devuelto es 6, 
+significa que la semana comienza en domingo.
+'''
+import calendar
+c = calendar.Calendar(calendar.SUNDAY)
+for weekday in c.iterweekdays():
+    print(weekday, end=" ")  # 6 0 1 2 3 4 5
+
+'''itermonthdates(año, mes) devuelve un iterador Como resultado, se devuelven todos los días del mes y el año 
+especificados, así como todos los días antes del comienzo del mes o del final del mes que son necesarios para obtener 
+una semana completa., en objeto datetime.date'''
+
+import calendar
+c = calendar.Calendar()
+for date in c.itermonthdates(2019, 11):  # el 1 de noviembre fue viernes, completa hasta lunes por eso tiene octubre
+    print(date, end=" ")  # 2019-10-28 2019-10-29 2019-10-30 2019-10-31 2019-11-01 ...
+
+'''
+itermonthdays(año, mes)devuelve el iterador a los días de la semana representados por números. pone 0 como son días 
+fuera del rango de meses especificado que se agregan para mantener la semana completa.
+'''
+import calendar
+c = calendar.Calendar()
+for date in c.itermonthdays(2019, 11):
+    print(date, end=" ")  # 0 0 0 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 0
+
+'''itermonthdays2 devuelve los días en forma de tuplas que consisten en un número de día del mes y un número de día de 
+la semana'''
+import calendar
+c = calendar.Calendar()
+for date in c.itermonthdays2(2019, 11):
+    print(date, end=" ")  # (0, 0) (0, 1) (0, 2) (0, 3) (1, 4) (2, 5) (3, 6) (4, 0) (5, 1) (6, 2) (7, 3) (8, 4) ...
+
+'''itermonthdays3 devuelve los días en forma de tuplas que consisten en números de un año, un mes y un día del mes.'''
+import calendar
+c = calendar.Calendar()
+for date in c.itermonthdays3(2019, 11):
+    print(date, end=" ")  # (2019, 10, 28) (2019, 10, 29) (2019, 10, 30) ...
+
+'''itermonthdays4 devuelve días en forma de tuplas que consisten en un año, un mes, un día del mes y el número del día 
+de la semana '''
+
+import calendar
+c = calendar.Calendar()
+for date in c.itermonthdays4(2019, 11):
+    print(date, end=" ")  # (2019, 10, 28, 0) (2019, 10, 29, 1) (2019, 10, 30, 2) ...
+
+'''
+El método monthdays2calendar() ( hay mas en la docu )
+. Uno de ellos es el método monthdays2calendar, que toma el año y e
+l mes y luego devuelve una lista de semanas en un mes específico. Cada semana es una tupla que consta de números de días
+y números de días de la semana. Mira el código en el editor. Tenga en cuenta que los números de días fuera del mes están
+ representados por 0, mientras que los números de días de la semana son un número de 0 a 6, donde 0 es lunes y 
+ 6 es domingo.'''
+
+# +++++++++ Ejercicio fechas lab   ++++++++++
+
+'''
+amplíe la funcionalidad de claendar con un nuevo método llamado count_weekday_in_year, que toma un año y un día de la
+semana como parámetros y luego devuelve el número de ocurrencias de un día de la semana específico en el año.
+como:
+- Cree una clase llamada MyCalendar que amplíe la clase Calendar;
+- cree el método count_weekday_in_year con los parámetros de año y día de la semana. El parámetro del día de la semana
+  debe tener un valor entre 0 y 6, donde 0 es lunes y 6 es domingo. El método debe devolver el número de días como un
+  número entero;
+- en su implementación, use el método monthdays2calendar de la clase Calendar.
+'''
+
+import calendar
+class MyCalendar(calendar.Calendar):
+    def count_weekday_in_year(self, year, weekday):
+        current_month = 1
+        number_of_days = 0
+        while (current_month <= 12):
+            for data in self.monthdays2calendar(year, current_month):
+                if data[weekday][0] != 0:
+                    number_of_days = number_of_days + 1
+
+            current_month = current_month + 1
+        return number_of_days
+
+my_calendar = MyCalendar()
+number_of_days = my_calendar.count_weekday_in_year(2019, calendar.MONDAY)
+
+print(number_of_days)  # 52
+
 
 # ***********************************
 # ******** Paquetes #############
