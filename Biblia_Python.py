@@ -5040,7 +5040,6 @@ de hecho, un generador, que es (de hecho, de nuevo) un iterador.
 '''
 for i in range(5):
     print(i)
-
 '''
 Una función devuelve un valor bien definido; puede ser el resultado de una evaluación más o menos compleja de, 
 por ejemplo, un polinomio, y se invoca una vez, solo una vez.
@@ -5114,39 +5113,24 @@ imprimiendo un mensaje;
 
 líneas 12 a 21: el método __next__ es responsable de crear la secuencia; es algo prolijo, pero esto debería hacerlo más 
 legible; primero, imprime un mensaje, luego actualiza la cantidad de valores deseados y, si llega al final de la 
-secuencia, el método interrumpe la iteración al generar la excepción StopIteration; el resto del código es simple y 
-refleja con precisión la definición que le mostramos anteriormente;
-
-las líneas 24 y 25 hacen uso del iterador.
-
-El código produce el siguiente resultado:
-
+secuencia, el método interrumpe la iteración al generar la excepción StopIteration; las últimas líneas  hacen uso del 
+iterador.El código produce el siguiente resultado:
 __init__
 __iter__
-__próximo__
+__next__
 1
-__próximo__
+__next__
 1
-__próximo__
+__next__
 2
-__próximo__
+__next__
 3
 …
-
-Mirar:
-
 primero se crea una instancia del objeto iterador;
 a continuación, Python invoca el método __iter__ para obtener acceso al iterador real;
 el método __next__ se invoca once veces: las primeras diez veces producen valores útiles, mientras que la undécima 
 finaliza la iteración.
-
-Hemos construido el iterador Fib en otra clase (podemos decir que lo hemos integrado en la clase Class). Se crea una
-instancia junto con el objeto de Class. El objeto de la clase puede usarse como iterador cuando (y solo cuando) responde
-positivamente a la invocación de __iter__; esta clase puede hacerlo, y si se invoca de esta manera, proporciona un
-objeto capaz de obedecer el protocolo de iteración. Esta es la razón por la que la salida del código es la misma que
-antes, aunque el objeto de la clase Fib no se usa explícitamente dentro del contexto del bucle for.'''
-
-
+'''
 class Fib:
     def __init__(self, nn):
         self.__n = nn
@@ -5176,22 +5160,27 @@ class Class:
         print("Class iter")
         return self.__iter
 
+
 object = Class(8)  # se inicializa class que asu vez fib
 
 for i in object: # es este for el que llama a iter() que a su vez llama a next
     print(i)
+    '''
+Hemos construido el iterador Fib en otra clase (podemos decir que lo hemos integrado en la clase Class). Se crea una
+instancia junto con el objeto de Class. El objeto de la clase puede usarse como iterador cuando (y solo cuando) responde
+positivamente a la invocación de __iter__; esta clase puede hacerlo, y si se invoca de esta manera, proporciona un
+objeto capaz de obedecer el protocolo de iteración. Esta es la razón por la que la salida del código es la misma que
+antes, aunque el objeto de la clase Fib no se usa explícitamente dentro del contexto del bucle for.
+podemos ahorrar memoria'''
 
 
-
-# ++++ Ejemplo web +++++
+# ++++ Ejemplo myrange +++++
 '''
 Con iter Lo que se devuelve es un objeto iterable, que se asigna principalmente a la Función __iter__ de la clase, esta 
-función devuelve una implementación de la función __next__ del Objeto.
-
-Al llamar iter, se genera un objeto de iteración, que requiere __iter__ bebe devolver una implementación del método
-__next__ ,  next visita el siguiente elemento de este objeto y lanza uno si no desea 
-continuar iterando StopIteration La excepción (for La declaración detectará esta excepción y finalizará automáticamente 
-for), la función myrange es similar al funcionamiento de  range'''
+función devuelve una implementación de la función __next__ del Objeto. Al llamar iter, se genera un objeto de iteración, 
+que requiere __iter__ bebe devolver una implementación del método __next__ , next visita el siguiente elemento de este 
+objeto y lanza uno si no desea continuar iterando StopIteration La excepción (for La declaración detectará esta 
+excepción y finalizará automáticamente for), la función myrange es similar al funcionamiento de  range'''
 class MyRange(object):
     def __init__(self, end):
         self.start = 0
@@ -5228,10 +5217,9 @@ elementos anteriores). Esto hace que el código sea más grande y menos comprens
 
 Esta es la razón por la que Python ofrece una forma mucho más efectiva, conveniente y elegante de escribir iteradores.
 El concepto se basa fundamentalmente en un mecanismo muy específico y poderoso provisto por la palabra clave yield. 
-Puede pensar en la palabra clave yield como un hermano más inteligente de la declaración de devolución, con una 
+Puede pensar en la palabra clave yield como un hermano más inteligente de la declaración return, con una 
 diferencia esencial.
 '''
-
 def fun(n):
     for i in range(n):
         return i
@@ -5241,7 +5229,6 @@ lo romperá irrevocablemente. Además, invocar la función no cambiará nada: el
 interrumpirá de inmediato. Podemos decir que dicha función no puede guardar y restaurar su estado entre invocaciones 
 posteriores. Esto también significa que una función como esta no se puede usar como generador.
 '''
-
 def fun(n):
     for i in range(n):
         yield i
@@ -5257,13 +5244,10 @@ reanuda la ejecución (no se toma desde cero, como después de la devolución).
 
 Hay una limitación importante: dicha función no debe invocarse explícitamente ya que, de hecho, ya no es una función; 
 es un objeto generador ( si lo imprimes ves que es un objeto generador y lo tienes que llamar desde por ejemplo un for 
-una compresión de listas, una lista! e incluso el operador in (como for i in renge(x)). 
-La invocación devolverá el identificador del objeto, no la serie que esperamos del generador.Por las mismas razones, 
-la función anterior (la que tiene la declaración de retorno) solo puede invocarse explícitamente 
-y no debe usarse como generador.
+una compresión de listas, una lista! e incluso el operador in (como for i in renge(x)). La invocación devolverá el 
+identificador del objeto, no la serie que esperamos del generador.
 '''
 # ++++++++ ejemplo yield +++++
-
 def powers_of_2(n):
     power = 1
     for i in range(n):
@@ -5280,8 +5264,6 @@ print(t)  # [1, 2, 4, 8, 16]
 print(l)  # [1, 2, 4]
 
 # ++++++++ ejemplo Fibonacci con yield +++++
-
-
 def fibonacci(n):
     p = pp = 1
     for i in range(n):
@@ -5352,7 +5334,7 @@ Ahora Hay  nuevo: una función (llamada inner()) dentro de otra función (llamad
 función, excepto por el hecho de que inner() puede invocarse solo desde outer(). Podemos decir que inner() es la 
 herramienta privada de outer() - ninguna otra parte del código puede acceder a ella.
 - la función inner() devuelve el valor de la variable accesible dentro de su alcance, ya que inner() puede usar 
-cualquiera de las entidades a disposición de outside()
+cualquiera de las entidades a disposición de outer()
 - la función outer() devuelve la función inner() en sí misma; más precisamente, devuelve una copia de la función inner()
 , la que estaba congelada en el momento de la invocación de outer(); la función congelada contiene su entorno completo, 
 incluido el estado de todas las variables locales, lo que también significa que el valor de loc se conserva con éxito, 
@@ -5373,7 +5355,6 @@ fsqr = make_closure(2)
 fcub = make_closure(3)
 for i in range(5):
     print(i, fsqr(i), fcub(i))
-
 '''
 Es totalmente posible declarar un cierre equipado con un número arbitrario de parámetros, por ejemplo, uno, al igual 
 que la función power(). Esto significa que el cierre no solo hace uso del entorno congelado, sino que también puede 
@@ -5388,8 +5369,6 @@ Es por eso que el código produce el siguiente resultado:
 3 9 27
 4 16 64
 
-'''
-'''
 PEP 8, la Guía de estilo para el código de Python, recomienda que las lambdas no se asignen a variables, sino que se 
 definan como funciones. Esto significa que es mejor usar una declaración de definición y evitar usar una declaración de
 asignación que vincule una expresión lambda a un identificador. Por ejemplo:
@@ -5490,17 +5469,16 @@ class Vowels:
 
 vowels = Vowels()
 for v in vowels:
-    print(v, end=' ') # a e i o u y
+    print(v, end=' ')  # a e i o u y
 
 # +++++++ otro
-#Escriba una función lambda, establezca el bit menos significativo de su argumento entero y aplíquelo a la función
+# Escriba una función lambda, establezca el bit menos significativo de su argumento entero y aplíquelo a la función
 # map() para producir la cadena 1 3 3 5 en la consola.
 any_list = [1, 2, 3, 4]
 # even_list = # Complete the line here.
 # print(even_list)
 
 list(map(lambda n: n | 1, any_list))  # recuerda, | es como un or
-
 
 # +++++++++ otro
 # ¿cual es la salida esperada del siguiente código?
@@ -5512,7 +5490,7 @@ def replace_spaces(replacement='*'):
 
 
 stars = replace_spaces()
-print(stars("And Now for Something Completely Different")) # And*Now*for*Something*Completely*Different
+print(stars("And Now for Something Completely Different"))  # And*Now*for*Something*Completely*Different
 
 
 # ***********************************
@@ -5544,7 +5522,7 @@ while True:
         print("Sorry, something went wrong...")
 
 
-# 0
+# ****** una excepción
 
 try:
     '10' / 0
@@ -5553,7 +5531,7 @@ except Exception as e:  # ZeroDivisionError peta
     # Solamente clases padre pueden procesar excepciones, incluyendo clases hijas
     print(f'Ocurrió un error: {e}')
 
-# 1
+# ******  varias excepciones
 resultado = None  # Al usarse fuera del try hay que declararla fuera si no falla
 try:
     a = int(input('Primer numero: '))
@@ -5575,7 +5553,7 @@ finally:  # Siempre se ejecuta incluso si se lanza una excepción
 
 
 # podemos manejas varias excepciones deben ir de más específico a más genérico
-# Si ponemos la más general al principio no se manejarán las mas específicas
+# Si ponemos la más general al principio no se manejarán las más específicas
 # 2: Excepción propia
 
 
@@ -5701,7 +5679,7 @@ BaseException ← KeyboardInterrupt
 Una excepción concreta planteada cuando el usuario utiliza un atajo de teclado diseñado para 
 terminar la ejecución de un programa (Ctrl-C en la mayoría de los sistemas operativos); Si el control de esta excepción 
 no conduce a la finalización del programa, el programa continúa su ejecución. Nota: esta excepción no se deriva de la 
-clase Exception. Este ejmplo no temrina al finalizar con control c
+clase Exception. Este ejemplo no termina al finalizar con control c
 '''
 from time import sleep
 seconds = 0
@@ -5736,7 +5714,7 @@ ex = 1
 
 try:
     while True:
-        print(exp(ex)) # values of exp(k), k = 1, 2, 4, 8, 16, ...
+        print(exp(ex))  # values of exp(k), k = 1, 2, 4, 8, 16, ...
         ex *= 2
 except OverflowError:
     print('The number is too big.')
@@ -5816,7 +5794,7 @@ def print_exception_tree(thisclass, nest = 0):
 
 print(BaseException.__subclasses__())  # [<class 'BaseExceptionGroup'>, <class 'Exception'>, <class 'GeneratorExit'>,...
 print(Exception.__subclasses__())  # [<class 'ArithmeticError'>, <class 'AssertionError'>, <class 'AttributeError'>, ...
-# print_exception_tree(BaseException)
+print_exception_tree(BaseException)
 ''' BaseException
    +---BaseExceptionGroup
    |   +---ExceptionGroup
@@ -5846,7 +5824,7 @@ def print_args(args):
 try:
     raise Exception
 except Exception as e:
-    print(e, e.__str__(), sep=' : ' ,end=' : ')  #  :  :
+    print(e, e.__str__(), sep=' : ', end=' : ')  #  :  :
     print_args(e.args) #
 
 try:
