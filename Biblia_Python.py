@@ -718,11 +718,11 @@ print(a, b, c, d, e, f)  # 0 5 -5 1 1 16
 Estos operadores se utilizan para desplazar los bits de un número hacia la izquierda o hacia la derecha, multiplicando
 o dividiendo el número por dos, respectivamente.Se pueden utilizar cuando tenemos que multiplicar o dividir un número 
 por dos.
-Desplazamiento a la derecha bit a bit: desplaza los bits del número a la derecha y llena 0 en los vacíos a
-la izquierda (llena 1 en el caso de un número negativo) como resultado.
-Efecto similar al dividir el número con alguna potencia de dos.Desplazamiento bit a bit a la derecha: desplaza los bits 
-del número a la derecha y llena 0 en vacíos left (llena 1 en el caso de un número negativo) como resultado.
-Efecto similar al de dividir el número con alguna potencia de dos.
+- Desplazamiento a la derecha bit a bit >>: desplaza los bits del número a la derecha y llena 0 en los vacíos a la 
+  izquierda (llena 1 en el caso de un número negativo) como resultado. Efecto similar al dividir el número con alguna 
+  potencia de dos.
+- Desplazamiento bit a bit a la izquierda <<: Desplaza los bits del número a la izquierda y, como resultado, llena 0 en 
+  los espacios vacíos a la derecha. Efecto similar al de multiplicar el número con alguna potencia de dos.
 """
 # ++++  Ejemplos +++++++++
 a = 10  # = 0000 1010 (Binary)
@@ -730,10 +730,6 @@ a >> 1  # = 0000 0101 = 5
 a = -10  # = 1111 0110 (Binary)
 a >> 1  # = 1111 1011 = -5
 
-""" Bitwise left shift: Shifts the bits of the number to the left and fills 0 on voids right as a result. 
-Similar effect as of multiplying the number with some power of two. Example: 
-"""
-# ++++  Ejemplos +++++++++
 a = 5  # = 0000 0101 (Binary)
 a << 1  # = 0000 1010 = 10
 a << 2  # = 0001 0100 = 20
@@ -744,7 +740,7 @@ b << 2  # = 1101 1000 = -40
 # ++++  ejemplo and  +++++++++
 v = int(input('proporciona un valor numérico: '))
 max = 5
-r = (v > 0) and (v <= max)  # mas simple.... 0 < v <= maximo
+r = (v > 0) and (v <= max)  # mas simple.... 0 < v <= máximo
 if r:
     print(f'{v} está dentro de rango')
 else:
