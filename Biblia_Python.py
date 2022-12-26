@@ -856,7 +856,7 @@ contador = 0
 while contador <= 10:
     print(contador)
     contador += 1
-else:
+else:  # Ojo en cada iteración
     print(f'fin del contador ultimo numero: {contador}')
 
 c = 5
@@ -871,9 +871,8 @@ while n <= 10:
         print(n)
     n += 1
 
-# A program that reads a sequence of numbers
-# and counts how many numbers are even and how many are odd.
-# The program terminates when zero is entered.
+# +++++ ejemplo
+# programa que lea una secuencia de números cuenta cuantos son pares (odd) e impares (even), temrina al intorducir 0
 odd_numbers = 0
 even_numbers = 0
 
