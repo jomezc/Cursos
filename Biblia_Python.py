@@ -908,8 +908,6 @@ for letra in cadena:
 else:
     print('fin for')
 
-# arreglo cadena de caracteres, iterar recorrer cada elemento
-
 # ********   break
 cadena = 'holanda'
 for letra in cadena:
