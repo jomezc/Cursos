@@ -204,7 +204,7 @@ print("f" in the_string)  # False
 
 # ******** MÉTODOS DE CADENAS  #############
 
-# ******** min()
+# ******** min() y max() (CADENAS Y NUMEROS)
 # Encuentra el elemento mínimo de la secuencia pasada como argumento. Hay una condición:
 # la secuencia (cadena, lista, no importa) no puede estar vacía, de lo contrario obtendrá una excepción ValueError.
 # max el mayor
@@ -215,9 +215,18 @@ t = 'The Knights Who Say "Ni!"'
 print('[' + min(t) + ']')  # espacio es el 32
 print('[' + max(t) + ']')  # y
 
+# También para números, puede además recibir más de dos parámetros devolverá el mayor o menor
 t = [0, 1, 2]
-print(min(t))  # 0 menor ascii de los números
+print(min(t))  # 0 Menor ascii de los números
 print(max(t))  # 2
+
+number1 = int(input("Enter the first number: "))  # Enter the first number: 9999
+number2 = int(input("Enter the second number: "))  # Enter the second number: 10000
+number3 = int(input("Enter the third number: "))  # Enter the third number: 23
+
+largest_number = max(number1, number2, number3)
+print("The largest number is:", largest_number)  # The largest number is: 10000
+
 
 # ******** index()
 # Busca la secuencia desde el principio, para encontrar el primer elemento del valor especificado en su argumento.
@@ -726,16 +735,16 @@ por dos.
 """
 # ++++  Ejemplos +++++++++
 a = 10  # = 0000 1010 (Binary)
-a >> 1  # = 0000 0101 = 5
+print(a >> 1)  # = 0000 0101 = 5
 a = -10  # = 1111 0110 (Binary)
-a >> 1  # = 1111 1011 = -5
+print(a >> 1)  # = 1111 1011 = -5
 
 a = 5  # = 0000 0101 (Binary)
-a << 1  # = 0000 1010 = 10
-a << 2  # = 0001 0100 = 20
+print(a << 1)  # = 0000 1010 = 10
+print(a << 2)  # = 0001 0100 = 20
 b = -10  # = 1111 0110 (Binary)
-b << 1  # = 1110 1100 = -20
-b << 2  # = 1101 1000 = -40
+print(b << 1)  # = 1110 1100 = -20
+print(b << 2) # = 1101 1000 = -40
 
 # ++++  ejemplo and  +++++++++
 v = int(input('proporciona un valor numérico: '))
@@ -798,7 +807,7 @@ env = bool(input('Indica si el envio es gratuito: '))
 print(f'''
 nombre: {nom}
 Id: {pid}
-envio gratuito?: {env}
+¿Envío gratuito?: {env}
 ''')
 
 # ++++   mas ejercicio +++++++
@@ -833,19 +842,6 @@ else:
     mensaje = 'Etapa de la ida no reconocida....'
 
 print(f'tu edad es: {edad}, {mensaje}')
-
-# ***********************************
-# ******** MAX MIN  #######################
-# ***********************************
-# max() máximo valor, se puede usar con múltiples parámetros
-# min() minimo valor, se puede usar con múltiples parámetros
-# Read three numbers.
-number1 = int(input("Enter the first number: "))
-number2 = int(input("Enter the second number: "))
-number3 = int(input("Enter the third number: "))
-
-largest_number = max(number1, number2, number3)
-print("The largest number is:", largest_number)
 
 # ***********************************
 # ******** WHILE  #######################
