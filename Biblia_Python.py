@@ -141,7 +141,6 @@ TypeError y devuelve un número que representa el punto de código del argumento
 
 por el contrario si conoces el valor del punto de código y quieres concer el caracter: chr()
 '''
-# Demonstrating the ord() function.
 char_1 = 'a'
 char_11 = 'A'
 char_2 = ' '  # space
@@ -151,7 +150,7 @@ print(ord(char_11))  # 65
 print(ord(char_2))  # 32
 print(chr(97))  # a
 print(chr(65))  # A
-print(len("\n\n"))  #2.
+print(len("\n\n"))  # 2
 
 print("\"I\'m\"\n\"\"learning\"\"\n\"\"\"Python\"\"\"")
 # "I'm"
@@ -165,7 +164,6 @@ b = "Mi grupo favorito es:"
 print(b + " " + miGrupoFavorito)
 # ******** podemos también usar comas que mete automáticamente espacio
 print(b, miGrupoFavorito)
-
 n1 = "1"
 n2 = "2"
 print(n1 + n2)  # Concatenación
@@ -190,7 +188,7 @@ print("+" + 10 * "-" + "+")
 leg_a = float(input("Input first leg length: "))  # float a número en punto flotante
 leg_b = float(input("Input second leg length: "))
 print("Hypotenuse length is " + str((leg_a**2 + leg_b**2) ** .5))  # 2 3 -> 3.605551275463989 str a char
-x = int(input("Enter a number: ")) # The user enters 2
+x = int(input("Enter a number: "))  # The user enters 2
 print(x * "5")
 
 # como son secuencias se pueden recorrer como las listas (ejemplos en for) tanto por con índices positivos como
@@ -214,8 +212,8 @@ print(min("aAbByYzZ"))  # A, es menor ascii
 print(max("aAbByYzZ"))  # z, es mayor ascii
 
 t = 'The Knights Who Say "Ni!"'
-print('[' + min(t) + ']') # espacio es el 32
-print('[' + max(t) + ']') # y
+print('[' + min(t) + ']')  # espacio es el 32
+print('[' + max(t) + ']')  # y
 
 t = [0, 1, 2]
 print(min(t))  # 0 menor ascii de los números
@@ -241,13 +239,12 @@ print(list("abcabc"))  # ['a', 'b', 'c', 'a', 'b', 'c']
 print("abcabc".count("b"))  # 2
 print('abcabc'.count("d"))  # 0
 
-
 # ******** center()
 # Hace una copia de la cadena original,
 # tratando de centrarla dentro de un campo de un ancho específico.
 # o con un numero de ocurrencias del segundo parámetro
 print('[' + 'alpha'.center(10) + ']')  # [  alpha   ]
-print('[' + 'alpha'.center(10,'*') + ']')  # [**alpha***]
+print('[' + 'alpha'.center(10, '*') + ']')  # [**alpha***]
 
 # ******** endswith()
 # Verifica si la cadena dada termina con el argumento especificado y devuelve True o False,
@@ -257,6 +254,13 @@ if "epsilon".endswith("on"):
 else:
     print("no")
 # yes
+
+# **** startswith()
+# Es un reflejo especular de "endswith()": comprueba si una cadena dada comienza
+# con la subcadena especificada.
+# Demonstrating the startswith() method:
+print("omega".startswith("meg"))  # False
+print("omega".startswith("om"))  # True
 
 # ******** find()
 # Es similar a index(), que ya conoce: busca una subcadena y devuelve el índice de la primera
@@ -269,9 +273,9 @@ else:
 print("Eta".find("ta"))  # 1
 print("Eta".find("mma"))  # -1
 print('kappa'.find('a', 2))  # 4
-print('kappa'.find('a', 1, 4))  # 1
-print('kappa'.find('a', 2, 4))  # -1
-
+print('kappa'.find('a', 1, 4))  # 1 si incluye en el rango el principio
+print('kappa'.find('a', 2))  # 4 desde sin hasta
+print('kappa'.find('a', 2, 4))  # -1 no inclusive en el final es el rango según este ejemplo k 0, a 1, p 2, p 3, a 4
 the_text = """A variation of the ordinary lorem ipsum
 text has been used in typesetting since the 1960s"""
 
@@ -285,14 +289,14 @@ while fnd != -1:
 # Hacen casi lo mismo que sus contrapartes (los que no tienen el prefijo r), pero comienzan sus
 # búsquedas desde el final de la cadena, no desde el principio (por lo tanto, el prefijo r, de derecho).
 print("tau tau tau".rfind("ta"))  # 8
-print("tau tau tau".rfind("ta", 9))  # -1
-print("tau tau tau".rfind("ta", 3, 9))  # 4
+print("tau tau tau".rfind("ta", 9))  # -1 desde el final al 9
+print("tau tau tau".rfind("ta", 3, 9))  # 4 desde el 9 al 3
 
 # ******** isalnum()
 # Comprueba si la cadena contiene solo dígitos o caracteres alfabéticos (letras) y devuelve True o FalseTambién
-t = 'Six lambdas' # False
+t = 'Six lambdas'  # False por el espacio
 print(t.isalnum())
-t = 'ΑβΓδ'  # True
+t = 'ΑβΓδ'  # True son alfabéticos ...
 print(t.isalnum())
 t = '20E1'  # True
 print(t.isalnum())
@@ -319,6 +323,7 @@ print(" ".isspace())  # True
 print("mooo mooo mooo".isspace())  # False
 
 # ********  isupper()
+# solo mayúsculas
 print("Moooo".isupper())  # False
 print('MOOOO'.isupper())  # True
 
@@ -352,7 +357,7 @@ print("I know that I know nothing. Part 2.".upper())    # I KNOW THAT I KNOW NOT
 # ******** lower()
 # Hace una copia de una cadena de origen, reemplaza todas las letras mayúsculas con sus
 # equivalentes en minúsculas y devuelve la cadena como resultado. Una vez más, la cadena de origen permanece intacta.
-print("SiGmA=60".lower()) # sigma=60
+print("SiGmA=60".lower())  # sigma=60
 
 # ***** join()
 # como sugiere su nombre, el método realiza una unión: espera un argumento como una lista; debe asegurarse de que
@@ -370,22 +375,21 @@ print("".join(["omicron", "pi", "rho"]))  # omicronpirho
 # operación y no se copian en la lista resultante. Si la cadena está vacía, la lista resultante también está vacía.
 # si le pones otra cosa pues es el separador
 print("phi       chi\npsi".split())  # ['phi', 'chi', 'psi']
-print("phi       chi\npsi".split('\n'))  # ['phi', 'chi', 'psi']
+print("phi       chi\npsi".split('\n'))  # ['phi       chi', 'psi']
 
 # **** lstrip()
 # Sin parámetros devuelve una cadena recién creada formada a partir de la original eliminando
 # todos los espacios en blanco INICIALES.
 print("[" + " tau ".lstrip() + "]")  # [tau ] OJO iniciales
-# **** lstrip()
 # De un parámetro hace lo mismo que su versión sin parámetros,
-# pero elimina todos los caracteres incluidos en su argumento (una cadena), no solo los espacios en blanco:
+# pero elimina sólo los caracteres incluidos en su argumento (una cadena), hasta encontrar otro carácter
 print("www.cisco.com".lstrip("w."))  # cisco.com
 print("pythoninstitute.org".lstrip(".org"))  # pythoninstitute.org
 
 # **** rstrip()
 # Lo mismo pero desde el otro extremo:
-print("[" + " upsilon ".rstrip() + "]")
-print("cisco.com".rstrip(".com"))
+print("[" + " upsilon ".rstrip() + "]")  # [ upsilon]
+print("cisco.com".rstrip(".com"))  # cis
 
 # **** strip()
 # Combina los efectos causados por rstrip() y lstrip() - crea una nueva cadena que carece de
@@ -397,29 +401,18 @@ print(".orgpythoninstitute.org".strip(".org"))  # pythoninstitute
 # De dos parámetros devuelve una copia de la cadena original en la que todas las apariciones
 # del primer argumento han sido reemplazadas por el segundo argumento.
 #  Si el segundo argumento es una cadena vacía, reemplazar en realidad es eliminar la cadena del primer argumento.
-#  ¿Qué tipo de magia ocurre si el primer argumento es una cadena vacía?
 # La variante replace() de tres parámetros usa el tercer argumento (un número) para limitar el número de reemplazos.
 print("www.netacad.com".replace("netacad.com", "pythoninstitute.org"))  # www.pythoninstitute.org
 print("This is it!".replace("is", "are"))  # Thare are it!
 print("Apple juice".replace("juice", ""))  # Apple
 print("This is it!".replace("is", "are", 1))  # Thare is it!
-print("This is it!".replace("is", "are", 2))  # Thare are it!
-
-# **** startswith()
-# Es un reflejo especular de "endswith()": comprueba si una cadena dada comienza
-# con la subcadena especificada.
-# Demonstrating the startswith() method:
-print("omega".startswith("meg"))  # False
-print("omega".startswith("om"))  # True
-print("omega".endswith("meg"))  # False
-print("omega".endswith("a"))  # True
-print()
+print("This is it is! is".replace("is", "are", 3))  # Thare are it! # ojo numero de remplazos no de caracteres
 
 
 # ***********************************
 # ********  BOOL  ###############
 # ***********************************
-# Is it guaranteed that False == 0 and True == 1,
+# Está garantizado que False == 0 and True == 1,
 miVariable = True
 miVariable2 = False
 miVariable3 = 2 < 3  # la comprobación devuelve un valor true o false
@@ -429,9 +422,9 @@ print(miVariable, miVariable2, miVariable3)
 # ***********************************
 # ********  None  ###############
 # ***********************************
-# son solo dos tipos de circunstancias en las que Ninguno se puede usar de manera segura:
-# cuando lo asigna a una variable (o lo devuelve como resultado de una función)
-# #cuando lo comparas con una variable para diagnosticar su estado interno. Como aquí:
+'''son solo dos tipos de circunstancias en las que None se puede usar de manera segura: cuando lo asigna a una 
+variable (o lo devuelve como resultado de una función), y cuando lo comparas con una variable para diagnosticar su 
+estado interno. Como aquí:'''
 value = None
 if value is None:
     print("Sorry, you don't carry any value")
@@ -444,7 +437,7 @@ if miVariable2:  # LOS DOS PUNTOS SON NECESARIOS
 else:
     print("el resultado fue falso")
 
-x, y, z = 5, 10, 8
+x, y, z = 5, 10, 8  # Desempaquetado
 x, y, z = z, y, x
 
 print(x > z)
@@ -453,8 +446,8 @@ print((y - 5) == x)
 # ***********************************
 # ********  Input ***************
 # ***********************************
-# Función input para la entrada del usuario
-# Input devuelve un string con lo que para realizar operaciones numéricas tenemos que convertir
+'''Función input para la entrada del usuario Input devuelve un string de lo introducido por el usuario,  con lo que 
+para realizar operaciones numéricas tenemos que convertir a entero, por ejemplo'''
 n = int(input("Escribe el primer numero: "))
 m = int(input("Escribe el segundo numero: "))  # ahora si no metemos enteros falla claro
 r = n + m
@@ -469,6 +462,7 @@ print("Mi dia estuvo de:", dia)
 # ***********************************
 
 # **** SUMA +
+# ojo de cadenas concatenación
 opA = 3
 opB = 2
 suma = opA + opB
@@ -477,6 +471,7 @@ print('Resultado de la suma: ', suma)
 print(f'resultado de la  suma: {suma}')
 
 # **** RESTA -
+# ojo de cadenas NO soportado
 resta = opA - opB
 print(f'Resultado de la resta: {resta}')
 print(-4 - 4)  # -8
@@ -524,10 +519,10 @@ m *= 3  # m = m * 3
 m /= 3
 print(m)
 
-print(9 % 6 % 2)  # 1 left-sided binding
-print(2 ** 2 ** 3)  # 256  the exponentiation operator uses right-sided binding.
+print(9 % 6 % 2)  # 1 empieza por la izquierda
+print(2 ** 2 ** 3)  # 256 menos la exponenciación que empieza por la derecha.
 # operador unario es un operador con un solo operando, por ejemplo, -1 o +3.
-print((-2 / 4), (2 / 4), (2 // 4), (-2 // 4)) # -0.5 0.5 0 -1
+print((-2 / 4), (2 / 4), (2 // 4), (-2 // 4))  # -0.5 0.5 0 -1
 
 # ***********************************
 # ******** COMPARACIONES##
@@ -539,7 +534,7 @@ distingue entre mayúsculas y minúsculas (las letras mayúsculas se toman como 
 string con números, 
 string == number --> False;
 string != number --> True;
-string >= number --> falla.'''
+string >= number --> falla.  # OJO'''
 
 a = 4
 b = 2
@@ -549,31 +544,28 @@ r = a != b
 print(f'Resultado: {r}')
 r = a > b  # mayor
 r = a < b  # menor
-r = a >= b  # menor o igual
+r = a >= b  # mayor o igual
 r = a <= b  # menor o igual
 print(f'Resultado: {r}')
-
 s1 = '12.8'
-i = int(s1) # value error aqui porque no podemos pasar el string 12.8 a entero a float si podriamos
-
+i = int(s1)  # value error aquí porque no podemos pasar el string 12.8 a entero a float si podríamos
 
 '''
-En general, Python ofrece dos formas diferentes de ordenar listas.
-El primero se implementa como una función llamada sorted().
-La función toma un argumento (una lista) y devuelve una nueva lista, llena con los elementos del argumento ordenado. 
-La lista original permanece intacta. Mire el código en el editor y ejecútelo. 
+En general, Python ofrece dos formas diferentes de ordenar listas. El primero se implementa como una función llamada 
+sorted(). La función toma un argumento (una lista) y devuelve una nueva lista, llena con los elementos del argumento 
+ordenado. La lista original permanece intacta.
 El segundo método afecta a la lista en sí: no se crea ninguna lista nueva. La ordenación se realiza in situ mediante 
 el método denominado sort().
 '''
 first_greek = ['omega', 'alpha', 'pi', 'gamma']
 first_greek_2 = sorted(first_greek)
-print(first_greek) # ['omega', 'alpha', 'pi', 'gamma']
-print(first_greek_2) # ['alpha', 'gamma', 'omega', 'pi']
-
+print(first_greek)  # ['omega', 'alpha', 'pi', 'gamma']
+print(first_greek_2)  # ['alpha', 'gamma', 'omega', 'pi']
+# sorted() -> crea nueva lista ordenada; sort() ordena la lista original
 second_greek = ['omega', 'alpha', 'pi', 'gamma']
-print(second_greek) # ['omega', 'alpha', 'pi', 'gamma']
+print(second_greek)  # ['omega', 'alpha', 'pi', 'gamma']
 second_greek.sort()
-print(second_greek)  ['alpha', 'gamma', 'omega', 'pi']
+print(second_greek)  # ['alpha', 'gamma', 'omega', 'pi']
 
 # ++++  Ejemplo prioridad +++++++++
 #  1
@@ -599,9 +591,9 @@ print(miles, "miles is", round(miles_to_kilometers, 2), "kilometers")
 print(kilometers, "kilometers is", round(kilometers_to_miles, 2), "miles")
 
 # ++++  ecuación sencilla ++++++++++
-x =  -1
+x = -1
 x = float(x)
-y = 3*(x**3) - 2*(x**2) + 3*x -1
+y = 3*(x**3) - 2*(x**2) + 3*x - 1
 print("y =", y)
 
 
@@ -622,12 +614,10 @@ else:
 
 # ******** paso de minutos en reloj +++++++
 """
-Su tarea es preparar un código simple capaz de evaluar el
-hora de finalización de un período de tiempo, dada como un número de minutos (podría ser arbitrariamente grande). 
-La hora de inicio se da como un par de horas (0..23) y minutos (0..59).
-El resultado tiene que ser impreso en la consola.
-Por ejemplo, si un evento comienza a las 12:17 y dura 59 minutos,
-terminará a las 13:16.
+Su tarea es preparar un código simple capaz de evaluar la hora de finalización de un período de tiempo, dada como un 
+número de minutos (podría ser arbitrariamente grande). La hora de inicio se da como un par de horas (0..23) y minutos 
+(0..59). El resultado tiene que ser impreso en la consola. Por ejemplo, si un evento comienza a las 12:17 y dura 59 
+minutos, terminará a las 13:16.
 input: 12 17 59 --> output: 13:16
 input: 23 58 642 --> Expected output: 10:40
 """
@@ -664,12 +654,12 @@ print(r)
 # El resultado de sus operaciones es uno de estos valores: Falso o Verdadero.
 # Esto significa que este fragmento asignará el valor True a la variable j si i no es cero;
 # de lo contrario, será Falso.
-
+a = 10
+b = 4
 """
 Operadores bit a bit ( SOLO ENTEROS)
-https://www.geeksforgeeks.org/python-bitwise-operators/
-Sin embargo, hay cuatro operadores que le permiten manipular bits individuales de datos. Se llaman operadores bit a bit.
-Cubren todas las operaciones que mencionamos antes en el contexto lógico y un operador adicional. Este es el operador 
+Hay cuatro operadores que le permiten manipular bits individuales de datos. Se llaman operadores bit a bit.
+Cubren  las operaciones en el contexto lógico y un operador adicional. Este es el operador 
 xor (como en o exclusivo), y se denota como ^ (signo de intercalación).
 
 Aquí están todos ellos:
@@ -680,6 +670,9 @@ Aquí están todos ellos:
     0 AND 1 = 0
     1 AND 0 = 0
     1 AND 1 = 1;
+"""
+print("a & b =", a & b)  # a & b = 0
+"""
 | (bar) - disyunción bit a bit
     El operador OR también es conocido como disyunción lógica. 
     Da como salida 1 siempre que una o más de sus entradas sean 1. Aquí está la tabla de verdad:
@@ -687,22 +680,30 @@ Aquí están todos ellos:
     0 OR 1 = 1
     1 OR 0 = 1
     1 OR 1 = 1;
-
+"""
+print("a | b =", a | b)  # a | b = 14
+"""
 ~ (tilde) - negación bit a bit
     lo contrario 0 -> 1 ; 1-> 0;
+"""
+print("~a =", ~a)  # ~a = -11
+""" 
 ^ (signo de intercalación) - bit a bit exclusivo o (xor)
-    El operador XOR tiene como salida un 1 siempre que las entradas no coincidan,
-     lo cual ocurre cuando una de las dos entradas es exclusivamente verdadera. Esto es lo mismo que la suma mod 2. 
+    El operador XOR tiene como salida un 1 siempre que las entradas no coincidan, lo cual ocurre cuando una de las dos 
+    entradas es exclusivamente verdadera. Esto es lo mismo que la suma mod 2. 
      Aquí está la tabla de verdad:
     0 XOR 0 = 0
     0 XOR 1 = 1
     1 XOR 0 = 1
     1 XOR 1 = 0.
-
+"""
+print("a ^ b =", a ^ b)  # a ^ b = 14
+"""
 por ello:
 & requiere exactamente dos 1 para proporcionar 1 como resultado;
 | requiere al menos un 1 para proporcionar 1 como resultado;
 ^ requiere exactamente un 1 para proporcionar 1 como resultado.
+"""
 x = 4
 y = 1
 a = x & y
@@ -711,28 +712,9 @@ c = ~x  # tricky!
 d = x ^ 5
 e = x >> 2
 f = x << 2
-print(a, b, c, d, e, f) # 0 5 -5 1 1 16
+print(a, b, c, d, e, f)  # 0 5 -5 1 1 16
 """
-
-# Python program to show
-# bitwise operators
-
-a = 10
-b = 4
-
-# Print bitwise AND operation
-print("a & b =", a & b)
-
-# Print bitwise OR operation
-print("a | b =", a | b)
-
-# Print bitwise NOT operation
-print("~a =", ~a)
-
-# print bitwise XOR operation
-print("a ^ b =", a ^ b)
-"""
-Operadores de Turno
+**** Operadores de Turno
 Estos operadores se utilizan para desplazar los bits de un número hacia la izquierda o hacia la derecha, multiplicando
 o dividiendo el número por dos, respectivamente.Se pueden utilizar cuando tenemos que multiplicar o dividir un número 
 por dos.
