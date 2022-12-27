@@ -913,7 +913,7 @@ cadena = 'holanda'
 for letra in cadena:
     if letra == 'a':
         print(f' letra encontrada: {letra}')
-        break  # rompe el ciclo incluso el else !!!!
+        break  # Rompe el ciclo incluso el else !!!!
 else:
     print('fin for')
 
@@ -923,7 +923,7 @@ else:
 for i in range(10):
     if i % 2 == 0:
         print(f'Valor: {i}')
-        continue  # ******** ejecuta la siguiente iteración si cumple
+        continue  # ** ejecuta la siguiente iteración si cumple
     print(f'{i} no es par')
 
 for i in range(10):
