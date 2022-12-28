@@ -82,8 +82,7 @@ es en realidad un gráfico o una representación matemática de esa imagen, pero
 es solo una trama que representa 18 píxeles. Y la razón de esto es que map plot lib usa mapas de color para representar
 datos de imagen.'''
 plt.imshow(img, cmap='gray')  # con el flag opcional seleccionamos formato en escala de grises
-'''cv2.imshow('image', img, )  # llamamos al show de OpenCV
-cv2.waitKey(0)  # Esperar a pulsar una tecla para cerrar la imagen OpenCV'''
+
 
 # ++++ ejemplo imagen escala de grises +++++
 cb_img_fuzzy = cv2.imread("checkerboard_fuzzy_18x18.jpg", 0)
@@ -111,8 +110,7 @@ print(cb_img_fuzzy)  # pintarlo en consola
 # mostrar imagen.
 plt.imshow(cb_img_fuzzy, cmap='gray')
 plt.show()
-'''cv2.imshow('image', cb_img_fuzzy, )  # llamamos al show de OpenCV
-cv2.waitKey(0)  # Esperar a pulsar una tecla para cerrar la imagen OpenCV'''
+
 
 # ++++ ejemplo imagen Cocacola de grises +++++
 # Read and display Coca-Cola logo.
@@ -130,8 +128,6 @@ visualización correcta, necesitamos invertir los canales de la imagen'''
 coke_img_channels_reversed = coke_img[:, :, ::-1]  # Invierte el orden de ese último miembro de la matriz (700, 700, 3)
 plt.imshow(coke_img_channels_reversed)
 plt.show()
-cv2.imshow('image', coke_img, )  # llamamos al show de OpenCV, OJO como es el de Open cv se guarda y muestra en BGR
-cv2.waitKey(0)  # Esperar a pulsar una tecla para cerrar la imagen OpenCV
 
 
 # ***********************************
@@ -173,8 +169,6 @@ imgMerged = cv2.merge((b, g, r))
 # mostramos la imagen mergeada (Invertimos el orden de ese último miembro de la matriz)
 plt.subplot(144); plt.imshow(imgMerged[:, :, ::-1]); plt.title("Merged Output");
 plt.show()
-'''cv2.imshow('image', imgMerged, )  # llamamos al show de OpenCV, OJO como es el de Open cv se guarda y muestra en BGR
-cv2.waitKey(0)  # Esperar a pulsar una tecla para cerrar la imagen OpenCV'''
 
 
 # ************************************************
@@ -277,3 +271,35 @@ Imwrite: https://docs.opencv.org/4.5.1/d4/da8/group__imgcodecs.html#gabbc7ef1aa2
 '''
 # Guardar la imagen
 cv2.imwrite("New_Zealand_Lake_SAVED.png", img_NZ_bgr)
+
+# leemos la imagen guardada
+# read the image as Color
+img_NZ_bgr = cv2.imread("New_Zealand_Lake_SAVED.png", cv2.IMREAD_COLOR)
+print("img_NZ_bgr shape is: ", img_NZ_bgr.shape)  # img_NZ_bgr shape is:  (600, 840, 3)
+
+# read the image as Grayscaled
+img_NZ_gry = cv2.imread("New_Zealand_Lake_SAVED.png", cv2.IMREAD_GRAYSCALE)
+print("img_NZ_gry shape is: ", img_NZ_gry.shape)  # img_NZ_gry shape is:  (600, 840)
+
+
+# *************************************************
+# ***** mostrar la imagen con matploit o con opencv
+# *************************************************
+window1 = cv2.namedWindow("w1")  # creamos una ventana
+cv2.imshow('image', img_NZ_bgr, )  # llamamos al show de OpenCV, OJO como es el de Open cv se guarda y muestra en BGR
+cv2.waitKey(0)  # pulsar una tecla para cerrar la imagen OpenCV si 0, si ponemos numeros seran los segundos de espera
+
+# cv2.waitKey(8000)   # 8 segundos
+
+# keypress = cv2.waitKey(0)  # creamos una variable que contenga la primera tecla introducida
+# if keypress == ord('q'):   # si la tecla ( es en ascii) coincide con el ascii de q
+#     Alive = False
+
+cv2.destroyWindow(window1)  # destruimos la ventana creada
+
+
+# *******************************
+# ***** Basic Image Manipulations
+# *******************************
+
+#
