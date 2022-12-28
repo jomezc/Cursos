@@ -1,6 +1,4 @@
-'''
-Imports
-'''
+# Imports
 import cv2  # pip install opencv-python es el módulo de open cv
 import numpy as np  #
 import matplotlib.pyplot as plt
@@ -10,7 +8,7 @@ from IPython.display import Image  # nos permitirá mostrar y renderizar imágen
 # ***********************************
 # ***** Leer imágenes usando OpenCV
 # ***********************************
-Image(filename='checkerboard_18x18.png') # mostrar 18x18 pixel image (en notebook) solo .
+Image(filename='checkerboard_18x18.png')  # mostrar 18x18 pixel image (en notebook) solo .
 
 # **********************************************
 # ***** Leer e imprimir imágenes usando OpenCV
@@ -78,13 +76,14 @@ print("Data type of image is ", img.dtype)  # Data type of image is  uint8
 
 # **** mostrar imagen en una ventana
 plt.imshow(img)
+plt.show()
 ''' lo muestra mediante a lib de matploit en notebook como una represantación de puntos corrdenadas x/y
 es en realidad un gráfico o una representación matemática de esa imagen, pero no es 18 píxeles de ancho en mi pantalla,
-es solo una trama que representa 18 píxeles.'''
-# Y la razón de esto es que map plot lib usa mapas de color para representar datos de imagen.
+es solo una trama que representa 18 píxeles. Y la razón de esto es que map plot lib usa mapas de color para representar
+datos de imagen.'''
 plt.imshow(img, cmap='gray')  # con el flag opcional seleccionamos formato en escala de grises
-cv2.imshow('image', img, )  # llamamos al show de OpenCV
-cv2.waitKey(0)  # Esperar a pulsar una tecla para cerrar la imagen OpenCV
+'''cv2.imshow('image', img, )  # llamamos al show de OpenCV
+cv2.waitKey(0)  # Esperar a pulsar una tecla para cerrar la imagen OpenCV'''
 
 # ++++ ejemplo imagen escala de grises +++++
 cb_img_fuzzy = cv2.imread("checkerboard_fuzzy_18x18.jpg", 0)
@@ -110,23 +109,19 @@ print(cb_img_fuzzy)  # pintarlo en consola
  [  0   0   9  22   1 132 233 255 253 253 254 230 129   1  26   2   0   0]]
 '''
 # mostrar imagen.
-# plt.imshow(cb_img_fuzzy, cmap='gray')
-# en consola
-cv2.imshow('image', cb_img_fuzzy, )  # llamamos al show de OpenCV
-cv2.waitKey(0)  # Esperar a pulsar una tecla para cerrar la imagen OpenCV
+plt.imshow(cb_img_fuzzy, cmap='gray')
+plt.show()
+'''cv2.imshow('image', cb_img_fuzzy, )  # llamamos al show de OpenCV
+cv2.waitKey(0)  # Esperar a pulsar una tecla para cerrar la imagen OpenCV'''
 
 # ++++ ejemplo imagen Cocacola de grises +++++
 # Read and display Coca-Cola logo.
 Image("coca-cola-logo.png")  # mostrar el logo de coca-cola (en notebook) solo .
-
-
 coke_img = cv2.imread("coca-cola-logo.png", 1)  # leer imagen. opción formato color
-
 print("Image size is ", coke_img.shape)  # Tamaño de la imagen, Image size is  (700, 700, 3) se ve que tiene 3 canales
-
 print("Data type of image is ", coke_img.dtype)   # Mostrar el tipo de dato de la imagen, Data type of image is  uint8
-
 plt.imshow(coke_img)
+plt.show()
 '''
 El color que se muestra por defecto es diferente de la imagen real. Esto se debe a que 
 matplotlib espera la imagen en formato RGB mientras que OpenCV almacena imágenes en formato BGR. Por lo tanto, para una 
@@ -134,7 +129,7 @@ visualización correcta, necesitamos invertir los canales de la imagen'''
 # No se va a ver bien a menos que cambiemos el orden del canal.
 coke_img_channels_reversed = coke_img[:, :, ::-1]  # Invierte el orden de ese último miembro de la matriz (700, 700, 3)
 plt.imshow(coke_img_channels_reversed)
-# en consola
+plt.show()
 cv2.imshow('image', coke_img, )  # llamamos al show de OpenCV, OJO como es el de Open cv se guarda y muestra en BGR
 cv2.waitKey(0)  # Esperar a pulsar una tecla para cerrar la imagen OpenCV
 
@@ -143,43 +138,142 @@ cv2.waitKey(0)  # Esperar a pulsar una tecla para cerrar la imagen OpenCV
 # ***** Split y mege imágenes usando OpenCV
 # ***********************************
 '''División y fusión de canales de color
-cv2.split() Divide una matriz multicanal en varias matrices de un solo canal.
-cv2.merge() Combina varias matrices para crear una única matriz multicanal. Todas las matrices de entrada deben tener el mismo tamaño.
-Documentación de OpenCV¶
+- cv2.split() Divide una matriz multicanal en varias matrices de un solo canal.
+- cv2.merge() Combina varias matrices para crear una única matriz multicanal. Todas las matrices de entrada deben tener 
+              el mismo tamaño.
+Documentación de OpenCV
+
 https://docs.opencv.org/4.5.1/d2/de8/group__core__array.html#ga0547c7fed86152d7e9d0096029c8518a
 
-A continuación vamos a cargar una imagen y posteriormente  Voy a llamar a la función de división abierta para tomar esa 
+A continuación vamos a cargar una imagen y posteriormente voy a llamar a la función de división abierta para tomar esa 
 imagen multicanal y dividirla en sus componentes. B, G y R. Y así, cada una de estas variables representa una matriz 
-numpy 2D que contiene las intensidades de píxeles para esos.
-
-canales de colores.
+numpy 2D que contiene las intensidades de píxeles para esos canales de colores.
 '''
-
 # Split de la imagen en los componentes B, G, R
+img_NZ_bgr = cv2.imread("New_Zealand_Lake.jpg", cv2.IMREAD_COLOR)
+b, g, r = cv2.split(img_NZ_bgr)  # slpit + desempaquetado
 
-img_NZ_bgr = cv2.imread("New_Zealand_Lake.jpg",cv2.IMREAD_COLOR)
-b, g, r = cv2.split(img_NZ_bgr)
-'''
-Entonces, en la siguiente sección del código aquí, simplemente usaremos I am show para mostrar cada uno de esos 
-representaciones como un mapa en escala de grises. '''
-plt.figure(figsize=[20,5])
-plt.subplot(141);plt.imshow(r,cmap='gray');plt.title("Red Channel");
-plt.subplot(142);plt.imshow(g,cmap='gray');plt.title("Green Channel");
-plt.subplot(143);plt.imshow(b,cmap='gray');plt.title("Blue Channel");
-
+# Ahora, simplemente usaremos I am show para mostrar cada uno de esas representaciones como un mapa en escala de grises
+plt.figure(figsize=[20, 5])
+plt.subplot(141); plt.imshow(r, cmap='gray');plt.title("Red Channel");
+plt.subplot(142); plt.imshow(g, cmap='gray');plt.title("Green Channel");
+plt.subplot(143); plt.imshow(b, cmap='gray');plt.title("Blue Channel");
 '''
 Y luego este último fragmento de código toma esos canales individuales y usa la función de fusión para fusionar ellos de
 nuevo en lo que debería ser la imagen original. Y llamaremos a esa imagen fusionada aquí, y también la mostraremos.
-Y vale la pena mencionar un poco aquí que puede obtener algo de intuición con solo echar un vistazo
-en la imagen original.'''
+Y vale la pena mencionar un poco aquí que puede obtener algo de intuición con solo echar un vistazo en la imagen 
+original. 
+por ejemplo, este lago es una especie de azul turquesa, por así decirlo. Seguro que tiene algo de verde y azul, y 
+probablemente muy poco de rojo. Entonces, si ahora regresa a estos canales, puede ver que el Canal Rojo para la parte 
+del lago es bajo, lo que significa que no hay mucho componente rojo en ese color. Por eso es más oscuro. Está más cerca
+de cero. Y fíjate en el verde. Los canales azules tienen una intensidad bastante alta para sus respectivos colores, 
+lo que indica que el color de esa agua tiene un poco de rojo, pero un poco de verde y definitivamente bastante azul.'''
 # Merge de cada canal en una imagen BGR
 imgMerged = cv2.merge((b, g, r))
 # mostramos la imagen mergeada (Invertimos el orden de ese último miembro de la matriz)
-plt.subplot(144);plt.imshow(imgMerged[:, :, ::-1]);plt.title("Merged Output");
-cv2.imshow('image', imgMerged, )  # llamamos al show de OpenCV, OJO como es el de Open cv se guarda y muestra en BGR
-cv2.waitKey(0)  # Esperar a pulsar una tecla para cerrar la imagen OpenCV
+plt.subplot(144); plt.imshow(imgMerged[:, :, ::-1]); plt.title("Merged Output");
+plt.show()
+'''cv2.imshow('image', imgMerged, )  # llamamos al show de OpenCV, OJO como es el de Open cv se guarda y muestra en BGR
+cv2.waitKey(0)  # Esperar a pulsar una tecla para cerrar la imagen OpenCV'''
 
+
+# ************************************************
+# ***** Conversión a diferentes espacios de color
+# ************************************************
+'''
+- cv2.cvtColor() Convierte una imagen de un espacio de color a otro. La función convierte una imagen de entrada de un 
+                espacio de color a otro. En caso de una transformación del espacio de color RGB, el orden de los canales 
+                debe especificarse explícitamente (RGB o BGR). Tenga en cuenta que el formato de color predeterminado 
+                en OpenCV a menudo se denomina RGB, pero en realidad es BGR (los bytes están invertidos). Entonces, 
+                el primer byte en una imagen de color estándar (24 bits) será un componente azul de 8 bits, el segundo 
+                byte será verde y el tercer byte será rojo. Los bytes cuarto, quinto y sexto serían entonces el segundo 
+                píxel (azul, luego verde, luego rojo), y así sucesivamente.
+
+Sintaxis de la función
+dst = cv2.cvtColor(origen, código)
+dst: es la imagen de salida del mismo tamaño y profundidad que src.
+
+La función tiene 2 argumentos requeridos:
+- imagen de entrada src: 8 bits sin firmar, 16 bits sin firmar ( CV_16UC... ) o punto flotante de precisión simple.
+- código: código de conversión de espacio de color (consulte ColorConversionCodes).
+Documentación OpenCV
+cv2.cvtColor: https://docs.opencv.org/3.4/d8/d01/group__imgproc__color__conversions.html#ga397ae87e1288a81d2363b61574eb8cab 
+ColorConversionCodes: https://docs.opencv.org/4.5.1/d8/d01/group__imgproc__color__conversions.html#ga4e0972be5de079fed4e3a10e24ef5ef0'''
+
+# **** Cambiando BGR a RGB
+# OpenCV almacena los canales de color en un orden diferente al de la mayoría de las otras aplicaciones (BGR vs RGB).
+img_NZ_rgb = cv2.cvtColor(img_NZ_bgr, cv2.COLOR_BGR2RGB)  # estamos pasando la imagen y un flag que indica la conversión
+plt.imshow(img_NZ_rgb)  # con el cambio Simplemente estamos mostrando la imagen original.
+plt.show()
 
 '''
-Conversión a diferentes espacios de color
-cv2.cvtColor() Convierte una imagen de un espacio de color a otro. La función convierte una imagen de entrada de un espacio de color a otro. En caso de una transformación del espacio de color RGB, el orden de los canales debe especificarse explícitamente (RGB o BGR). Tenga en cuenta que el formato de color predeterminado en OpenCV a menudo se denomina RGB, pero en realidad es BGR (los bytes están invertidos). Entonces, el primer byte en una imagen de color estándar (24 bits) será un componente azul de 8 bits, el segundo byte será verde y el tercer byte será rojo. Los bytes cuarto, quinto y sexto serían entonces el segundo píxel (azul, luego verde, luego rojo), y así sucesivamente.'''
+vamos a convertir la representación BGR de esa imagen en un HSV representación. HSV significa saturación y valor de tono
+, y ese es otro espacio de color que se usa a menudo en la imagen. Procesamiento y visión por computadora.
+
+Y entonces vamos a almacenar ese resultado en una variable llamada image subrayado HSV. Así que ahora puedo dividir esos
+canales como hicimos anteriormente y obtener los componentes HSN V, por ejemplo.
+
+H representa el color de la saturación de la imagen, S representa la intensidad del color y V representa el valor, es 
+decir, puede pensar en la saturación como un rojo puro versus un rojo opaco, y puede pensar en el valor S ( intensidad)
+como cuán blanco u oscuro es el color, independientemente del color en sí. Y luego Hugh se parece más a la 
+representación del color real.
+'''
+img_hsv = cv2.cvtColor(img_NZ_bgr, cv2.COLOR_BGR2HSV)  # conversión
+h, s, v = cv2.split(img_hsv)  # Split de la imagen al desempaquetado de los componentes h, s, v
+
+
+# mostramos los canales
+plt.figure(figsize=[20, 5])
+plt.subplot(141);plt.imshow(h,cmap='gray');plt.title("H Channel");
+plt.subplot(142);plt.imshow(s,cmap='gray');plt.title("S Channel");
+plt.subplot(143);plt.imshow(v,cmap='gray');plt.title("V Channel");
+plt.subplot(144);plt.imshow(img_NZ_rgb);plt.title("Original");
+plt.show()
+
+'''
+vamos a modificar uno de los canales. Si observa esta primera línea de código, tomaremos el valor Q actual y le 
+sumaremos 10 a eso. Así que solo estamos cambiando donde estamos en el espectro de color y luego fusionaré ese nuevo 
+canal con los canales de arena originales, obteniendo una imagen fusionada, y luego usaremos el cvtColor() para 
+convertir eso de HSV a GB.
+
+En definitiva modifiqué uno de los canales, lo fusioné y ahora lo convertí.
+
+por ello podremos ver la imagen modificada, porque hemos cambiado el tono, observandose diferente a la imagen original 
+'''
+# Cambio de la saturación
+h_new = h+10
+img_NZ_merged = cv2.merge((h_new, s, v))
+img_NZ_rgb = cv2.cvtColor(img_NZ_merged, cv2.COLOR_HSV2RGB)
+
+# mostramos los canales y la imagen
+plt.figure(figsize=[20,5])
+plt.subplot(141);plt.imshow(h,cmap='gray');plt.title("H Channel");
+plt.subplot(142);plt.imshow(s,cmap='gray');plt.title("S Channel");
+plt.subplot(143);plt.imshow(v,cmap='gray');plt.title("V Channel");
+plt.subplot(144);plt.imshow(img_NZ_rgb);plt.title("Modified");
+plt.show()
+
+
+# **********************************
+# ***** Guardar imagen cv2.imwrite()
+# **********************************
+'''
+Guardar la imagen es tan trivial como leer una imagen en OpenCV. Usamos la función cv2.imwrite() con dos argumentos. El 
+primero es el nombre del archivo, el segundo argumento es el objeto de la imagen.
+
+La función imwrite guarda la imagen en el archivo especificado. El formato de imagen se elige en función de la 
+extensión del nombre de archivo (consulte cv::imread para ver la lista de extensiones). En general, solo las imágenes 
+de 8 bits de un solo canal o de 3 canales (con orden de canales 'BGR') se pueden guardar con esta función.
+
+Sintaxis de la función
+cv2.imwrite (nombre de archivo, img [, parámetros])
+La función tiene 2 argumentos requeridos:
+
+- nombre de archivo: puede ser una ruta absoluta o relativa.
+- img: Imagen o Imágenes a guardar.
+Documentación OpenCV
+Imwrite: https://docs.opencv.org/4.5.1/d4/da8/group__imgcodecs.html#gabbc7ef1aa2edfaa87772f1202d67e0ce 
+**ImwriteFlags:**https://docs.opencv.org/4.5.1/d8/d6a/group__imgcodecs__flags.html#ga292d81be8d76901bff7988d18d2b42ac
+'''
+# Guardar la imagen
+cv2.imwrite("New_Zealand_Lake_SAVED.png", img_NZ_bgr)
