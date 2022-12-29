@@ -109,8 +109,7 @@ while alive:
             for x, y in numpy.float32(corners).reshape(-1, 2):
                 cv2.circle(result, (int(x), int(y)), 10, (0, 255, 0), 1)
 
-
-    cv2.imshow(win_name, result)
+    cv2.imshow(win_name, result)  # Enviamos el resultado a la salida
 
     # para poder cambiar el tratamiento de la imagen dependiendo de la tecla introducida
     key = cv2.waitKey(1)
