@@ -63,7 +63,8 @@ print(img)  # pintarlo en consola
  [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]]
 
 Son 18 filas y 18 columnas, y cada uno de los valores representa las intensidades de píxel para cada uno de esos píxeles
-Y observe que están en el rango de 0-255 porque esta imagen está siendo representada por un entero grande de ocho bits.
+Y observe que están en el rango de 0-255 porque esta imagen está siendo representada por un entero  de8-bit unsigned 
+integer (0 a 255).
 '''
 
 # Imprime el tamaño de la imagen
@@ -439,7 +440,7 @@ relación adecuada, que resulta ser de unos sesenta y siete píxeles.
 ------------------------------------------------------------
 para saber el ancho y el alto  función shape() (dimensiones) 
 ------------------------------------------------------------
-s dimensiones de una imagen dada, como la altura de la imagen, el ancho de la imagen y la cantidad de canales en la 
+dimensiones de una imagen dada, como la altura de la imagen, el ancho de la imagen y la cantidad de canales en la 
 imagen, se denominan shape (forma) de la imagen y  se almacena en numpy.ndarray.
 La función shape() puede proporcionar la dimensión de una imagen dada y almacena cada una de las dimensiones de la 
 imagen, como la altura de la imagen, el ancho de la imagen y la cantidad de canales en la imagen en diferentes índices.
@@ -648,3 +649,277 @@ plt.imshow(imageText[:, :, ::-1])
 plt.show()
 
 
+# ******************************************
+# ***** Operaciones aritméticas con imágenes
+# ******************************************
+'''
+Las técnicas de procesamiento de imágenes aprovechan las operaciones matemáticas para lograr diferentes resultados. 
+La mayoría de las veces llegamos a una versión mejorada de la imagen usando algunas operaciones básicas. Echaremos un 
+vistazo a algunas de las operaciones fundamentales que se usan a menudo en las canalizaciones de visión por computadora.
+En este cuaderno cubriremos operaciones aritméticas como la suma y la multiplicación.
+'''
+img_bgr = cv2.imread("New_Zealand_Coast.jpg", cv2.IMREAD_COLOR)  # cargar imagen a color [[[188 183 174],[189....
+img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)  # cambiar el color a RGB (cv2 por defecto BGR)
+
+# ***** Adición o Brillo
+'''
+La primera operación que analizamos es la simple adición de imágenes. Esto da como resultado aumentar o disminuir el 
+brillo de la imagen ya que eventualmente estamos aumentando o disminuyendo los valores de intensidad de cada píxel en 
+la misma cantidad. Entonces, esto resultará en un aumento/disminución global del brillo.
+
+primera instrucción matrix = ...
+- numpy.ones(): devuelve un array del tamaño y tipo indicados inicializando sus valores con unos
+- crea una matriz del tamaño img_rgb.shape (con la dimensión de la imagen (600, 840, 3) es decir una imagen con el 
+  tamaño de la original), tipo entero grande y con todo valor 50, es decir se crea una imagen que si la imprimimos es 
+  un gris [[[50 50 50],v[50...
+Y ahora simplemente vamos a usar las funciones de abrir, sumar y restar para sumar y restar esa matriz de la imagen 
+original, siendo todo lo que se requiere para generar una imagen más oscura que la original y una imagen que es mas 
+clara que la original
+'''
+matrix = np.ones(img_rgb.shape, dtype = "uint8") * 50
+img_rgb_brighter = cv2.add(img_rgb, matrix)  # se le suma a la imagen original la matriz [[[224 233 238], [226...
+img_rgb_darker   = cv2.subtract(img_rgb, matrix)  # se le resta a la imagen original la matriz [[[124 133 138], [122...
+plt.subplot(131); plt.imshow(img_rgb_darker);  plt.title("Darker");
+plt.subplot(132); plt.imshow(img_rgb);         plt.title("Original");
+plt.subplot(133); plt.imshow(img_rgb_brighter);plt.title("Brighter");
+plt.show()
+
+# **** Multiplicación o Contraste
+'''
+Al igual que la suma puede resultar en un cambio de brillo, la multiplicación se puede usar para mejorar el contraste 
+de la imagen. El contraste es la diferencia en los valores de intensidad de los píxeles dentro de una imagen. 
+Multiplicar los valores de intensidad con una constante puede hacer que la diferencia sea mayor o menor (si el factor de
+multiplicación es < 1).
+'''
+matrix1 = np.ones(img_rgb.shape) * .8  # Crea una matriz del mismo tamaño inicializado todo a 0.8 [[[0.8 0.8 ...
+matrix2 = np.ones(img_rgb.shape) * 1.2  # Crea una matriz del mismo tamaño inicializado todo a 1.2 [[[1.2 1.2 ...
+
+# convertimos los puntos de la imagen a flotante y multiplicamos por la matriz, convirtiendo después a un array de uint
+# 8-bit unsigned integer (0 a 255).
+img_rgb_darker = np.uint8(cv2.multiply(np.float64(img_rgb), matrix1))    # [[[139 146 150 ...
+img_rgb_brighter = np.uint8(cv2.multiply(np.float64(img_rgb), matrix2))  # [[[208 219 255 ....
+# mostramos las imagenes
+plt.figure(figsize=[18,5])
+plt.subplot(131); plt.imshow(img_rgb_darker);  plt.title("Lower Contrast");
+plt.subplot(132); plt.imshow(img_rgb);         plt.title("Original");
+plt.subplot(133); plt.imshow(img_rgb_brighter);plt.title("Higher Contrast");
+plt.show()
+
+'''la imagen de alto contraste, hay un código de color extraño al mostrarlo, Y la razón de esto es porque cuando 
+multiplicamos la imagen original por esta matriz, tiene un factor de uno punto dos en ella. Potencialmente obtenemos 
+valores superiores a 255. Entonces,  la imagen original aquí, las nubes  probablemente estaban cerca de 255. Algunos de 
+ellos, al menos. Y cuando multiplicamos por uno punto dos, pasamos a cincuenta y cinco.
+
+Entonces, cuando intentamos convertir esos valores en un número de ocho bits sin signo en lugar de exceder 255,
+simplemente pasan a un número pequeño. provocando estos valores de intensidad cercanos a cero y siendo el motivo del
+problema.
+
+numpy.clip(): La función se utiliza para recortar (limitar) los valores en una matriz.
+Dado un intervalo, los valores fuera del intervalo se recortan a los bordes del intervalo. Por ejemplo, si se especifica
+ un intervalo de [0, 1], los valores menores que 0 se convierten en 0 y los valores mayores que 1 se convierten en 1.
+
+Para solucionarlo lo que podemos hacer es usar la función clip de numpy para recortar primero esos valores al
+rango de cero a 255 antes de convertirlos un entero de 8 bits (0-255), provocando que esta parte de la imagen se sature
+por completo, teniendo algunos valores 255 por lo que realmente no tienen información .
+'''
+matrix1 = np.ones(img_rgb.shape) * .8
+matrix2 = np.ones(img_rgb.shape) * 1.2
+
+img_rgb_lower = np.uint8(cv2.multiply(np.float64(img_rgb), matrix1))
+img_rgb_higher = np.uint8(np.clip(cv2.multiply(np.float64(img_rgb), matrix2), 0, 255))
+
+# Show the images
+plt.figure(figsize=[18,5])
+plt.subplot(131); plt.imshow(img_rgb_lower);  plt.title("Lower Contrast");
+plt.subplot(132); plt.imshow(img_rgb);         plt.title("Original");
+plt.subplot(133); plt.imshow(img_rgb_higher);plt.title("Higher Contrast");
+plt.show()
+
+
+# ******************************************
+# ***** Operaciones bit a bit con imágenes
+# ******************************************
+'''
+Las técnicas de procesamiento de imágenes aprovechan diferentes operaciones lógicas para lograr diferentes resultados. 
+La mayoría de las veces llegamos a una versión mejorada de la imagen usando algunas operaciones lógicas básicas como 
+las operaciones AND y OR.
+
+Sintaxis:
+ cv2.bitwise_and(). Otros incluyen: cv2.bitwise_or(), cv2.bitwise_xor(), cv2.bitwise_not()
+
+dst = cv2.bitwise_and( src1, src2[, dst[, máscara]] )
+- dst: matriz de salida que tiene el mismo tamaño y tipo que las matrices de entrada.
+
+La función tiene 2 argumentos requeridos:
+- src1: primera matriz de entrada o un escalar.
+- src2: segunda matriz de entrada o un escalar.
+Un argumento opcional importante es:
+- máscara: máscara de operación opcional, matriz de un solo canal de 8 bits, que especifica los elementos de la matriz 
+de salida que se cambiarán, es decir, a que parte de estas dos imágenes se aplica la lógica de la operación.
+
+Documentación OpenCV
+https://docs.opencv.org/4.5.1/d0/d86/tutorial_py_image_arithmetics.html 
+https://docs.opencv.org/4.5.0/d2/de8/group__core__array.html#ga60b4d04b251ba5eb1392c34425497e14
+'''
+# leemos dos imagenes un rectángulo y un circulo.
+img_rec = cv2.imread("rectangle.jpg", cv2.IMREAD_GRAYSCALE)
+img_cir = cv2.imread("circle.jpg", cv2.IMREAD_GRAYSCALE)
+
+plt.figure(figsize=[20, 5])
+plt.subplot(121);
+plt.imshow(img_rec, cmap='gray')
+plt.subplot(122);
+plt.imshow(img_cir, cmap='gray')
+plt.show()
+print(img_rec.shape)  # (200, 499)
+
+# **** Operación not
+''' En el operador NOT, cuando una entrada es verdadera o 1, su salida es falso o  0, y viceversa. En OpenCV se realiza 
+el mismo procedimiento, con la diferencia que en vez de 1 se emplea 255, como he dicho antes, para poder visualizar el 
+resultado o salida en colores blanco y negro'''
+result = cv2.bitwise_not(img_rec)
+plt.imshow(result, cmap='gray')
+plt.show()
+
+# **** Operación and
+'''
+Estamos pasando la imagen del rectángulo en la imagen del círculo.Y luego estamos indicando que la máscara es ninguna.
+Así que simplemente vamos a hacer una comparación bit a bit entre estas dos imágenes y el valor devuelto de esa 
+comparación será 255 (blanco) si los píxeles correspondientes en ambas imágenes son blancos.
+
+Entonces, en este caso, el resultado será solo este lado izquierdo de este semicírculo, ya que ese es el único región en
+ambas imágenes donde los píxeles son blancos.'''
+result = cv2.bitwise_and(img_rec, img_cir, mask=None)
+plt.imshow(result, cmap='gray')
+plt.show()
+
+# **** Operación or
+'''Ahora el valor de retorno de la operación será blanco si el píxel correspondiente de cualquier punto de la imagen es 
+blanco ( 255). EN este ejemplo, obtenemos todo el lado izquierdo del rectángulo, que es blanco y luego el lado derecho
+lado de la mano del círculo.'''
+result = cv2.bitwise_or(img_rec, img_cir, mask=None)
+plt.imshow(result, cmap='gray')
+plt.show()
+
+# **** Operación xor
+''' Solo devolverá un valor de blanco si el píxel correspondiente es blanco (255) en una imagen, pero no en ambas.'''
+result = cv2.bitwise_xor(img_rec, img_cir, mask=None)
+plt.imshow(result, cmap='gray')
+plt.show()
+
+# ******* Aplicación: manipulación de logotipos  ##########
+
+# **** Leer imagen en primer plano
+img_bgr = cv2.imread("coca-cola-logo.png")
+img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+plt.imshow(img_rgb)
+plt.show()
+print(img_rgb.shape)
+logo_w = img_rgb.shape[0]  # guardamos el ancho de la imagen
+logo_h = img_rgb.shape[1]  # guardamos el alto de la imagen
+
+# **** leer la imagen de fondo
+# Leer en la imagen del fondo del tablero de color
+img_background_bgr = cv2.imread("checkerboard_color.png")
+img_background_rgb = cv2.cvtColor(img_background_bgr, cv2.COLOR_BGR2RGB)
+
+# Establecer el ancho deseado (logo_w) y mantener la relación de aspecto de la imagen
+aspect_ratio = logo_w / img_background_rgb.shape[1]
+dim = (logo_w, int(img_background_rgb.shape[0] * aspect_ratio))
+
+# Cambiar el tamaño de la imagen de fondo al mismo tamaño que la imagen del logotipo
+img_background_rgb = cv2.resize(img_background_rgb, dim, interpolation=cv2.INTER_AREA)
+plt.imshow(img_background_rgb)
+plt.show()
+print(img_background_rgb.shape)
+
+# **** se cra una máscara de la imagen de primer plano
+img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2GRAY)
+'''vamos a pasar el logotipo aquí para ver el color, convertirlo a gris. y luego use la treshold para 
+crear una máscara binaria a partir de la imagen en escala de grises.Entonces esto solo va a contener valores de cero y 
+255.
+
+Umbralización o thresholding: Consiste en modificar una imagen a una representación binaria, por medio de la 
+modificación de los valores de los pixeles estableciendo un valor umbral.
+
+sintaxis: 
+ret,thresh = cv2.threshold(img, umbral, valorMax , tipo)
+
+Los parámetros son los siguientes:
+- img es la imagen gris que va a ser analizada
+- umbral es el valor indicado a analizar en cada píxel
+- valorMax Valor que se coloca a un píxel si sobrepasa el umbral
+- tipo se elige un tipo de umbralización: THRESH_BINARY, THRESH_BINARY_INV, THRESH_TRUNC, THRESH_TOZERO], 
+  THRESH_TOZERO_INV, THRESH_OTSU.
+
+La función devuelve:
+- thresh imagen binarizada
+- ret valor del umbral
+
+THRESH_BINARY
+Y muestra que, si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que superaron 
+el umbral se les asigna el valor máximo establecido.
+
+THRESH_BINARY_INV
+si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que superaron el umbral se les 
+asigna cero 0 y a los que no superaron el umbral se les asigna el valor máximo establecido (maxval en este ejemplo es 
+255)
+
+THRESH_TRUNC
+Estas muestran que, si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que 
+superaron el umbral se les asigna el mismo valor del umbral y a los que no superaron el umbral se les asigna los mismos
+valores que tenían originalmente.
+
+THRESH_TOZERO
+si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que superaron el umbral 
+mantienen el valor de los pixeles originalmente, y cuando no superan el umbral se les asigna cero.
+
+THRESH_TOZERO_INV
+si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que superaron el umbral se les 
+asigna cero, y a los píxeles que no superaron el umbral se les asigna el mismo valor que originalmente tenías.
+.'''
+# Aplique un umbral global para crear una máscara binaria del logotipo
+retval, img_mask = cv2.threshold(img_gray, 127, 255, cv2.THRESH_BINARY)
+plt.imshow(img_mask, cmap="gray")
+plt.show()
+print(img_mask.shape)
+
+# **** Se invierte la máscara
+# Se cre una máscara inversa
+'''
+Y luego vamos a realizar una operación similar aquí abajo, pero sin usar la función de umbral.
+Aunque podríamos haberlo hecho, podríamos haber usado la función de umbral aquí abajo y especificar un umbral
+máscara inversa binaria:
+retval2, img_mask2 = cv2.threshold(img_gray, 127, 255, cv2.THRESH_BINARY_INV)
+
+pero en su lugar podemos simplemente llamar a la función bitwise_not en la máscara de imagen para devolver la máscara 
+inversa
+'''
+img_mask_inv = cv2.bitwise_not(img_mask)
+plt.imshow(img_mask_inv, cmap="gray")
+plt.show()
+
+# **** Se aplica el fondo a la máscara
+'''para mostrar el fondo  "detrás" de las letras del logotipo se utiliza bitwise_and usando 
+la imagen de fondo consigo misma pero utilizando la máscara original creada pero solo la va a aplicar a la máscara, que 
+es las letras blancas en este caso, es decir vamos a hacer una comparación bit a bit entre estas dos imágenes y el valor
+devuelto de esa comparación será el de la imagen si los píxeles correspondientes en ambas imágenes son iguales solo en 
+las letras y en el resto 0 (negro), con esto obtenemos solo los colores que se muestran en el logotipo.'''
+img_background = cv2.bitwise_and(img_background_rgb, img_background_rgb, mask=img_mask)
+plt.imshow(img_background)
+plt.show()
+
+# **** Se aísla el primer plano de la imagen
+'''Aísle el primer plano (rojo de la imagen original) usando la máscara inversa consigo misma y aplicándolo a la mascara
+inversa con lo que se aplicará a toda la imagen la comparación de rojo = rojo menos a las letras, quedando éstas a 0
+(negro)'''
+img_foreground = cv2.bitwise_and(img_rgb, img_rgb, mask=img_mask_inv)
+plt.imshow(img_foreground)
+plt.show()
+
+# **** Se obtiene el resultado
+'''Ahora sumando las dos imagenes que acabamos de crear obtenemos el resultado del fondo rojo + las letras de colores'''
+result = cv2.add(img_background, img_foreground)
+plt.imshow(result)
+cv2.imwrite("logo_final.png", result[:, :, ::-1])
+plt.show()

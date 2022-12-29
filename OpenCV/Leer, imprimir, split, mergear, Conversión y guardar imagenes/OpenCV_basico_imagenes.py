@@ -63,7 +63,8 @@ print(img)  # pintarlo en consola
  [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]]
 
 Son 18 filas y 18 columnas, y cada uno de los valores representa las intensidades de píxel para cada uno de esos píxeles
-Y observe que están en el rango de 0-255 porque esta imagen está siendo representada por un entero grande de ocho bits.
+Y observe que están en el rango de 0-255 porque esta imagen está siendo representada por un entero  de8-bit unsigned 
+integer (0 a 255).
 '''
 
 # Imprime el tamaño de la imagen
