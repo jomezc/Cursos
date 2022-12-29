@@ -1472,10 +1472,13 @@ plt.axis('off');
 plt.title("Scanned Form");
 plt.show()
 
+
+
 import cv2
 import glob
 import matplotlib.pyplot as plt
 import math
+
 # ***********************************************
 # ***** Unión de imágenes y creación de panoramas
 # ***********************************************
