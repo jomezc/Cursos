@@ -3,7 +3,7 @@
 # ****************************
 # Objetivo: dada la ubicación inicial de un objeto, realizar un seguimiento de la ubicación en fotogramas posteriores
 
-# Import modules
+
 import cv2
 import sys
 import os
@@ -11,9 +11,8 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from IPython.display import HTML
 import urllib
-import zipfile
 
-video_input_file_name = "./race_car.mp4"
+video_input_file_name = "race_car.mp4"
 
 def drawRectangle(frame, bbox):
     p1 = (int(bbox[0]), int(bbox[1]))
@@ -29,7 +28,6 @@ def displayRectangle(frame, bbox):
 
 def drawText(frame, txt, location, color = (50,170,50)):
     cv2.putText(frame, txt, location, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 3)
-
 
 # Descargar modelo de seguimiento (solo para GOTURN)
 if not os.path.isfile('goturn.prototxt') or not os.path.isfile('goturn.caffemodel'):
@@ -97,7 +95,6 @@ else:
 video_output_file_name = 'race_car-' + tracker_type + '.mp4'
 video_out = cv2.VideoWriter(video_output_file_name, cv2.VideoWriter_fourcc(*'avc1'), 10, (width, height))
 
-
 # ****** Definir cuadro delimitador
 # Definir un cuadro delimitador
 bbox = (1300, 405, 160, 120)
@@ -109,20 +106,17 @@ displayRectangle(frame,bbox)
 '''
 1. Un marco
 2. Un cuadro delimitador'''
+ok = tracker.init(frame, bbox)
 
 # ***** Marco de lectura y objeto de seguimiento
 while True:
     ok, frame = video.read()
-    # if not frame[0][0][0]:
-    #     continue
     if not ok:
         break
 
     # Start empieza el contador
     timer = cv2.getTickCount()
 
-    print(frame[0][0][0])
-    # actualizar el rastrador
     ok, bbox = tracker.update(frame)
 
     # calcular los frames por segundo (FPS)
