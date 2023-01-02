@@ -27,20 +27,19 @@ inferencias en una red entrenada)
 la función cv2.dnn.readNetFromCaffe es una función diseñada específicamente para leer un modelo caffemodel. necesita dos
 argumentos:
 - El primer argumento aquí es el archivo deploy.prototxt, que contiene la información de la arquitectura de la red,
-- El segundo archivo es el archivo res10_300x300_ssd_iter_140000_fp16.caffemodel,  un archivo mucho más grande que 
+- El segundo archivo es el archivo res10_300x300_ssd_iter_140000_fp16.caffemodel, un archivo mucho más grande que 
 contiene los pesos del modelo que ha sido entrenado.
 
 en https://github.com/opencv/opencv/tree/4.x/samples/dnn tenemos varios ejemplos de modelos pre entrenados para diversas
 utilidades. Hay un archivo Léame que contiene una descripción e instrucciones sobre cómo usar el script para descargar 
 varios modelos. El script hace referencia a un archivo de un modelo con una referencia en el bloque de la parte superior 
-al modelo que vaa utilizar y la URL para descargar el archivo de pesos, así como otros parámetros relacionados con como
+al modelo que va a utilizar y la URL para descargar el archivo de pesos, así como otros parámetros relacionados con como
 se entrenó ese modelo como el factor de escala, alto, ancho y rgb.
 
 Cuando llamamos a este método readNetFromCaffe, regresa para una instancia de la red neuronal, cuyo objeto se usará a 
 continuación para realizar inferencias en nuestras imágenes de prueba de la transmisión de video'
 '''
-net = cv2.dnn.readNetFromCaffe("deploy.prototxt",
-                               "res10_300x300_ssd_iter_140000_fp16.caffemodel")
+net = cv2.dnn.readNetFromCaffe("deploy.prototxt", "res10_300x300_ssd_iter_140000_fp16.caffemodel")
 
 '''Identifica los parámetros del modelo que se asociaron con la forma en que se realizó el modelo entrenado siendo 
 importante porque cualquier imagen que pasemos a través del modelo para realizar la inferencia también deben procesarse
