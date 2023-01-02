@@ -1693,8 +1693,8 @@ video_out = cv2.VideoWriter(video_output_file_name, cv2.VideoWriter_fourcc(*'avc
 aquí de forma manual, Pero en la práctica, seleccionaría eso con una interfaz de usuario o tal vez usaría un algoritmo 
 de detección para detectar objetos de interés para el seguimiento '''
 bbox = (1300, 405, 160, 120)  # Dos conjuntos de pixeles, esquina sup izq y esquina inf der
-#bbox = cv2.selectROI(frame, False)
-#print(bbox)
+# bbox = cv2.selectROI(frame, False)
+# print(bbox)
 displayRectangle(frame,bbox)
 
 # ****** Inicializar rastreador
