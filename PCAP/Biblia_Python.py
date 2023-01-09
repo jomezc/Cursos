@@ -264,10 +264,12 @@ print("omega".startswith("om"))  # True
 # ******** index()
 # Busca la secuencia desde el principio, para encontrar el primer elemento del valor especificado en su argumento.
 # Encuentra el elemento mínimo de la secuencia pasada como argumento. Hay una condición:
-# la secuencia (cadena, lista, no importa) no puede estar vacía, de lo contrario obtendrá una excepción ValueError.
+# la secuencia (cadena, lista, no importa) no puede estar vacía, es decir tiene que encontrarlo, de lo contrario
+# obtendrá una excepción ValueError.
 print("aAbByYzZaA".index("b"))  # 2
 print("aAbByYzZaA".index("Z"))  # 7
 print("aAbByYzZaA".index("A"))  # 1
+print("aAbByYzZaA".index("0"))  # ValueError: substring not found
 
 # ******** find()
 # Es similar a index(), que ya conoce: busca una subcadena y devuelve el índice de la primera
@@ -380,8 +382,8 @@ print("".join(["omicron", "pi", "rho"]))  # omicronpirho
 # El método split() hace lo que dice: divide la cadena y crea una lista de todas las subcadenas detectadas.
 # El método asume que las subcadenas están delimitadas por espacios en blanco: los espacios no participan en la
 # operación y no se copian en la lista resultante. Si la cadena está vacía, la lista resultante también está vacía.
-# si le pones otra cosa pues es el separador
-print("phi       chi\npsi".split())  # ['phi', 'chi', 'psi']
+# Si le pones otra cosa pues es el separador
+print("phi       chi\npsi".split())  # ['phi', 'chi', 'psi'] ignora el \n
 print("phi       chi\npsi".split('\n'))  # ['phi       chi', 'psi']
 
 # **** lstrip()
