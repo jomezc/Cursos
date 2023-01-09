@@ -227,15 +227,6 @@ number3 = int(input("Enter the third number: "))  # Enter the third number: 23
 largest_number = max(number1, number2, number3)
 print("The largest number is:", largest_number)  # The largest number is: 10000
 
-
-# ******** index()
-# Busca la secuencia desde el principio, para encontrar el primer elemento del valor especificado en su argumento.
-# Encuentra el elemento mínimo de la secuencia pasada como argumento. Hay una condición:
-# la secuencia (cadena, lista, no importa) no puede estar vacía, de lo contrario obtendrá una excepción ValueError.
-print("aAbByYzZaA".index("b"))  # 2
-print("aAbByYzZaA".index("Z"))  # 7
-print("aAbByYzZaA".index("A"))  # 1
-
 # ******** list()
 # Toma su argumento (una cadena) y crea una nueva lista que contiene todos los caracteres de la
 # cadena, uno por elemento de la lista. Nota: no es estrictamente una función de cadena: list()
@@ -269,6 +260,14 @@ else:
 # Demonstrating the startswith() method:
 print("omega".startswith("meg"))  # False
 print("omega".startswith("om"))  # True
+
+# ******** index()
+# Busca la secuencia desde el principio, para encontrar el primer elemento del valor especificado en su argumento.
+# Encuentra el elemento mínimo de la secuencia pasada como argumento. Hay una condición:
+# la secuencia (cadena, lista, no importa) no puede estar vacía, de lo contrario obtendrá una excepción ValueError.
+print("aAbByYzZaA".index("b"))  # 2
+print("aAbByYzZaA".index("Z"))  # 7
+print("aAbByYzZaA".index("A"))  # 1
 
 # ******** find()
 # Es similar a index(), que ya conoce: busca una subcadena y devuelve el índice de la primera
