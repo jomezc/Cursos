@@ -83,9 +83,9 @@ x = float(input("Enter value for x: "))
 x = True  # booleano, eso si respetar la mayúscula # False
 print(type(x))
 # OJO SABER QUE TODOS LOS TIPOS DE DATOS SON ALMACENADOS POR CLASES EN PYTHON
-print(True > False) # True
-print(True < False) # False
-2 == 2.  # True
+print(True > False)  # True
+print(True < False)  # False
+print(2 == 2.)  # True
 # Due to the low priority of the == operator, the question shall be treated as equivalent to this one:
 # black_sheep == (2 * white_sheep)
 
@@ -97,7 +97,7 @@ print(True < False) # False
 y UNICODE (capaz de codificar prácticamente todos los alfabetos que utilizan los humanos).
 
 revisa el código de la letra minúscula a. Esto es 97. Y ahora encuentra la A mayúscula. Su código es 65. 
-Ahora calcula la diferencia entre el código de ay A. Es igual a 32. Ese es el código de un espacio.
+Ahora calcula la diferencia entre el código de a y A. Es igual a 32. Ese es el código de un espacio.
 
 Unicode asigna caracteres únicos (no ambiguos) (letras, guiones, ideogramas, etc.) a más de un millón de puntos de 
 código. Los primeros 128 puntos de código Unicode son idénticos a ASCII, y los primeros 256 puntos de código Unicode 
@@ -109,7 +109,7 @@ El nombre proviene de Universal Character Set. UCS-4 usa 32 bits (cuatro bytes) 
 y el código es solo el número único de los puntos de código Unicode. 
 Un archivo que contiene texto codificado en UCS-4 puede comenzar con una BOM (marca de orden de bytes):
 es una combinación especial no imprimible de bits que anuncian la codificación utilizada  por el contenido de un archivo 
-(por ejemplo, UCS-4 o UTF-B).
+(por ejemplo, UCS-4 o UTF-8).
 
 UTF-8
 Uno de los más utilizados es UTF-8.
@@ -174,7 +174,7 @@ print(n1 + n2)  # suma
 n1 = "1"
 n2 = 2
 print("Concatenación: ", int(n1) + n2)  # conversión a entero int(), tiene que ser valido
-print("Programming", "Essentials", "in", sep="***", end="...") # Programming***Essentials***in...Python
+print("Programming", "Essentials", "in", sep="***", end="...")  # Programming***Essentials***in...Python
 print("Python")
 # En las cadenas de Python, la barra invertida (\) es un carácter especial que anuncia que el siguiente carácter tiene
 # un significado diferente, por ejemplo, \n (el carácter de nueva línea) inicia una nueva línea de salida.
@@ -199,15 +199,15 @@ for character in the_string:
     print(character, end=' ')  # 's i l l y  w a l k'
 
 print(the_string[-1])  # k
-print(the_string[1:3])
+print(the_string[1:3])  # il
 print("f" in the_string)  # False
 
 # ******** MÉTODOS DE CADENAS  #############
 
-# ******** min() y max() (CADENAS Y NUMEROS)
+# ******** min() y max() (CADENAS Y NÚMEROS)
 # Encuentra el elemento mínimo de la secuencia pasada como argumento. Hay una condición:
 # la secuencia (cadena, lista, no importa) no puede estar vacía, de lo contrario obtendrá una excepción ValueError.
-# max el mayor
+# .max(x) el mayor
 print(min("aAbByYzZ"))  # A, es menor ascii
 print(max("aAbByYzZ"))  # z, es mayor ascii
 
@@ -250,8 +250,7 @@ print('abcabc'.count("d"))  # 0
 
 # ******** center()
 # Hace una copia de la cadena original,
-# tratando de centrarla dentro de un campo de un ancho específico.
-# o con un numero de ocurrencias del segundo parámetro
+# tratando de centrarla dentro de un campo de un ancho específico, o con un número de ocurrencias del segundo parámetro
 print('[' + 'alpha'.center(10) + ']')  # [  alpha   ]
 print('[' + 'alpha'.center(10, '*') + ']')  # [**alpha***]
 
@@ -653,16 +652,16 @@ print(r)
 r = not b
 print(r)
 
-# ley de Morgan
-# not (p and q) == (not p) or (not q)
-# not (p or q) == (not p) and (not q)
-# Valores lógicos frente a bits individuales
-# Los operadores lógicos toman sus argumentos como un todo sin importar cuántos bits contengan.
-# Los operadores solo conocen el valor: cero (cuando se restablecen todos los bits) significa Falso;
-# no cero (cuando al menos un bit está establecido) significa Verdadero.
-# El resultado de sus operaciones es uno de estos valores: Falso o Verdadero.
-# Esto significa que este fragmento asignará el valor True a la variable j si i no es cero;
-# de lo contrario, será Falso.
+'''
+Ley de Morgan
+- not (p and q) == (not p) or (not q)
+- not (p or q) == (not p) and (not q)
+Valores lógicos frente a bits individuales
+Los operadores lógicos toman sus argumentos como un todo, sin que tenga importancia cuántos bits contengan.
+Los operadores solo conocen el valor: cero (cuando se restablecen todos los bits) significa Falso;
+no cero (cuando al menos un bit está establecido) significa Verdadero.
+El resultado de sus operaciones es uno de estos valores: Falso o Verdadero.
+Esto significa que este fragmento asignará el valor True a la variable j si i no es cero, de lo contrario, Falso.'''
 a = 10
 b = 4
 """
@@ -744,7 +743,7 @@ print(a << 1)  # = 0000 1010 = 10
 print(a << 2)  # = 0001 0100 = 20
 b = -10  # = 1111 0110 (Binary)
 print(b << 1)  # = 1110 1100 = -20
-print(b << 2) # = 1101 1000 = -40
+print(b << 2)  # = 1101 1000 = -40
 
 # ++++  ejemplo and  +++++++++
 v = int(input('proporciona un valor numérico: '))
