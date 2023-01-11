@@ -947,10 +947,9 @@ for count, value in enumerate(values):
 
 
 # ++++ ejercicio +++++
-
-for i in range(1, 6): # cuenta de 1 inlcuido a 5 ( 6 no incluido)
+for i in range(1, 6):  # cuenta de 1 inlcuido a 5 ( 6 no incluido)
     print(f" Mississippi {i}")
-# Write a for loop that counts to five.
+    # Write a for loop that counts to five.
     # Body of the loop - print the loop iteration number and the word "Mississippi".
     # Body of the loop - use:
     time.sleep(1)  # suspende la ejecución durante los segundos indicados
@@ -1050,13 +1049,13 @@ pasos = 17
 """
 c0 = int(input("numero: "))  # Even || odd
 step = 0
-while c0>1:
+while c0 > 1:
     if c0 % 2 == 0:
         c0 /= 2
-        c0=int(c0)
+        c0 = int(c0)
     else:
-        c0 = 3* c0 +1
-    step +=1
+        c0 = 3 * c0 + 1
+    step += 1
     print(c0)
 print(f'steps = {step}')  # par || impar
 
@@ -1127,11 +1126,11 @@ line = input("Enter a line of numbers - separate them with spaces: ")  # 1 2 3 4
 strings = line.split()
 total = 0
 try:
-    for substr in strings:
-        total += float(substr)
+    for sbstr in strings:
+        total += float(sbstr)
     print("The total is:", total)
 except:
-    print(substr, "is not a number.")  # 21.0
+    print(sbstr, "is not a number.")  # 21.0
 
 # ++++  Cifrado Cesar v2 +++++++
 """
