@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 # ************************************************************
-# ***** Características de la imagen y alineación de la imagen
+# ***** Caracteristicas de la imagen y alineación de la imagen
 # ************************************************************
 '''
 Demostraremos los pasos a través de un ejemplo en el que alinearemos una foto de un formulario tomado con un teléfono 

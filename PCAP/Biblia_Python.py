@@ -1,3 +1,4 @@
+import time
 """
 APUNTES JESÚS GÓMEZ CÁNOVAS SOBRE PYTHON
 
@@ -69,9 +70,8 @@ print(x)
 print(type(x))
 print(3e3)  # Exponente 3 x 108.
 print(3E8)
-print(0.0000000000000000000001)  # el resultado de ejecutarlo es 1e-22 python escoge
-
-# el modo más económico de representación de números
+print(0.0000000000000000000001)
+# el resultado de ejecutarlo es 1e-22 python escoge el modo más económico de representación de números
 anything = float(input("Enter a number: "))
 something = float(anything) ** 2.0
 print(anything, "to the power of 2 is", something)
@@ -86,8 +86,6 @@ print(type(x))
 print(True > False)  # True
 print(True < False)  # False
 print(2 == 2.)  # True
-# Due to the low priority of the == operator, the question shall be treated as equivalent to this one:
-# black_sheep == (2 * white_sheep)
 
 # ***********************************
 # ********  CADENAS  ############# secuencias inmutables
@@ -207,7 +205,7 @@ print("f" in the_string)  # False
 # ******** min() y max() (CADENAS Y NÚMEROS)
 # Encuentra el elemento mínimo de la secuencia pasada como argumento. Hay una condición:
 # la secuencia (cadena, lista, no importa) no puede estar vacía, de lo contrario obtendrá una excepción ValueError.
-# .max(x) el mayor
+# -max(x) el mayor
 print(min("aAbByYzZ"))  # A, es menor ascii
 print(max("aAbByYzZ"))  # z, es mayor ascii
 
@@ -234,20 +232,17 @@ print("The largest number is:", largest_number)  # The largest number is: 10000
 print(list("abcabc"))  # ['a', 'b', 'c', 'a', 'b', 'c']
 
 # ******** count()
-# Cuenta todas las ocurrencias del elemento dentro de la secuencia. La ausencia de tales elementos
-# no causa ningún problema.
+# Cuenta todas las ocurrencias del elemento en la secuencia. La ausencia de tales elementos no causa ningún problema.
 print("abcabc".count("b"))  # 2
 print('abcabc'.count("d"))  # 0
 
 # ******** center()
-# Hace una copia de la cadena original,
-# tratando de centrarla dentro de un campo de un ancho específico, o con un número de ocurrencias del segundo parámetro
+# copia de la cadena original, centrándola con espacios, o con un número de ocurrencias del segundo parámetro
 print('[' + 'alpha'.center(10) + ']')  # [  alpha   ]
 print('[' + 'alpha'.center(10, '*') + ']')  # [**alpha***]
 
 # ******** endswith()
-# Verifica si la cadena dada termina con el argumento especificado y devuelve True o False,
-# según el resultado de la verificación.
+# Verifica si la cadena dada termina con el argumento especificado y devuelve True o False, depende de la verificación.
 if "epsilon".endswith("on"):
     print("yes")
 else:
@@ -255,9 +250,7 @@ else:
 # yes
 
 # **** startswith()
-# Es un reflejo especular de "endswith()": comprueba si una cadena dada comienza
-# con la subcadena especificada.
-# Demonstrating the startswith() method:
+# Es un reflejo  de "endswith()": comprueba si una cadena dada comienza con la subcadena especificada.
 print("omega".startswith("meg"))  # False
 print("omega".startswith("om"))  # True
 
@@ -272,8 +265,7 @@ print("aAbByYzZaA".index("A"))  # 1
 print("aAbByYzZaA".index("0"))  # ValueError: substring not found
 
 # ******** find()
-# Es similar a index(), que ya conoce: busca una subcadena y devuelve el índice de la primera
-# aparición de esta subcadena, pero:
+# Es similar a index(), que ya conoce: busca una subcadena y devuelve el índice de su primera aparición, pero:
 # es más seguro: no genera un error para un argumento que contiene una subcadena inexistente (devuelve -1 entonces)
 # funciona solo con cadenas; no intente aplicarlo a ninguna otra secuencia.
 # El segundo argumento especifica el índice en el que se iniciará la búsqueda (no tiene que caber dentro de la cadena).
@@ -409,7 +401,7 @@ print(".orgpythoninstitute.org".strip(".org"))  # pythoninstitute
 # **** replace()
 # De dos parámetros devuelve una copia de la cadena original en la que todas las apariciones
 # del primer argumento han sido reemplazadas por el segundo argumento.
-#  Si el segundo argumento es una cadena vacía, reemplazar en realidad es eliminar la cadena del primer argumento.
+# Si el segundo argumento es una cadena vacía, reemplazar en realidad es eliminar la cadena del primer argumento.
 # La variante replace() de tres parámetros usa el tercer argumento (un número) para limitar el número de reemplazos.
 print("www.netacad.com".replace("netacad.com", "pythoninstitute.org"))  # www.pythoninstitute.org
 print("This is it!".replace("is", "are"))  # Thare are it!
@@ -955,13 +947,13 @@ for count, value in enumerate(values):
 
 
 # ++++ ejercicio +++++
-import time
+
 for i in range(1, 6): # cuenta de 1 inlcuido a 5 ( 6 no incluido)
     print(f" Mississippi {i}")
 # Write a for loop that counts to five.
     # Body of the loop - print the loop iteration number and the word "Mississippi".
     # Body of the loop - use:
-    time.sleep(1) # suspende la ejecución durante los segundos indicados
+    time.sleep(1)  # suspende la ejecución durante los segundos indicados
 
 print("Ready or not, here I come!")
 # Write a print function with the final message.
@@ -1076,33 +1068,33 @@ devolver una lista vacía; su nombre debería ser mysplit() Utilice la plantilla
 cuidadosamente '''
 
 
-def mysplit(string):
+def my_split(cadena1):
     try:
-        if type(string) != str:
+        if type(cadena1) != str:
             raise Exception('only accept strings')
-        if string.isspace():
+        if cadena1.isspace():
             return []
         # return string.split()
         # like is not use split
-        string = string.strip()
-        l = []
-        aux = 0
-        for s in range(len(string)):
-            if string[s].isspace() or s == (len(string) -1):
-                l.append(string[aux:s+1].strip())
-                aux=s
-        return l
-    except Exception as e:
-        print('raise an error:', e)
+        cadena1 = cadena1.strip()
+        lista1 = []
+        auxiliar = 0
+        for stx1 in range(len(cadena1)):
+            if cadena1[stx1].isspace() or stx1 == (len(cadena1) -1):
+                lista1.append(cadena1[auxiliar:stx1+1].strip())
+                auxiliar = stx1
+        return lista1
+    except Exception as err:
+        print('raise an error:', err)
 
 
-print(mysplit("To be or not to be, that is the question"))
+print(my_split("To be or not to be, that is the question"))
 # ['To', 'be', 'or', 'not', 'to', 'be,', 'that', 'is', 'the', 'question']
-print(mysplit("To be or not to be,that is the question"))
+print(my_split("To be or not to be,that is the question"))
 # ['To', 'be', 'or', 'not', 'to', 'be,that', 'is', 'the', 'question']
-print(mysplit("   "))   # []
-print(mysplit(" abc "))     # ['abc']
-print(mysplit(""))  # []
+print(my_split("   "))   # []
+print(my_split(" abc "))     # ['abc']
+print(my_split(""))  # []
 
 # ++++  Cifrado Cesar ++++++
 text = input("Enter your message: ")  # bLa blaaa

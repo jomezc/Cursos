@@ -5,7 +5,7 @@ import math
 # ***********************************************
 # ***** Unión de imágenes y creación de panoramas
 # ***********************************************
-# Características de la imagen y alineación de la imagen
+# Caracteristicas de la imagen y alineación de la imagen
 
 # Creando panoramas usando OpenCV
 '''
@@ -16,7 +16,7 @@ import math
 5. Puntada con mezcla
 
 podemos realizar todos estos pasos con la clase stitcher, es muy similar a los pasos que se explican en  
-Características de la imagen y alineación de la imagen. stitcher es una clase que nos permite crear panoramas 
+Caracteristicas de la imagen y alineación de la imagen. stitcher es una clase que nos permite crear panoramas 
 simplemente pasando una lista de imágenes.
 
 las imágenes utilizadas para crear panoramas deben tomarse desde el mismo punto de vista Y también es importante tomar 

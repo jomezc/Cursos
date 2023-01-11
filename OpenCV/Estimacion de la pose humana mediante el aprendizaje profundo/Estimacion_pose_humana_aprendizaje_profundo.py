@@ -1,5 +1,5 @@
 # *******************************************************************
-# ***** Estimación de la pose humana mediante el aprendizaje profundo
+# ***** Estimacion de la pose humana mediante el aprendizaje profundo
 # *******************************************************************
 '''
 La estimación de la pose humana puede ser difícil:

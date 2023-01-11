@@ -949,7 +949,7 @@ import sys
 # especificamos un índice de dispositivo de cámara predeterminado de cero.
 s = 0
 print(sys.argv)  # contiene los argumentos de la librería sys, por ejemplo 0 es la ruta
-# ['C:\\Users\\jgomcano\\PycharmProjects\\guiapython\\OpenCV\\Usando la camara en openCV\\Usanod la camara en OpenCV.py']
+# ['C:\\Users\\jgomcano\\PycharmProjects\\guiapython\\OpenCV\\Usando la camara en openCV\\Usando_camara_OpenCV.py']
 # y simplemente estamos verificando si hubo una especificación de línea de comando para anular ese valor predeterminado.
 if len(sys.argv) > 1:
     s = sys.argv[1]
@@ -1227,7 +1227,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # ************************************************************
-# ***** Características de la imagen y alineación de la imagen
+# ***** Caracteristicas de la imagen y alineación de la imagen
 # ************************************************************
 '''
 Demostraremos los pasos a través de un ejemplo en el que alinearemos una foto de un formulario tomado con un teléfono 
@@ -1482,7 +1482,7 @@ import math
 # ***********************************************
 # ***** Unión de imágenes y creación de panoramas
 # ***********************************************
-# Características de la imagen y alineación de la imagen
+# Caracteristicas de la imagen y alineación de la imagen
 
 # Creando panoramas usando OpenCV
 '''
@@ -1493,7 +1493,7 @@ import math
 5. Puntada con mezcla
 
 podemos realizar todos estos pasos con la clase stitcher, es muy similar a los pasos que se explican en  
-Características de la imagen y alineación de la imagen. stitcher es una clase que nos permite crear panoramas 
+Caracteristicas de la imagen y alineación de la imagen. stitcher es una clase que nos permite crear panoramas 
 simplemente pasando una lista de imágenes.
 
 las imágenes utilizadas para crear panoramas deben tomarse desde el mismo punto de vista Y también es importante tomar 
@@ -1742,7 +1742,7 @@ video_out.release()
 
 
 # ********************************************************
-# ***** Detección de rostros mediante aprendizaje profundo
+# ***** Deteccion de rostros mediante aprendizaje profundo
 # ********************************************************
 '''Para detectar los rostros, podemos utilizar OpenCV que nos permitirá leer en un modelo previamente entrenado y
 realizar inferencias usando ese modelo'''
@@ -2028,7 +2028,7 @@ objects = detect_objects(net, im)
 display_objects(im, objects)
 
 # *******************************************************************
-# ***** Estimación de la pose humana mediante el aprendizaje profundo
+# ***** Estimacion de la pose humana mediante el aprendizaje profundo
 # *******************************************************************
 '''
 La estimación de la pose humana puede ser difícil:

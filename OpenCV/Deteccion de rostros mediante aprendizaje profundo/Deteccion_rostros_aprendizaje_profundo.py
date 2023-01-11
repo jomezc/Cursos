@@ -1,5 +1,5 @@
 # ********************************************************
-# ***** Detección de rostros mediante aprendizaje profundo
+# ***** Deteccion de rostros mediante aprendizaje profundo
 # ********************************************************
 '''Para detectar los rostros, podemos utilizar OpenCV que nos permitirá leer en un modelo previamente entrenado y
 realizar inferencias usando ese modelo'''
