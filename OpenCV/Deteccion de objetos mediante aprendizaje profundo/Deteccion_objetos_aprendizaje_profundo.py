@@ -165,10 +165,10 @@ objects = detect_objects(net, im)
 # este es un algoritmo de detección de objetos muy robusto que tiene alrededor de 80 clases.
 display_objects(im, objects)
 
-im = cv2.imread('images/baseball.jpg')
-objects = detect_objects(net, im)
-display_objects(im, objects, 0.2)
-
-im = cv2.imread('images/soccer.jpg')
-objects = detect_objects(net, im)
-display_objects(im, objects)
+# im = cv2.imread('images/baseball.jpg')
+# objects = detect_objects(net, im)
+# display_objects(im, objects, 0.2)
+#
+# im = cv2.imread('images/soccer.jpg')
+# objects = detect_objects(net, im)
+# display_objects(im, objects)

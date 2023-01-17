@@ -848,7 +848,7 @@ contador = 0
 while contador <= 10:
     print(contador)
     contador += 1
-else:  # Ojo en cada iteración
+else:  # Ojo en cada iteración, si no cumple, en este caso fin del contador último número: 11
     print(f'fin del contador ultimo numero: {contador}')
 
 c = 5
@@ -1126,11 +1126,12 @@ line = input("Enter a line of numbers - separate them with spaces: ")  # 1 2 3 4
 strings = line.split()
 total = 0
 try:
-    for sbstr in strings:
-        total += float(sbstr)
+    for sub in strings:
+        total += float(sub)
     print("The total is:", total)
+
 except:
-    print(sbstr, "is not a number.")  # 21.0
+    print(sub, "is not a number.")  # 21.0
 
 # ++++  Cifrado Cesar v2 +++++++
 """
@@ -1214,7 +1215,7 @@ German: DE02100100100152517108
 """
 
 iban = input("Enter IBAN, please: ")
-iban = iban.replace(' ','')
+iban = iban.replace(' ', '')
 
 if not iban.isalnum():
     print("You have entered invalid characters.")
@@ -1254,7 +1255,7 @@ for s in st1:
     if aux2 < aux:
         response = 'No'
         break
-print(response) #Yes || con donut como st1 --> No
+print(response)  # Yes || con donut como st1 --> No
 
 # ++++  Sudoku  ++++++++
 """
@@ -1444,7 +1445,7 @@ lst.reverse()
 list_1 = [1]
 list_2 = list_1[:]
 list_1[0] = 2
-print(list_2)
+print(list_2)  # [1]
 
 # Copying some part of the list.
 my_list = [10, 8, 6, 4, 2]
@@ -1470,7 +1471,7 @@ print(cubed)  # outputs: [0, 1, 8, 27, 64]
 # siendo más compacta y rápida que las otras funciones y bucles utilizados para crear una lista. Por ejemplo,
 py_list = ['a-1', 'b-2', 'c-3', 'a-4']
 r = [s for s in py_list if "a" in s]
-print(r) # Producción: ['a-1', 'a-4']
+print(r)  # Producción: ['a-1', 'a-4']
 
 # En el código anterior, la comprensión de listas se utiliza para buscar cadenas que tengan a en la lista py_list. Tenga
 # en cuenta que escribir el mismo código utilizando otras funciones o bucles habría llevado más tiempo, ya que se
@@ -1481,11 +1482,11 @@ print(r) # Producción: ['a-1', 'a-4']
 py_list = ['a-1', 'b-2', 'c-3', 'a-4', 'b-8']
 q = ['a', 'b']
 r = [s for s in py_list if any(xs in s for xs in q)]
-print(r) # Producción: ['a-1', 'b-2', 'a-4','b-8']
+print(r)  # Producción: ['a-1', 'b-2', 'a-4','b-8']
 
 # ++++  Eliminar duplicados y ordenar +++++++++++++
 lst = [10, 1, 2, 4, 4, 1, 4, 2, 6, 2, 9, 10]
-lst = [lst[l] for l in range(len(lst)) if lst[l] not in lst[0:l]]
+lst = [lst[el] for el in range(len(lst)) if lst[el] not in lst[0:el]]
 lst.sort()
 print(lst)  # [1, 2, 4, 6, 9, 10]
 
@@ -1537,10 +1538,10 @@ for room_number in range(20):
 
 py_lst = ['a-1', 'b-2', 'c-3', 'a-4']
 filter(lambda x: 'a' in x, py_lst)
-print(filter(lambda x: 'a' in x, py_lst)) # Producción:<filter object at 0x7fd36c1905e0> Tenga en cuenta que la salida
+print(filter(lambda x: 'a' in x, py_lst))  # Producción:<filter object at 0x7fd36c1905e0> Tenga en cuenta que la salida
 # anterior es un objeto de tipo filtro-iterador ya que la función filter() devuelve un iterador en lugar de una lista.
 # Podemos usar la función list() como se muestra en el código siguiente para obtener una lista.
-list(filter(lambda x: 'a' in x, py_lst)) # Producción:['a-1','a-4']
+list(filter(lambda x: 'a' in x, py_lst))  # Producción:['a-1','a-4']
 # En el código anterior, hemos utilizado filter() para encontrar una cadena con valores específicos en la lista py_list.
 
 
@@ -1573,13 +1574,13 @@ for fruta in frutas:
 
 my_tuple = (1, 10, 100)
 
-t1 = my_tuple + (1000, 10000) # junta varias tuplas en 1
-t2 = my_tuple * 3 # multiplica tuplas, como la lista repite sus valores 3 veces
+t1 = my_tuple + (1000, 10000)  # junta varias tuplas en 1
+t2 = my_tuple * 3  # multiplica tuplas, como la lista repite sus valores 3 veces
 
 print(len(t2))
 print(t1)
 print(t2)
-print(10 in my_tuple) # si se encuentra o no
+print(10 in my_tuple)  # si se encuentra o no
 print(-10 not in my_tuple)
 
 # Una de las propiedades de tupla más útiles es su capacidad para aparecer en el
@@ -1703,7 +1704,7 @@ print(diccionario)
 
 diccionario.pop('DBMS')
 del diccionario['PK']
-diccionario.popitem() # el último ( random en versiones viejas
+diccionario.popitem()  # el último ( random en versiones viejas
 
 # ******** limpiar para eliminar todos los elementos, usar la función clear()
 diccionario.clear()
@@ -1711,7 +1712,7 @@ diccionario.clear()
 # ******** Eliminar el diccionario
 del diccionario
 
-## COPIAR Diccionario ( NO ASIGNAR!!) !!!!!!!!!!!!!!!
+# COPIAR Diccionario ( NO ASIGNAR!!) !!!!!!!!!!!!!!!
 pol_eng_dictionary = {
     "zamek": "castle",
     "woda": "water",
@@ -1723,7 +1724,7 @@ copy_dictionary = pol_eng_dictionary.copy()
 my_dictionary = {"A": 1, "B": 2}
 copy_my_dictionary = my_dictionary.copy()
 my_dictionary.clear()
-print(copy_my_dictionary) # {'A': 1, 'B': 2}
+print(copy_my_dictionary)  # {'A': 1, 'B': 2}
 
 # sorted()
 dictionary = {"cat": "chat", "dog": "chien", "horse": "cheval"}
@@ -1808,8 +1809,8 @@ print(var)  # 1
 
 
 def my_function():  # Do I know that variable? 2
-    var = 2
-    print("Do I know that variable?", var)  # 2
+    varia = 2
+    print("Do I know that variable?", varia)  # 2
 
 
 var = 1
@@ -1828,14 +1829,14 @@ def my_function():
 
 
 var = 1
-my_function() # Do I know that variable? 2
-print(var) # 2
+my_function()  # Do I know that variable? 2
+print(var)  # 2
 
 
-def mi_func(nombre, apellido):  # parámetro la variable con la que se define
-    if nombre == '':
+def mi_func(nombre1, apellido):  # parámetro la variable con la que se define
+    if nombre1 == '':
         return
-    print(nombre, apellido)  # forma parte lo que está dentro de la indentación
+    print(nombre1, apellido)  # forma parte lo que está dentro de la indentación
 
 
 mi_func('Jesus', 'Gomez')  # argumento valor que le paso
@@ -1843,8 +1844,8 @@ mi_func('Jesus', 'Gomez')  # argumento valor que le paso
 
 # si una función no devuelve un determinado valor mediante una cláusula de expresión return, se supone que
 # implícitamente devuelve None.
-def strange_function(n):
-    if(n % 2 == 0):
+def strange_function(num_v):
+    if num_v % 2 == 0:
         return True
 
 
@@ -1886,8 +1887,8 @@ def introduction(first_name, last_name):
     print("Hello, my name is", first_name, last_name)
 
 
-introduction(first_name = "James", last_name = "Bond")
-introduction(last_name = "Skywalker", first_name = "Luke")
+introduction(first_name="James", last_name="Bond")
+introduction(last_name="Skywalker", first_nam="Luke")
 
 
 # Puede mezclar ambas modos si lo desea: solo hay una regla inquebrantable: debe poner los argumentos posicionales antes
@@ -2001,7 +2002,7 @@ desplegarNombres([6, 9])
 # ++++   Función Es primo ++++++
 def is_prime(num):
     r = True
-    for i in range(2,num):
+    for i in range(2, num):
         if i % 2 == 0:
             r = False
             break
@@ -2021,7 +2022,7 @@ hay más de unas pocas soluciones correctas; trate de encontrar más de una.'''
 
 
 def palindromo(string):
-    string = string.upper().replace(' ','')
+    string = string.upper().replace(' ', '')
     frase = 'Es un palíndromo'
     for a in range(len(string) - 1):
         if not string[a] == string[(len(string) - 1) - a]:
@@ -2044,7 +2045,7 @@ los espacios no se tienen en cuenta durante la verificación; trátelos como ine
 datos que le hemos proporcionado.'''
 
 
-def palindromo(string,string2):
+def palindromo(string, string2):
     string = string.upper().replace(' ', '')
     string2 = string2.upper().replace(' ', '')
     frase = 'Es un anagrama'
@@ -2058,7 +2059,7 @@ def palindromo(string,string2):
     print(frase)
 
 
-palindromo('Listen','Silent')
+palindromo('Listen', 'Silent')
 
 
 # ++++   ejemplo funciones variables  +++++++
@@ -2073,61 +2074,50 @@ def printer(*args, **dics):
 printer(1, 2, 3, 'll', a='lol', b='lal')
 
 # ******** Problema listas en Funciones ####
-"""
-El siguiente ejemplo arrojará algo de luz sobre el problema:
+
 
 def my_function(my_list_1):
-    print("Print #1:", my_list_1)
-    print("Print #2:", my_list_2)
+
+    print("Print #1:", my_list_1)  # Print #1: [2, 3]
+    print("Print #2:", my_list_2)  # Print #2: [2, 3]
     my_list_1 = [0, 1]
-    print("Print #3:", my_list_1)
-    print("Print #4:", my_list_2)
+    print("Print #3:", my_list_1)  # Print #3: [0, 1], Estamos imprimiendo la lista recién modificada
+    print("Print #4:", my_list_2)  # Print #4: [2, 3], no se modifica la lista original
+
 
 my_list_2 = [2, 3]
 my_function(my_list_2)
-print("Print #5:", my_list_2)
+print("Print #5:", my_list_2)  # Print #5: [2, 3]
+""" sin embargo """
 
-salida:
-
-Print #1: [2, 3]
-Print #2: [2, 3]
-Print #3: [0, 1]
-Print #4: [2, 3]
-Print #5: [2, 3]
-output
-
-Parece que la regla anterior todavía funciona. Finalmente, puedes ver la diferencia en el siguiente ejemplo:
 
 def my_function(my_list_1):
-    print("Print #1:", my_list_1)
-    print("Print #2:", my_list_2)
+    print("Print #1:", my_list_1)  # Print #1: [2, 3]
+    print("Print #2:", my_list_2)  # Print #2: [2, 3]
     del my_list_1[0]  # OJO AQUI.
-    print("Print #3:", my_list_1)
-    print("Print #4:", my_list_2)
+    print("Print #3:", my_list_1)  # Print #3: [3]
+    print("Print #4:", my_list_2)  # Print #3: [3]
 
 
 my_list_2 = [2, 3]
 my_function(my_list_2)
-print("Print #5:", my_list_2)
-
-
-No cambiamos el valor del parámetro my_list_1 (ya sabemos que no afectará al argumento), sino que modificamos la lista 
-identificada por él. El resultado puede ser sorprendente. Ejecute el código y verifique:
-
-Print #1: [2, 3]
-Print #2: [2, 3]
-Print #3: [3]
-Print #4: [3]
-Print #5: [3]
-output
-
-si el argumento es una lista, cambiar el valor del parámetro correspondiente no afecta a la lista (recuerde: las 
-variables que contienen listas se almacenan de una manera diferente a los escalares), Pero si cambia una lista 
-identificada por el parámetro (nota: ¡la lista, no el parámetro!), La lista reflejará el cambio.
+print("Print #5:", my_list_2)   # Print #3: [3]
 """
-
+No cambiamos el valor del parámetro my_list_1 (ya sabemos que no afectará al argumento), sino que modificamos la lista 
+identificada por él. si el argumento es una lista, cambiar el valor del parámetro correspondiente no afecta a la lista 
+(recuerde: las variables que contienen listas se almacenan de una manera diferente a los escalares), Pero si cambia una 
+lista identificada por el parámetro (nota: ¡la lista, no el parámetro!), La lista reflejará el cambio.
+la solución podría ser, si no queremos modificarlo copiar la lista, y si no reemplazarlo, como se vío anteriormente:
+list_2 = list_1  # no estás copiando el contenido, sino la dirección de memoria donde está alojado
+list_1 = [1]
+list_2 = list_1[:]
+list_1[0] = 2
+print(list_2)  # [1]
+"""
 
 # ++++  Es Triángulo y es triángulo equilátero +++++++
+
+
 def is_a_triangle(a, b, c):
     return a + b > c and b + c > a and c + a > b
 
@@ -2200,11 +2190,11 @@ print(f'Son {celsius} ºC')
 # Debe retornar True si el año es bisisto, False en caso contrario
 def is_year_leap(year):
     r = False
-    if year % 4 == 0: # divisible entre 4
+    if year % 4 == 0:  # divisible entre 4
         # salvo que sea año secular -último de cada siglo, terminado en «00»-, en cuyo caso también ha de ser divisible
         # entre 400.
         if str(year)[-2:] != '00' or (str(year)[-2:] == '00' and year % 400 == 0):
-            r=True
+            r = True
     return r
 
 
@@ -2491,6 +2481,8 @@ valores de una función dada (otra) para un conjunto de argumentos seleccionados
 universal; debe aceptar un conjunto de argumentos colocados en una lista y una función para evaluar, ambos como 
 argumentos; no queremos codificar nada.
 '''
+
+
 def print_function(args, fun):
     for x in args:
         print('f(', x,')=', fun(x), sep='')
@@ -2516,6 +2508,8 @@ f(0)=2 f(1)=0 f(2)=2
 ¿Podemos evitar definir la función poly(), ya que no la usaremos más de una vez? Sí, podemos: este es el beneficio que 
 puede brindar una lambda.
 '''
+
+
 def print_function(args, fun):
     for x in args:
         print('f(', x,')=', fun(x), sep='')
@@ -2638,7 +2632,7 @@ print(constructor_ecuación_cuadrática(2, 0, 1)(3))
 # como el valor de la variable global __name__.
 
 # podemos importar un modulo de varias formas:
-import math # importamos el módulo en su totalidad no se comparte el espacio de nombres ( no entra en conflicto
+import math  # importamos el módulo en su totalidad no se comparte el espacio de nombres ( no entra en conflicto
 # otra función con el mismo nombre que tengas creada y para acceder a ella tienes que usar el nombre.
 # podemos usar varias líneas para cada módulo o varios con , import math,sys
 print(math.pi)
@@ -2657,7 +2651,7 @@ print(s(3), cc(16))
 # La función devuelve una lista ordenada alfabéticamente que contiene todos los nombres de entidades disponibles
 # en el módulo identificado por un nombre pasado a la función como argumento: dir(módulo)
 import math
-print(dir(math)) # devuelve una lista
+print(dir(math))  # devuelve una lista
 
 import math
 for name in dir(math):
