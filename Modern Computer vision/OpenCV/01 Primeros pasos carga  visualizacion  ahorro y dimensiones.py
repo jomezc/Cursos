@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
 '''
 primera lección de OpenCV. Aquí aprenderemos a:
 1. Importar el modelo OpenCV en Python
