@@ -4640,7 +4640,6 @@ version_2._Python__venomous = not version_2._Python__venomous
 hasattr(version_2, 'constrictor')
 
 
-
 # ***********************************
 # ******** constantes python ##########
 # ***********************************
