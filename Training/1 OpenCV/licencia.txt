@@ -30,8 +30,8 @@
 # or tort (including negligence or otherwise) arising in any way out of
 # the use of this software, even if advised of the possibility of such damage.
 
-Interpretación y explicación propia del curso procedente en www.udemy.com
-Computer Vision with OpenCV Python | Official OpenCV Course
+#Interpretación y explicación propia del curso procedente en www.udemy.com
+#Computer Vision with OpenCV Python | Official OpenCV Course
 
 ##### *******
 # Also the files ending in RR are a realization of Rajeev Ratan's modern computer vision.com course on undemy.com

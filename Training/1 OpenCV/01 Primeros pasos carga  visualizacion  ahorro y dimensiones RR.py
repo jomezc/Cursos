@@ -27,7 +27,7 @@ get_ipython().system('unzip -qq images.zip')'''
 
 # ### **Cargamos las imagenes**
 # Cargue una imagen usando 'imread' especificando la ruta a la imagen
-image = cv2.imread('../images/castara.jpeg')
+image = cv2.imread('./images/castara.jpeg')
 
 
 # ### **Mostramos las imagenes**
