@@ -2637,14 +2637,14 @@ import math  # importamos el módulo en su totalidad no se comparte el espacio d
 # podemos usar varias líneas para cada módulo o varios con , import math,sys
 print(math.pi)
 
-from math import sin # podemos importar una funcion de un módulo, aquí SI PUEDE ENTRAR EN CONFLICTO C
+from math import sin  # podemos importar una funcion de un módulo, aquí SI PUEDE ENTRAR EN CONFLICTO C
 # ON NUESTRO ESPACIO DE NOMBRES,  es decir si tenemos una funcion = la sobrescribimos y al revés
-sin(16) # lo usamos sin nombre de módulo ni nada
+sin(16)  # lo usamos sin nombre de módulo ni nada
 
-import math as m # se le puede dar un alias al módulo ( deja de ser accesible el nombre origianl.
+import math as m  # se le puede dar un alias al módulo ( deja de ser accesible el nombre origianl.
 print(m.pi)
 
-from math import sin as s, cos as cc # podemos poner alias de los from también
+from math import sin as s, cos as cc  # podemos poner alias de los from también
 print(s(3), cc(16))
 
 # ****** dir()
@@ -2657,7 +2657,9 @@ import math
 for name in dir(math):
     print(name, end="\t")
 
-
+x = 26
+y = 2
+b = 3
 # ***** math
 # modulo de matemáticas
 math.sin(x)     # el seno de x;
@@ -2669,12 +2671,12 @@ math.acos(x)    # el arccoseno de x;
 math.Atan(x)    # la arcotangente de x.
 # Todas estas funciones toman un argumento (una medida de ángulo expresada en radianes) y devuelven el resultado
 # apropiado (tenga cuidado con tan() - no todos los argumentos son aceptados).
-# Análogos hiperbólicos todos igual pero terminan en h:
+# Análogos hiperbólicos todos igual, pero terminan en h:
 
 # Para operar eficazmente en mediciones de ángulo, el módulo matemático le proporciona las siguientes entidades:
 math.pi    # Una constante con un valor que es una aproximación de π;
 math.radians(x)     # Una función que convierte x de grados a radianes;
-math.degrees (x)    # Actuando en la otra dirección (de radianes a grados)
+math.degrees(x)    # Actuando en la otra dirección (de radianes a grados)
 
 # Exponenciación:
 math.e   # una constante con un valor que es una aproximación del número de Euler (e)
@@ -2700,7 +2702,7 @@ math.hypot(x, y)  # devuelve la longitud de la hipotenusa de un triángulo rect�
 # elegido) y produce un nuevo valor de semilla.
 from random import random, seed, randrange, randint, choice, sample
 
-beg, end,step, left, right, sequence, elements_to_choose = 0, 10, 1, 2, 5, [1,2,3,4,5,6,7,8,9], 5
+beg, end, step, left, right, sequence, elements_to_choose = 0, 10, 1, 2, 5, [1,2,3,4,5,6,7,8,9], 5
 random()    # produce un número flotante x procedente del rango (0,0, 1,0)
 seed()      # La función es capaz de establecer directamente la semilla del generador.
             # Te mostramos dos de sus variantes: seed() - establece la semilla con la hora actual;
@@ -2724,7 +2726,7 @@ randint(left, right)
 
 
 choice(sequence)  # La primera variante elige un elemento "aleatorio" de la secuencia de entrada y lo devuelve.
-sample(sequence, elements_to_choose) # Elige algunos de los elementos de entrada, devolviendo una lista del tamaño
+sample(sequence, elements_to_choose)  # Elige algunos de los elementos de entrada, devolviendo una lista del tamaño
 # indicado con la opción. Los elementos de la muestra se colocan en orden aleatorio
 my_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -2746,12 +2748,12 @@ platform(aliased = False, terse = False)
 
 from platform import platform, machine, processor, system, version, python_implementation, python_version_tuple
 
-print(platform()) # macOS-13.0.1-arm64-arm-64bit
-print(platform(0, 1)) # macOS-13.0.1
-print(machine()) # arm64, el nombre genérico del procesador que ejecuta su sistema operativo
-print(processor()) # , nombre real del procesador ( si es posible)
-print(system()) # Darwin, devuelve el nombre genérico del sistema operativo como una cadena.
-print(version()) # Darwin Kernel Version 22.1.0: Sun Oct  9 20:15:09 PDT 2022; root:xnu-8792.41.9~2/RELEASE_ARM64_T6000
+print(platform())  # macOS-13.0.1-arm64-arm-64bit
+print(platform(0, 1))  # macOS-13.0.1
+print(machine())  # arm64, el nombre genérico del procesador que ejecuta su sistema operativo
+print(processor())  # , nombre real del procesador ( si es posible)
+print(system())  # Darwin, devuelve el nombre genérico del sistema operativo como una cadena.
+print(version())  # Darwin Kernel Version 22.1.0: Sun Oct  9 20:15:09 PDT 2022; root:xnu-8792.41.9~2/RELEASE_ARM64_T6000
 print(python_implementation())  # CPython, devuelve una cadena que indica la implementación de Python
 print(python_version_tuple())   # ('3', '11', '0'), la mayor parte de la versión de Python; la parte menor;
 # El número de nivel de parche.
@@ -2831,7 +2833,6 @@ print(os.listdir())
 # system
 # Ejecuta el comando pasado como argumento.
 import os
-
 returned_value = os.system("mkdir my_first_directory")
 print(returned_value)
 
@@ -2846,7 +2847,7 @@ import os
 class DirectorySearcher:
     def find(self, path, dir):
         try:
-            os.chdir(path)  # este intento de ir al directorio es lo que hace que corte , caso base cuando ya no sea un
+            os.chdir(path)  # este intento de ir al directorio es lo que hace que corte, caso base cuando ya no sea un
             # directorio volverá gracias al return de abajo
         except OSError:
             # Doesn't process a file that isn't a directory.
@@ -2908,7 +2909,7 @@ from datetime import date
 d = date(1991, 2, 5)
 print(d)
 # opcionales los parámetros
-d = d.replace(year=1992, month=1, day=16) # recordar asignar a una variable
+d = d.replace(year=1992, month=1, day=16)  # recordar asignar a una variable
 print(d)
 
 #  weekday , isoweekday
@@ -2951,8 +2952,8 @@ student.take_nap(5)
 import time
 
 timestamp = 1572879180
-print(time.ctime(timestamp)) # Mon Nov  4 14:53:00 2019
-print(time.ctime()) # current , Fri Dec 23 19:30:15 2022
+print(time.ctime(timestamp))  # Mon Nov  4 14:53:00 2019
+print(time.ctime())  # current , Fri Dec 23 19:30:15 2022
 
 # gmtime() y localtime()
 ''' Algunas de las funciones disponibles en el módulo de tiempo requieren conocimiento de la clase struct_time, pero 
@@ -2981,7 +2982,6 @@ print(time.localtime(timestamp))
 '''
 time.struct_time(tm_year=2019, tm_mon=11, tm_mday=4, tm_hour=14, tm_min=53, tm_sec=0, tm_wday=0, tm_yday=308, tm_isdst=0)
 time.struct_time(tm_year=2019, tm_mon=11, tm_mday=4, tm_hour=14, tm_min=53, tm_sec=0, tm_wday=0, tm_yday=308, tm_isdst=0)
-producción
 El ejemplo muestra dos funciones que convierten el tiempo transcurrido desde la época de Unix al objeto struct_time. La 
 diferencia entre ellos es que la función gmtime devuelve el objeto struct_time en UTC, mientras que la función localtime
 devuelve la hora local. Para la función gmtime, el atributo tm_isdst siempre es 0.'''
@@ -3008,9 +3008,9 @@ le pasamos una tupla, que consta de los siguientes valores:'''
 datetime(year, month, day, hour, minute, second, microsecond, tzinfo, fold)'''
 
 from datetime import datetime
-dt = datetime(2019, 11, 4, 14, 53) # Timestamp: 1572879180.0
+dt = datetime(2019, 11, 4, 14, 53)
 print("Datetime:", dt)  # Datetime: 2019-11-04 14:53:00
-print("Timestamp:", dt.timestamp()) #
+print("Timestamp:", dt.timestamp())  # Timestamp: 1572879180.0
 print("Date:", dt.date())  # 2019-11-04
 print("Time:", dt.time())  # 14:53:00
 '''La clase datetime tiene varios métodos que devuelven la fecha y la hora actuales. Estos métodos son:
@@ -3140,9 +3140,9 @@ from datetime import date
 from datetime import datetime
 delta = timedelta(weeks=2, days=2, hours=2)
 print(delta)  # 16 days, 2:00:00
-delta2 = delta * 2 # se puede multiplicar por un entero
+delta2 = delta * 2  # se puede multiplicar por un entero
 print(delta2)  # 32 days, 4:00:00
-d = date(2019, 10, 4) + delta2 # sumarlo a un date
+d = date(2019, 10, 4) + delta2  # sumarlo a un date
 print(d)  # 2019-11-05
 dt = datetime(2019, 10, 4, 14, 53) + delta2  # o a un datetime
 print(dt)  # 2019-11-05 18:53:00
@@ -3156,7 +3156,7 @@ debe llamar al método strftime con el formato apropiado para mostrar el siguien
 from datetime import datetime
 my_date = datetime(2020, 11, 4, 14, 53)
 print(my_date.strftime("%Y/%m/%d %H:%M:%S"))  # 2020/11/04 14:53:00
-print(my_date.strftime("%y/%B/%d %H:%M:%S %p"))  # 20/November/04 14:53:00 PM (B mes letrea y p AM o PM)
+print(my_date.strftime("%y/%B/%d %H:%M:%S %p"))  # 20/November/04 14:53:00 PM (B mes letra y p AM o PM)
 print(my_date.strftime("%a, %Y %b %d"))  # Wed, 2020 04 de nov (a día de la semana abreviado, b mes abreviado)
 print(my_date.strftime("%A, %Y %B %d"))  # Wednesday, 2020 November 04 ( A dia de la semana, B mes)
 print(my_date.strftime("Weekday: %w"))  # Weekday: 3 (w, dia de la semana numero)
@@ -3203,7 +3203,7 @@ calendar.prmonth(2020, 11)  # sin print
 # cambia el primer dia de la semana (por defecto lunes)
 import calendar
 # El método requiere un parámetro que exprese el día de la semana en forma de un valor entero
-calendar.setfirstweekday(calendar.SUNDAY) # puedes usar el 6
+calendar.setfirstweekday(calendar.SUNDAY)  # puedes usar el 6
 calendar.prmonth(2020, 12)
 '''
    December 2020
@@ -3226,11 +3226,11 @@ la semana. si le pones un valor mayor a 3 pero que no quepan todas las letras se
 setfirstweekday le afecta'''
 import calendar
 print(calendar.weekheader(3))  # Mon Tue Wed Thu Fri Sat Sun
-print(calendar.weekheader(10))  #   Monday    Tuesday   Wednesday   Thursday    Friday    Saturday    Sunday
+print(calendar.weekheader(10))  # Monday    Tuesday   Wednesday   Thursday    Friday    Saturday    Sunday
 
 #  años bisiestos
 import calendar
-print(calendar.isleap(2020)) # True o False si el año es bisiesto
+print(calendar.isleap(2020))  # True o False si el año es bisiesto
 print(calendar.leapdays(2010, 2020))  # 3, el numero de años bisiestos
 
 # Clases para crear calendarios
@@ -3266,7 +3266,7 @@ for date in c.itermonthdates(2019, 11):  # el 1 de noviembre fue viernes, comple
     print(date, end=" ")  # 2019-10-28 2019-10-29 2019-10-30 2019-10-31 2019-11-01 ...
 
 '''
-itermonthdays(año, mes)devuelve el iterador a los días de la semana representados por números. pone 0 como son días 
+itermonthdays(año, mes)devuelve el iterador a los días del mes representados por números. pone 0 como son días 
 fuera del rango de meses especificado que se agregan para mantener la semana completa.
 '''
 import calendar
@@ -3297,16 +3297,15 @@ for date in c.itermonthdays4(2019, 11):
 
 '''
 El método monthdays2calendar() ( hay mas en la docu )
-. Uno de ellos es el método monthdays2calendar, que toma el año y e
-l mes y luego devuelve una lista de semanas en un mes específico. Cada semana es una tupla que consta de números de días
-y números de días de la semana. Mira el código en el editor. Tenga en cuenta que los números de días fuera del mes están
- representados por 0, mientras que los números de días de la semana son un número de 0 a 6, donde 0 es lunes y 
- 6 es domingo.'''
+. Uno de ellos es el método monthdays2calendar, que toma el año y el mes y luego devuelve una lista de semanas en un mes
+ específico. Cada semana es una tupla que consta de números de días y números de días de la semana. Mira el código en el
+editor. Tenga en cuenta que los números de días fuera del mes están representados por 0, mientras que los números de 
+días de la semana son un número de 0 a 6, donde 0 es lunes y 6 es domingo.'''
 
 # +++++++++ Ejercicio fechas lab   ++++++++++
 
 '''
-amplíe la funcionalidad de claendar con un nuevo método llamado count_weekday_in_year, que toma un año y un día de la
+amplíe la funcionalidad de calendar con un nuevo método llamado count_weekday_in_year, que toma un año y un día de la
 semana como parámetros y luego devuelve el número de ocurrencias de un día de la semana específico en el año.
 como:
 - Cree una clase llamada MyCalendar que amplíe la clase Calendar;
@@ -3339,16 +3338,16 @@ print(number_of_days)  # 52
 # ******** Paquetes #############
 # ***********************************
 '''
-Un módulo es una especie de contenedor lleno de funciones Paquete: Agrupa sus módulos con un rol similar a una carpeta 
+Un módulo es una especie de contenedor lleno de funciones, Paquete: Agrupa sus módulos con un rol similar a una carpeta 
 / directorio en el mundo de los archivos. Si creamos un módulo (un archivo.py )aunque sea vacío y lo importamos en otro,
-Aparece una nueva subcarpeta,  __pycache__. Dentro  Hay un archivo llamado module.cpython-xy.pyc donde x e y. son dígitos 
-derivados de su versión de Python (por ejemplo, serán 3 y 8 si usa Python 3.8). El nombre del archivo es el mismo 
-que el nombre de su módulo (módulo aquí). La parte después del primer punto dice qué implementación de Python ha creado 
-el archivo (CPython aquí) y su número de versión. La última parte (pyc) proviene de las palabras Python y compilado.
-El contenido es completamente ilegible para los humanos. Tiene que ser así, ya que el archivo está destinado solo para 
-uso de Python. Cuando Python importa un módulo por primera vez, traduce su contenido en una forma algo compilada.
-Cuando se importa un módulo, Python ejecuta implícitamente su contenido. Le da al módulo la oportunidad de inicializar 
-algunos de sus aspectos internos.
+Aparece una nueva subcarpeta,  __pycache__. Dentro  Hay un archivo llamado module.cpython-xy.pyc donde x e y. son 
+dígitos derivados de su versión de Python (por ejemplo, serán 3 y 8 si usa Python 3.8). El nombre del archivo es el 
+mismo que el nombre de su módulo (módulo aquí). La parte después del primer punto dice qué implementación de Python ha 
+creado el archivo (CPython aquí) y su número de versión. La última parte (pyc) proviene de las palabras Python y 
+compilado. El contenido es completamente ilegible para los humanos. Tiene que ser así, ya que el archivo está destinado
+solo para uso de Python. Cuando Python importa un módulo por primera vez, traduce su contenido en una forma algo 
+compilada. Cuando se importa un módulo, Python ejecuta implícitamente su contenido. Le da al módulo la oportunidad de 
+inicializar algunos de sus aspectos internos.
 Python recuerda los módulos importados y omite silenciosamente todas las importaciones posteriores. Cuando ejecuta un 
 archivo directamente, su variable __name__ se establece en __main__; Cuando un archivo se importa 
 como un módulo, su variable __name__ se establece en el nombre del archivo (excluyendo.py)
@@ -3377,7 +3376,8 @@ for p in sys.path:
     print(p)
 
 """
-/Users/jesusgomezcanovas/Dropbox/guapo/programar/python/venv/bin/python /Users/jesusgomezcanovas/Library/CloudStorage/Dropbox/guapo/programar/python/Deiphone.py 
+/Users/jesusgomezcanovas/Dropbox/guapo/programar/python/venv/bin/python 
+/Users/jesusgomezcanovas/Library/CloudStorage/Dropbox/guapo/programar/python/Deiphone.py 
 /Users/jesusgomezcanovas/Library/CloudStorage/Dropbox/guapo/programar/python
 /Users/jesusgomezcanovas/Library/CloudStorage/Dropbox/guapo/programar/python
 /Library/Frameworks/Python.framework/Versions/3.11/lib/python311.zip
@@ -3385,12 +3385,12 @@ for p in sys.path:
 /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/lib-dynload
 /Users/jesusgomezcanovas/Library/CloudStorage/Dropbox/guapo/programar/python/venv/lib/python3.11/site-packages
 """
-sys.path.append('..\\modules') # Añadimos El nombre relativo de la carpeta \\, para añadir al path, es un ejemplo
+sys.path.append('..\\modules')  # Añadimos El nombre relativo de la carpeta \\, para añadir al path, es un ejemplo
 
 # La inicialización de un módulo se realiza mediante un código independiente (que no forma parte de ninguna función)
 # ubicado dentro del archivo del módulo. Como un paquete no es un archivo, esta técnica es inútil para inicializar
 # paquetes. En su lugar, debe usar un truco diferente: Python espera que haya un archivo con un nombre muy único dentro
-# de la carpetadel paquete: __init__.py. El contenido del archivo se ejecuta cuando se importa cualquiera de los
+# de la carpeta del paquete: __init__.py. El contenido del archivo se ejecuta cuando se importa cualquiera de los
 # módulos del paquete. No desea ninguna inicialización especial, puede dejar el archivo vacío, pero no debe omitirlo.
 
 # pregunta
