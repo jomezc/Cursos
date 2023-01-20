@@ -3435,9 +3435,9 @@ Una clase es un conjunto de objetos. Un objeto es un ser que pertenece a una cla
 los requisitos, rasgos y cualidades asignados a una clase específica.
 Ejemplo clase -> Persona, instancias juan y carlos
 Posee Atributos y Métodos
-La clase recién definida se convierte en una herramienta que puede crear nuevos objetos. La herramienta tiene que ser 
+La clase recién definida se convierte en una herramienta que puede crear nuevos objetos. La herramienta tiene que ser
 utilizada explícitamente, bajo demanda.
-La definición comienza con la clase de palabra clave. La palabra clave va seguida de un identificador que nombrará la 
+La definición comienza con la clase de palabra clave. La palabra clave va seguida de un identificador que nombrará la
 clase. no lo confunda con el nombre del objeto, son dos cosas diferentes.
 El acto de crear un objeto de la clase seleccionada también se denomina instanciación (ya que el objeto se convierte en
 una instancia de la clase).
@@ -3525,6 +3525,7 @@ except:
 obj._Classy__hidden()  # hidden
 
 # un método cuyo nombre comienza con __ está (parcialmente) oculto, podremos acceder con obj._Classy__hidden().
+
 
 # ++++++ Ejericio POO Aritmética ++++++++++
 class Aritmetica:
@@ -3732,9 +3733,10 @@ print(triangle.perimeter())
 # ***********************************
 # ******** ENCAPSULAMIENTO, GET y SET y DESTRUCTORES ##########
 # ***********************************
-#   Con _ indicamos que sólo desde la propia clase podemos acceder a la clase
+#   Con _ indicamos que solo desde la propia clase podemos acceder a la clase
 #   Aunque no deberíamos el lenguaje si te deja, es una sugerencia
-#   Con __ si que omite la modificación del valor (no falla) es menos comun y falla al sacarlo
+#   Con __ si que omite la modificación del valor (no falla) es menos comun y falla al sacarlo, menos con
+# objeto._Clase__variable/método()
 # ************************
 # ******** ROBUSTECER METODO INIT
 
@@ -3816,7 +3818,7 @@ del persona2  # Llamamos al método dunder y hará
 
 # __name__ es una propiedad que indica nombre del módulo
 # si lo ejecutamos desde el propio archivo donde aparece pondrá main
-# si no el nombre dle archivo
+# si no el nombre del archivo
 print(__name__)
 
 if __name__ == '__main__':
@@ -3861,7 +3863,7 @@ de sus superclases.
 class Empleado(Persona):  # con (Padre) indicamos en la declaración que heredamos
     def __init__(self, nombre, apellido, edad, sueldo):
         # tenemos que inicializar los atributos del padre
-        super().__init__(nombre, apellido, edad) # no necesitamos saber el nombre ni hacer referencia a self
+        super().__init__(nombre, apellido, edad)  # no necesitamos saber el nombre ni hacer referencia a self
         # super metodo que nos permite acceder a los atributos del padre
         # con super().__init__(atributos padre) estamos inicializando los atr padre
         # Persona.__init__(self, nombre, apellido, edad)  # sería lo mismo
@@ -3921,7 +3923,7 @@ no lo son, a pesar de que su contenido es el mismo.
 
 # +++++++ Ejercicio Herencia en Python ++++++
 # Definir una clase padre llamada Vehículo y dos clases hijas llamadas Coche y
-# Bicicleta, las cuales heredan de la clase Padre Vehíuculo
+# Bicicleta, las cuales heredan de la clase Padre Vehículo
 
 class Vehiculo:
     def __init__(self, color, ruedas):
@@ -3950,7 +3952,7 @@ class Vehiculo:
 
 class Coche(Vehiculo):
     def __init__(self, color, velocidad):
-        super().__init__(color, 4) # en curso cert no habla de super()
+        super().__init__(color, 4)  # en curso cert no habla de super()
         self._velocidad = str(velocidad) + 'km/hr'
 
     def __str__(self):
@@ -4090,7 +4092,7 @@ for i in range(100):
 print(stk.get_counter())
 
 class QueueError(Exception):
-    def __init__(self,mensaje):
+    def __init__(self, mensaje):
         self.messaje = mensaje
 
 
@@ -4202,7 +4204,7 @@ class FiguraGeometrica(ABC):  # al extender de ABC es abstracta
         if self.__validar_valor(alto):
             self._alto = alto
         else:
-            self._ancho = 0
+            self._alto = 0
         print(f'Valor erróneo para alto, no se modifica: {alto}')
 
     # ********   METODO ABSTRACTO
@@ -4271,8 +4273,7 @@ print(cuadrado1)  # Llama a str
 print(rectangulo1)
 
 # MRO - Method resolution Order, para ver en que orden de resolución en que se van a ejecutar
-# Si cambiamos el orden en que se hereda cambiaría. Nos indica el orden en que ira buscando
-# Los métodos por ejemplo
+# Si cambiamos el orden en que se hereda cambiaría. Nos indica el orden en que ira buscando los métodos, por ejemplo
 print(Cuadrado.mro())
 
 
@@ -4638,6 +4639,7 @@ version_2._Python__venomous = not version_2._Python__venomous
 # Escriba una expresión que verifique si el objeto versión_2 contiene una propiedad de instancia llamada constrictor
 # (¡sí, constrictor!).
 hasattr(version_2, 'constrictor')
+
 
 
 # ***********************************
