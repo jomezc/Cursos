@@ -33,9 +33,9 @@ import matplotlib.pyplot as plt
 from imageio import imsave
 from torch.utils import model_zoo
 
-module_path = os.path.abspath(os.path.join('../../AINTT/'))
-if module_path not in sys.path:
-    sys.path.append(module_path)
+# module_path = os.path.abspath(os.path.join('../../AINTT/'))
+# if module_path not in sys.path:
+#     sys.path.append(module_path)
 
 from building_footprint_segmentation.seg.binary.models import ReFineNet
 from building_footprint_segmentation.helpers.normalizer import min_max_image_net
@@ -52,8 +52,8 @@ from building_footprint_segmentation.utils.operations import handle_image_size
 
 # Establece el índice para la cámara si no se introduce otro por parámetro.
 
-s = 0
-# s = 'video/pr.mp4'
+#s = 0
+s = 'video/NO_pr.mp4'
 # s = 'rtsp://10.9.0.31/videodevice'
 if len(sys.argv) > 1:
     s = sys.argv[1]
@@ -170,7 +170,7 @@ THICKNESS = 1
 
 
 # toma el fotograma, una lista de objetos detectados y el umbral de detección
-def display_objects(im, objects, threshold=0.25):
+def display_objects(im, objects, threshold=0.7):
     rows = im.shape[0]
     cols = im.shape[1]
 
@@ -262,12 +262,12 @@ while cv2.waitKey(1) != 27:  # mientras no pulsemos la tecla con ord 27 (esc)
         label = 'Inference time: %.2f ms' % (t * 1000.0 / cv2.getTickFrequency())
         cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
 
-        set_model_weights()
-        # # PARALLELIZE the model if gpu available
-        model = load_parallel_model(model)
-        frame = extract(frame)
-
-        frame = cv2.resize(frame, (frame_width, frame_height))
+        # set_model_weights()
+        # # # PARALLELIZE the model if gpu available
+        # model = load_parallel_model(model)
+        # frame = extract(frame)
+        #
+        # frame = cv2.resize(frame, (frame_width, frame_height))
         cv2.imshow(win_name, frame)  # muestra el fotograma relleno en la ventana de salida
 
         # **** Escribe cada frame en el fichero
