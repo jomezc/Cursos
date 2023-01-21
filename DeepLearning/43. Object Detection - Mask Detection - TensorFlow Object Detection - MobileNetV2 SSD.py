@@ -2,37 +2,40 @@
 # coding: utf-8
 
 # 
-# 
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
 # 
-# # **Training Faster R-CNN Object Detection on a Custom Dataset**
-# NOTE: to obtain the most recent version of this notebook, please copy from 
 # 
-# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1U3fkRu6-hwjk7wWIpg-iylL2u5T9t7rr#scrollTo=lsT4-_Eq45Ww)
+# ## **Training MobileNetSSD Object Detection on a Mask Dataset**
+# 
+# Note! For a most up to date version of this notebook, make sure you copy from:
+# 
+# 💡 Recommendation: [Open this blog post](https://blog.roboflow.ai/training-a-tensorflow-object-detection-model-with-a-custom-dataset/) to continue.
 # 
 # ### **Overview**
 # 
-# This notebook walks through how to train a Faster R-CNN object detection model using the TensorFlow Object Detection API.
+# This notebook walks through how to train a MobileNet object detection model using the TensorFlow 1.5 Object Detection API.
 # 
 # In this specific example, we'll training an object detection model to recognize cells types: white blood cells, red blood cells and platelets. **To adapt this example to train on your own dataset, you only need to change two lines of code in this notebook.**
 # 
-# Everything in this notebook is also hosted on this [GitHub repo](https://github.com/roboflow-ai/tensorflow-object-detection-faster-rcnn).
+# Everything in this notebook is also hosted on this [GitHub repo](https://github.com/josephofiowa/tensorflow-object-detection).
 # 
-# ![Arial Maritime Drone Dataset](https://github.com/rajeevratan84/ModernComputerVision/raw/main/maritime.png)
+# ![Mask Detector Output](https://github.com/rajeevratan84/ModernComputerVision/raw/main/mask.png)
 # 
 # **Credit to [DLology](https://www.dlology.com/blog/how-to-train-an-object-detection-model-easy-for-free/) and [Tony607](https://github.com/Tony607)**, whom wrote the first notebook on which much of this is example is based. 
 # 
 # ### **Our Data**
 # 
-# We'll be using an open source Arial Maritime Drone Dataset. Our dataset contains 508 images is hosted publicly on Roboflow [here](https://public.roboflow.com/object-detection/aerial-maritime/9).
+# We'll be using an open source Mask Wearing Dataset which contains 149 images and is hosted publicly on Roboflow [here](https://public.roboflow.com/object-detection/mask-wearing).
 # 
 # When adapting this example to your own data, create two datasets in Roboflow: `train` and `test`. Use Roboflow to generate TFRecords for each, replace their URLs in this notebook, and you're able to train on your own custom dataset.
 # 
 # ### **Our Model**
 # 
-# We'll be training a Faster R-CNN neural network. Faster R-CNN is a two-stage detector: first it identifies regions of interest, and then passes these regions to a convolutional neural network. The outputted features maps are passed to a support vector machine (SVM) for classification. Regression between predicted bounding boxes and ground truth bounding boxes are computed. (Consider [this](https://towardsdatascience.com/faster-r-cnn-object-detection-implemented-by-keras-for-custom-data-from-googles-open-images-125f62b9141a) deep dive for more!)
+# We'll be training a MobileNetSSDv2 (single shot detector). This specific model is a one-short learner, meaning each image only passes through the network once to make a prediction, which allows the architecture to be very performant for mobile hardware.
 # 
 # The model arechitecture is one of many available via TensorFlow's [model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md#coco-trained-models).
+# 
+# As a note, this notebook presumes TensorFlow 1.5 as TensorFlow 2.0 has yet to fully support the object detection API.
 # 
 # ### **Training**
 # 
@@ -60,12 +63,6 @@
 # 
 # 
 
-# In[ ]:
-
-
-get_ipython().system('pip install tensorflow_gpu==1.15')
-
-
 # ## Configs and Hyperparameters
 # 
 # Support a variety of models, you can find more pretrained model from [Tensorflow detection model zoo: COCO-trained models](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md#coco-trained-models), as well as their pipline config files in [object_detection/samples/configs/](https://github.com/tensorflow/models/tree/master/research/object_detection/samples/configs).
@@ -77,7 +74,7 @@ get_ipython().system('pip install tensorflow_gpu==1.15')
 repo_url = 'https://github.com/roboflow-ai/tensorflow-object-detection-faster-rcnn'
 
 # Number of training steps - 1000 will train very quickly, but more steps will increase accuracy.
-num_steps = 10000  # 200000 to improve
+num_steps = 30000  # 200000 to improve
 
 # Number of evaluation steps.
 num_eval_steps = 50
@@ -97,12 +94,12 @@ MODELS_CONFIG = {
         'model_name': 'rfcn_resnet101_coco_2018_01_28',
         'pipeline_file': 'rfcn_resnet101_pets.config',
         'batch_size': 8
-    }
+    },    
 }
 
 # Pick the model you want to use
 # Select a model in `MODELS_CONFIG`.
-selected_model = 'faster_rcnn_inception_v2'
+selected_model = 'ssd_mobilenet_v2'
 
 # Name of the object detection model to use.
 MODEL = MODELS_CONFIG[selected_model]['model_name']
@@ -112,6 +109,13 @@ pipeline_file = MODELS_CONFIG[selected_model]['pipeline_file']
 
 # Training batch size fits in Colabe's Tesla K80 GPU memory for selected model.
 batch_size = MODELS_CONFIG[selected_model]['batch_size']
+
+
+# In[ ]:
+
+
+# use TF 1.x for Object Detection APIs as they are not ported to TF 2.0 yet
+get_ipython().run_line_magic('tensorflow_version', '1.x')
 
 
 # ## Clone the `tensorflow-object-detection` repository or your fork.
@@ -138,9 +142,15 @@ get_ipython().system('git pull')
 get_ipython().run_line_magic('cd', '/content')
 get_ipython().system('git clone --quiet https://github.com/tensorflow/models.git')
 
+get_ipython().system('pip install tf_slim')
+
 get_ipython().system('apt-get install -qq protobuf-compiler python-pil python-lxml python-tk')
 
-get_ipython().system('pip install -q Cython contextlib2 pillow lxml matplotlib pycocotools tf_slim')
+get_ipython().system('pip install -q Cython contextlib2 pillow lxml matplotlib')
+
+get_ipython().system('pip install -q pycocotools')
+
+get_ipython().system('pip install lvis')
 
 get_ipython().run_line_magic('cd', '/content/models/research')
 get_ipython().system('protoc object_detection/protos/*.proto --python_out=.')
@@ -167,30 +177,25 @@ get_ipython().system('python object_detection/builders/model_builder_test.py')
 get_ipython().run_line_magic('cd', '/content/tensorflow-object-detection-faster-rcnn/data')
 
 
-# In[ ]:
+# In[1]:
 
 
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/Aerial+Maritime.v9-tiled.tfrecord.zip')
-get_ipython().system("unzip -q 'Aerial Maritime.v9-tiled.tfrecord.zip'")
-
-
-# In[ ]:
-
-
-get_ipython().run_line_magic('ls', '')
+# Download our dataset
+get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/Mask+Wearing.v4-raw.tensorflow.zip')
+get_ipython().system("unzip -q 'Mask Wearing.v4-raw.tensorflow.zip'")
 
 
 # In[ ]:
 
 
-# check out what we have in train
+# training set
 get_ipython().run_line_magic('ls', 'train')
 
 
 # In[ ]:
 
 
-# show what we have in test
+# test set
 get_ipython().run_line_magic('ls', 'test')
 
 
@@ -198,9 +203,9 @@ get_ipython().run_line_magic('ls', 'test')
 
 
 # NOTE: Update these TFRecord names from "cells" and "cells_label_map" to your files!
-test_record_fname = '/content/tensorflow-object-detection-faster-rcnn/data/valid/movable-objects.tfrecord'
-train_record_fname = '/content/tensorflow-object-detection-faster-rcnn/data/train/movable-objects.tfrecord'
-label_map_pbtxt_fname = '/content/tensorflow-object-detection-faster-rcnn/data/train/movable-objects_label_map.pbtxt'
+test_record_fname = '/content/tensorflow-object-detection-faster-rcnn/data/test/People.tfrecord'
+train_record_fname = '/content/tensorflow-object-detection-faster-rcnn/data/train/People.tfrecord'
+label_map_pbtxt_fname = '/content/tensorflow-object-detection-faster-rcnn/data/train/People_label_map.pbtxt'
 
 
 # ## Download base model
@@ -360,12 +365,6 @@ get_ipython().system(' curl -s http://localhost:4040/api/tunnels | python3 -c   
 # In[ ]:
 
 
-get_ipython().system('pip install lvis')
-
-
-# In[ ]:
-
-
 get_ipython().system('python /content/models/research/object_detection/model_main.py      --pipeline_config_path={pipeline_fname}      --model_dir={model_dir}      --alsologtostderr      --num_train_steps={num_steps}      --num_eval_steps={num_eval_steps}')
 
 
@@ -403,12 +402,6 @@ get_ipython().system('ls {output_directory}')
 
 
 # ## Download the model `.pb` file
-
-# In[ ]:
-
-
-output_directory
-
 
 # In[ ]:
 
@@ -493,56 +486,10 @@ files.download(pipeline_fname)
 # files.download('fine_tuned_model.tar.gz')
 
 
-# In[ ]:
-
-
-
-
-
 # ## Run inference test
+# Test with images in repository `tensorflow-object-detection/test` directory.
 # 
-# To test on your own images, you need to upload raw test images to the `test` folder located inside `/data`.
-# 
-# Right now, this folder contains TFRecord files from Roboflow. We need the raw images.
-# 
-
-# #### Add test images to this notebook
-# 
-# We can download the exact same raw images that are in our Roboflow test split to our local computer by downloading the images in a different (non-TFRecord) format.
-# 
-# Go back to our [dataset](https://public.roboflow.ai/object-detection/bccd/1), click "Download," select "COCO JSON" as the format, and download to your local machine.
-# 
-# Unzip the downloaded file, and navigate to the `test` directory.
-# ![folder](https://i.imgur.com/xkjxmKP.png)
-# 
-# 
-# Now, on the left-hand side in the colab notebook, select the folder icon.
-# ![Colab folder](https://i.imgur.com/59v08qG.png)
-# 
-# Right-click on `test`, and select "Upload." Navigate to the files locally on your machine you just downloaded...and voila! You're set!
-# 
-
-# In[ ]:
-
-
-#downloading test images from Roboflow
-#export dataset above with format COCO JSON
-#or import your test images via other means. 
-#%mkdir /content/test/
-get_ipython().run_line_magic('cd', '/content/data/test/')
-get_ipython().system('curl -L "https://public.roboflow.com/ds/iwKDhmrlCu?key=BraSEpPoxC" > roboflow.zip; unzip roboflow.zip; rm roboflow.zip')
-
-
-# In[ ]:
-
-
-# optionally, remove the TFRecord and cells_label_map.pbtxt from
-# the test directory so it is only raw images
-get_ipython().run_line_magic('cd', '{repo_dir_path}')
-get_ipython().run_line_magic('cd', 'data/test')
-get_ipython().run_line_magic('rm', 'cells.tfrecord')
-get_ipython().run_line_magic('rm', 'cells_label_map.pbtxt')
-
+# **To test with your own images, you need to place your images inside the `test` directory in this Colab notebook!** More on this below.
 
 # In[ ]:
 
@@ -557,11 +504,15 @@ PATH_TO_CKPT = pb_fname
 PATH_TO_LABELS = label_map_pbtxt_fname
 
 # If you want to test the code with your images, just add images files to the PATH_TO_TEST_IMAGES_DIR.
-PATH_TO_TEST_IMAGES_DIR =  os.path.join(repo_dir_path, "data/test/test")
+PATH_TO_TEST_IMAGES_DIR =  repo_dir_path + "/data/test/"
+sample_img = 'https://storage.googleapis.com/roboflow-platform-transforms/Ly2DeBzbwsemGd2ReHk4BFxy8683/cf5ed147e4f2675fbabbc9b0db750ecf/transformed.jpg'
+import urllib.request
+urllib.request.urlretrieve(sample_img, 
+                           PATH_TO_TEST_IMAGES_DIR + "cell.jpg")
+
 
 assert os.path.isfile(pb_fname)
 assert os.path.isfile(PATH_TO_LABELS)
-
 TEST_IMAGE_PATHS = glob.glob(os.path.join(PATH_TO_TEST_IMAGES_DIR, "*.*"))
 assert len(TEST_IMAGE_PATHS) > 0, 'No image found in `{}`.'.format(PATH_TO_TEST_IMAGES_DIR)
 print(TEST_IMAGE_PATHS)
@@ -586,7 +537,7 @@ from matplotlib import pyplot as plt
 from PIL import Image
 
 # This is needed since the notebook is stored in the object_detection folder.
-sys.path.append("../Modern Computer vision")
+sys.path.append("../Cursos/Modern Computer vision")
 from object_detection.utils import ops as utils_ops
 
 
@@ -683,7 +634,6 @@ def run_inference_for_single_image(image, graph):
 # In[ ]:
 
 
-# Output images not showing? Run this cell again, and try the cell above
 # This is needed to display the images.
 get_ipython().run_line_magic('matplotlib', 'inline')
 
@@ -691,14 +641,10 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 # In[ ]:
 
 
-TEST_IMAGE_PATHS
-
-
-# In[ ]:
-
-
 for image_path in TEST_IMAGE_PATHS:
+  try:
     image = Image.open(image_path)
+    print(image_path)
     # the array based representation of the image will be used later in order to prepare the
     # result image with boxes and labels on it.
     image_np = load_image_into_numpy_array(image)
@@ -718,6 +664,38 @@ for image_path in TEST_IMAGE_PATHS:
         line_thickness=8)
     plt.figure(figsize=IMAGE_SIZE)
     plt.imshow(image_np)
+    plt.show()
+  except Exception:
+    pass
+
+
+# In[ ]:
+
+
+### Adding your own images to tensorflow-object-detection/data
+def upload_files():
+  from google.colab import files
+  uploaded = files.upload()
+  for k, v in uploaded.items():
+    open(k, 'wb').write(v)
+  return list(uploaded.keys())
+
+
+# In[ ]:
+
+
+# navigate to correct folder
+get_ipython().run_line_magic('cd', '/content/tensorflow-object-detection-faster-rcnn/data/test/')
+
+# call function to upload
+upload_files()
+
+
+# In[ ]:
+
+
+while True:
+  pass
 
 
 # In[ ]:

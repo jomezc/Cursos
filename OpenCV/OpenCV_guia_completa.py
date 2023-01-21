@@ -1911,7 +1911,7 @@ if not os.path.isfile(modelFile):
     os.remove('ssd_mobilenet_v2_coco_2018_03_29.tar.gz')
 
     # volvemos al directorio anterior
-    os.chdir("..")
+    os.chdir("../Training")
 
 '''Hay una gran diferencia entre un detector de objetos de aprendizaje profundo y un objeto de visión artificial 
 tradicional ( los revisados hasta ahora) Solíamos tener un detector para cada clase, por ejemplo, teníamos un detector 
