@@ -59,14 +59,14 @@ print(p1 - p2)
 # ***********************************
 # ******** Polimorfismo ##########
 # ***********************************
-'''Multiples formas en tiempo de ejecución
-una misma variable puede ejecutar varios métodos de distintos objetos dependiendo del objeto
-al cual esté apuntando en tiempo en ejecución
-Si tenemos una variable de una clase que tiene el método str, y otra que tiene gerente y ejecutarse el q sea
-Es decir ejecutar multiples métodos en tiempo de ejecución dependiendo del objeto al cual esté apuntando
-se ejecuta uno dependiendo de cuál apunte. En Python no tienen que tener relación
+'''Multiples formas en tiempo de ejecución una misma variable puede ejecutar varios métodos de distintos objetos 
+dependiendo del objeto al cual esté apuntando en tiempo en ejecución. Si tenemos una variable de una clase que tiene el 
+método str, y otra que tiene gerente y ejecutarse el que sea Es decir ejecutar multiples métodos en tiempo de ejecución 
+dependiendo del objeto al cual esté apuntando se ejecuta uno dependiendo de cuál apunte. En Python no tienen que tener 
+relación.
 Es La situación en la que la subclase es capaz de modificar el comportamiento de su superclase. Ayuda al desarrollador
 a mantener el código limpio y consistente.'''
+
 
 class Empleado:
     def __init__(self, nombre, sueldo):
@@ -89,7 +89,7 @@ class Empleado:
         self._nombre = nombre
 
     @sueldo.setter
-    def nombre(self, sueldo):
+    def sueldo(self, sueldo):
         self._sueldo = sueldo
 
     def mostrar_detalles(self):
@@ -113,7 +113,7 @@ class Gerente(Empleado):
 def imprimir_detalles(objeto):
     print(objeto)
     print(objeto.mostrar_detalles())
-    # mismo resultado se ejecuta el método del padre pero el str de la que está apuntando
+    # mismo resultado se ejecuta el método del padre, pero el str de la que está apuntando es el del hijo (polimorfismo)
     print(type(objeto))
     if isinstance(objeto, Gerente):  # ****** metodo que pregunta si un objeto es de una determinada clase
         print(objeto.departamento)
@@ -157,6 +157,8 @@ __next__() que está destinado a devolver el siguiente valor (primero, segundo, 
 por las declaraciones for/in para pasar a la siguiente iteración; si no hay más valores para proporcionar, el método 
 debe generar la excepción StopIteration.
 '''
+
+
 class Fib:
     def __init__(self, nn):
         print("__init__")
@@ -192,8 +194,6 @@ Fib1 = 1
 Fib2 = 1
 Fibi = Fibi-1 + Fibi-2
 
-En otras palabras:
-
 los dos primeros números de Fibonacci son iguales a 1;
 cualquier otro número de Fibonacci es la suma de los dos anteriores (por ejemplo, Fib3 = 2, Fib4 = 3, Fib5 = 5, etc.)
 Vamos a sumergirnos en el código:
@@ -228,25 +228,6 @@ a continuación, Python invoca el método __iter__ para obtener acceso al iterad
 el método __next__ se invoca once veces: las primeras diez veces producen valores útiles, mientras que la undécima 
 finaliza la iteración.
 '''
-class Fib:
-    def __init__(self, nn):
-        self.__n = nn
-        self.__i = 0
-        self.__p1 = self.__p2 = 1
-
-    def __iter__(self):
-        print("Fib iter")
-        return self
-
-    def __next__(self):
-        self.__i += 1
-        if self.__i > self.__n:
-            raise StopIteration
-        if self.__i in [1, 2]:
-            return 1
-        ret = self.__p1 + self.__p2
-        self.__p1, self.__p2 = self.__p2, ret
-        return ret
 
 
 class Class:
@@ -258,9 +239,9 @@ class Class:
         return self.__iter
 
 
-object = Class(8)  # se inicializa class que asu vez fib
+object1 = Class(8)  # se inicializa class que asu vez fib
 
-for i in object: # es este for el que llama a iter() que a su vez llama a next
+for i in object1:  # es este for el que llama a iter() que a su vez llama a next
     print(i)
     '''
 Hemos construido el iterador Fib en otra clase (podemos decir que lo hemos integrado en la clase Class). Se crea una
@@ -298,8 +279,8 @@ class MyRange(object):
 from collections.abc import *
 
 a = MyRange(5)
-print(isinstance(a, Iterable))
-print(isinstance(a, Iterator))
+print(isinstance(a, Iterable))  # True
+print(isinstance(a, Iterator))  # True
 
 for i in a:
     print(i)
@@ -341,24 +322,27 @@ reanuda la ejecución (no se toma desde cero, como después de la devolución).
 
 Hay una limitación importante: dicha función no debe invocarse explícitamente ya que, de hecho, ya no es una función; 
 es un objeto generador ( si lo imprimes ves que es un objeto generador y lo tienes que llamar desde por ejemplo un for 
-una compresión de listas, una lista! e incluso el operador in (como for i in renge(x)). La invocación devolverá el 
+una compresión de listas, una lista! e incluso el operador in (como for i in range(x)). La invocación devolverá el 
 identificador del objeto, no la serie que esperamos del generador.
 '''
+
+
 # ++++++++ ejemplo yield +++++
 def powers_of_2(n):
     power = 1
     for i in range(n):
-        yield power
+        yield power  # se guarda y luego se hace la potencia si no el 1º elemento no aparecería
         power *= 2
 
 
 t = [x for x in powers_of_2(5)]
-l = list(powers_of_2(3))
+ll = list(powers_of_2(3))
 for i in range(20):
     if i in powers_of_2(8):
         print(i, end=' ')
-print(t)  # [1, 2, 4, 8, 16]
-print(l)  # [1, 2, 4]
+print(f'\n{t}')  # [1, 2, 4, 8, 16]
+print(ll)  # [1, 2, 4]
+
 
 # ++++++++ ejemplo Fibonacci con yield +++++
 def fibonacci(n):
@@ -401,13 +385,13 @@ ninguna lista: solo hay valores posteriores producidos por el generador, uno por
 '''El cierre es una técnica que permite almacenar valores a pesar de que el contexto en el que han sido creados ya no
 existe.
 '''
-# def outer(par):
-#     loc = par
-#
-#
-# var = 1
-# outer(var)
-# print(var)
+def outer(par):
+    loc = par
+
+
+var = 1
+outer(var)
+print(var)
 # print(loc)
 '''
 Las últimas dos líneas de este ejemplo causarán una excepción NameError: ni par ni loc son accesibles fuera de la 
@@ -425,7 +409,7 @@ def outer(par):
 
 var = 1
 fun = outer(var)
-print(fun()) # 1
+print(fun())  # 1
 '''
 Ahora Hay  nuevo: una función (llamada inner()) dentro de otra función (llamada outer()). Funciona como cualquier otra 
 función, excepto por el hecho de que inner() puede invocarse solo desde outer(). Podemos decir que inner() es la 
@@ -496,6 +480,7 @@ def tag(tg):
 b_tag = tag('<b>')
 print(b_tag('Monty Python'))  # <b>Monty Python</b>
 
+
 # ++++++++ ejemplo pregunta modulo +++++
 class I:
     def __init__(self):
@@ -520,8 +505,8 @@ for x in I():
 # ++++++ otro
 class Ex(Exception):
     def __init__(self, msg):
-        Exception.__init__(self, msg+msg)
-        self.args = (msg,)
+        Exception.__init__(self, msg+msg)  # llama al init del padre con 2 veces el mensaje
+        self.args = (msg,)  # aquí al pasarle los argumentos sobrescribe la inicialización por el mensaje simple
 
 
 try:
@@ -538,15 +523,19 @@ try:
     raise Exception(1, 2, 3)
 except Exception as e:
     print(len(e.args))  # 3
+    print(e.args)  # (1, 2, 3), una tupla
+
 
 # ++++++ otro
 class A:
     def __init__(self):
         pass
 
-a = A(1)
 
-print(hasattr(a, 'A'))  # Falla 2 argumentos y solo hemos definido uno!!!
+a = A(1)
+# a = A() así si funcionaría y daría False hasattr
+print(hasattr(a, 'A'))  # TypeError, 2 argumentos y solo hemos definido uno!!!
+
 
 # +++++++ otro
 # ¿cual es la salida esperada del siguiente código?
@@ -564,6 +553,7 @@ class Vowels:
         self.pos += 1
         return self.vow[self.pos - 1]
 
+
 vowels = Vowels()
 for v in vowels:
     print(v, end=' ')  # a e i o u y
@@ -574,12 +564,12 @@ for v in vowels:
 any_list = [1, 2, 3, 4]
 # even_list = # Complete the line here.
 # print(even_list)
+# map(lambda n: n | 1, any_list) logica, list porque es un generador
+print(list(map(lambda n: n | 1, any_list)))  # [1, 3, 3, 5] recuerda, | es como un or
 
-list(map(lambda n: n | 1, any_list))  # recuerda, | es como un or
 
 # +++++++++ otro
 # ¿cual es la salida esperada del siguiente código?
-
 def replace_spaces(replacement='*'):
     def new_replacement(text):
         return text.replace(' ', replacement)
