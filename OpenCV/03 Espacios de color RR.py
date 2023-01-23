@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
-# 
+
+###########################
+# 03 Espacios de color ####
+###########################
 '''# # **Color Spaces**
 In this lesson we'll learn to:
 1. View the individual channels of an RGB Image
@@ -46,8 +49,7 @@ import numpy as np
 
 '''Vamos a crear el arbol de la imagen de la dimensión del árbol vamos a hacer todos los otros componentes de color
 a cero menos el que queremos visualizar, mediante la siguiente matriz'''
-# Vamos a crear una matriz de ceros
-# con dimensiones de la imagen h x w
+# Vamos a crear una matriz de ceros con dimensiones de la imagen h x w
 zeros = np.zeros(image.shape[:2], dtype = "uint8")
 
 imshow("Red", cv2.merge([zeros, zeros, R]))
@@ -62,8 +64,8 @@ image = cv2.imread('./images/castara.jpeg')
 B, G, R = cv2.split(image)
 
 # Rehagamos una copia de la imagen original, observando que se muestra la misma imagen
-merged = cv2.merge([B, G, R]) 
-imshow("Merged", merged) 
+merged = cv2.merge([B, G, R])
+imshow("Merged", merged)
 
 
 # Ampliemos el color azul, se ve extraño
@@ -75,7 +77,7 @@ imshow("Blue Boost", merged)
 '''#  en vez de usar una combinación de los colores RGB, sua un mapa de color llamado tono (HUE) del azul al amarillo con
 la intensidad, que es el brillo pudiendo ver hacia abajo los colores más oscuros, y la saturación, que te dice los
 conflictos alimentados en apelación, volíendose más rico y profundo a medida que avanza.
-básicamente usando este esquema hay una fomra diferente de representar los colores de difrentes espacios de color'''
+básicamente usando este esquema hay una fomra diferente de representar los colores de diferentes espacios de color'''
 # ![](https://upload.wikimedia.org/wikipedia/commons/f/f2/HSV_color_solid_cone.png)
 # - Matiz HUE: 0 - 179
 # - Saturación: 0 - 255
@@ -86,12 +88,10 @@ image = cv2.imread('./images/castara.jpeg')
 
 # convertimos a HSV
 hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-imshow('HSV', hsv_image)  # se ve extraño porque la función  está diseñada sólo paera representar imagenes RGV no HSV
-
+imshow('HSV', hsv_image)
 
 # #### Esto se ve extraño... ¿por qué?
 # Porque nuestra función de trazado fue diseñada solo para imágenes RGB, no para HSV
-
 
 plt.imshow(cv2.cvtColor(hsv_image, cv2.COLOR_HSV2RGB))
 plt.show()
@@ -99,6 +99,7 @@ plt.show()
 
 # ### **Veamos cada tipo de canal en la representación del espacio de color HSV**
 # Volviendo a ver la representación RGB mediante el uso de indexación
-imshow("Hue", hsv_image[:, :, 0])  # HUE es en realidad el color naranja, para que puedas ver la arena y los árboles ( intensidad)
-imshow("Saturation", hsv_image[:, :, 1])  # cuanto mas brillante en la saturaciópn
+#  HUE es en realidad el color naranja, para que puedas ver la arena y los árboles ( intensidad)
+imshow("Hue", hsv_image[:, :, 0])  #
+imshow("Saturation", hsv_image[:, :, 1])  # cuanto mas brillante en la saturación
 imshow("Value", hsv_image[:, :, 2])  # intensidad de brillo

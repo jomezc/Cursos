@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-# # **Contornos**
-#
+#####################
+# 11 contornos ######
+#####################
 # ####**En esta lección aprenderemos:**
 # 1. Usando findContours
 # 2. Dibujo de contornos
@@ -79,7 +79,7 @@ imshow('Contours overlaid on original image', image)
 # el número de contornos encontrados
 print("Number of Contours found = " + str(len(contours)))
 
-# visualizamos el primer elemento del contorno vemos que son las lista de los puntos, es una lista de  píxeles que son
+# visualizamos el primer elemento del contorno vemos que son las lista de los puntos, es una lista de píxeles que son
 # el perímetro del objeto
 print(contours[0])
 '''[[[564 112]]

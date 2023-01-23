@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
-# 
-# 
-# # **Escalado, cambio de tamaño, interpolaciones y recorte**
-#
+###################################################################
+# # 06 Escalado, cambio de tamaño, interpolaciones y recorte** ####
+###################################################################
 # **En esta lección aprenderemos:**
 # 1. Cómo redimensionar y escalar imágenes
 # 2. Pirámides de imágenes
@@ -16,8 +14,8 @@
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/Resizing.png)
 # 
 # Cambiar el tamaño es una función simple que ejecutamos usando la función cv2.resize, sus argumentos son:
-#
-# ```cv2.resize(imagen, dsize(tamaño de la imagen de salida), escala x, escala y, interpolación)```
+
+# cv2.resize(imagen, dsize(tamaño de la imagen de salida), escala x, escala y, interpolación)
 # - si dsize es Ninguno, la imagen de salida se calcula en función de la escala usando la escala x e y
 
 # la interpolación es básicamente un algoritmo para encontrar un valor entre dos puntos. si tuviéramos unos puntos por
@@ -56,7 +54,9 @@ get_ipython().system('unzip -qq images.zip')
 #
 # - **INTER_NEAREST** – una interpolación de vecino más cercano
 # - **INTER_LINEAR** – una interpolación bilineal (usada por defecto)
-# - **INTER_AREA** – remuestreo usando relación de área de píxeles. Puede ser un método preferido para la destrucción de imágenes, ya que brinda resultados sin muaré. Pero cuando se amplía la imagen, es similar al método INTER_NEAREST.
+# - **INTER_AREA** – remuestreo usando relación de área de píxeles. Puede ser un método preferido para la destrucción
+#                    de imágenes, ya que brinda resultados sin muaré. Pero cuando se amplía la imagen, es similar al
+#                    método INTER_NEAREST.
 # - **INTER_CUBIC**: una interpolación bicúbica sobre una vecindad de 4×4 píxeles
 # - **INTER_LANCZOS4**: una interpolación de Lanczos sobre un vecindario de 8×8 píxeles
 #
@@ -87,7 +87,7 @@ imshow("Scaling - Inter Area", img_scaled4)
 
 # ## **Imagen de pirámides**
 # Es una operación mucho más rápida, siendo una forma rápida de ampliar una imagen escalada
-# Básicamente, duplique o la mitad del tamaño para que pueda ver que esta gente de relaciones públicas está deprimida.
+# Básicamente, duplique recuzca la mitad del tamaño
 image = cv2.imread('images/oxfordlibrary.jpeg')
 
 smaller = cv2.pyrDown(image)  # reduce la mitad
@@ -118,7 +118,7 @@ end_row, end_col = int(height * .75), int(width * .75)
 
 # Simplemente use la indexación para recortar el rectángulo que deseamos
 # hace lo que se supone, es decir recorta la imagen
-cropped = image[start_row:end_row , start_col:end_col]
+cropped = image[start_row:end_row, start_col:end_col]
 
 imshow("Original Image", image)
 

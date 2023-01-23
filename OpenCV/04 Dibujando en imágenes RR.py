@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+###############################
+# 04 Dibujando en imágenes ####
+###############################
+
 # ## **Dibujar imágenes y formas usando OpenCV**
 # Primero, importemos OpenCV y numpy y definamos nuestra función imshow
 
@@ -36,7 +40,7 @@ imshow("Black Canvas - Grayscale", image_gray)
 
 
 # ### **Dibujemos una línea sobre nuestro cuadrado negro**
-# ```cv2.line(imagen, coordenadas iniciales, coordenadas finales, color, espesor)```
+# cv2.line(imagen, coordenadas iniciales, coordenadas finales, color, espesor)
 
 # Tenga en cuenta que esta es una operación en el lugar, lo que significa que cambia la imagen de entrada
 # A diferencia de muchas otras funciones de OpenCV que devuelven una nueva imagen sin afectar la entrada
@@ -47,17 +51,17 @@ imshow("Black Canvas With Diagonal Line", image)
 
 
 # ### **Drawing Rectangles**
-# ```cv2.rectangle(imagen, vértice inicial (sup izq), vértice opuesto (inf der), color, espesor)```
+# cv2.rectangle(imagen, vértice inicial (sup izq), vértice opuesto (inf der), color, espesor)
 # Vuelva a crear nuestro lienzo negro porque ahora tiene una línea
 image = np.zeros((512,512,3), np.uint8)
 
-# Espesor - si es positivo. Espesor negativo significa que está lleno
+# Espesor (ultimo parámetro) - si es positivo. Espesor -1 rellena el objeto
 cv2.rectangle(image, (100,100), (300,250), (127,50,127), 10)
 imshow("Black Canvas With Pink Rectangle", image)
 
 
 # ### **Dibujemos algunos círculos**
-# ```cv2.circle(imagen, centro, radio, color, relleno)```
+# cv2.circle(imagen, centro, radio, color, relleno)
 # de nuevo la imagen negra ...
 image = np.zeros((512,512,3), np.uint8)
 

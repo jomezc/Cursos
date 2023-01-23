@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
-
+######################################
+# 02 Imágenes en escalada grises ####
+######################################
 '''# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
 **Imágenes en escala de grises**
 En esta lección aprenderemos a:
@@ -49,7 +51,6 @@ def imshow(title = "", image = None, size = 10):
     # The line below is changed from w, h to h, w
     h, w = image.shape[0], image.shape[1]
     aspect_ratio = w/h
- 
     plt.figure(figsize=(size * aspect_ratio, size))
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     plt.title(title)

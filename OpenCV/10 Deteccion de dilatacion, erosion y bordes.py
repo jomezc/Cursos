@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
+#####################################################
+# 10 Detección de dilatación, erosión y bordes ######
+#####################################################
 # # **Detección de dilatación, erosión y bordes**
 # ####**En esta lección aprenderemos:**
 # - **Dilatación**: agrega píxeles a los límites de los objetos en una imagen
@@ -59,7 +60,7 @@ imshow('Closing',closing)
 # niveles de gris significativamente distintos. Suministran una valiosa información sobre las
 # fronteras de los objetos y puede ser utilizada para segmentar la imagen, reconocer objetos, etc.
 # La mayoría de las técnicas para detectar bordes emplean operadores locales basados en distintas
-# aproximaciones discretas de la primera y segunda derivada ( el cambio a oscuro y el retorno a claro) de los niveles
+# aproximaciones discretas de la primera y segunda derivada (el cambio a oscuro y el retorno a claro) de los niveles
 # de grises de la imagen.
 
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/Screenshot%202021-11-15%20at%205.24.15%20pm.png)
@@ -88,9 +89,9 @@ imshow('Canny Narrow', canny)
 canny = cv2.Canny(image, 60, 110)
 imshow('Canny 4', canny)
 
-## Luego, debemos proporcionar dos valores: umbral1 y umbral2. Cualquier valor de gradiente mayor que el umbral2
+# Luego, debemos proporcionar dos valores: umbral1 y umbral2. Cualquier valor de gradiente mayor que el umbral2
 # se considera una ventaja. Cualquier valor por debajo del umbral 1 se considera que no es un borde.
-#Los valores entre el umbral 1 y el umbral 2 se clasifican como bordes o no bordes en función de cómo Las #intensidades
+# Los valores entre el umbral 1 y el umbral 2 se clasifican como bordes o no bordes en función de cómo Las intensidades
 # están “conectadas”. En este caso, cualquier valor de degradado por debajo de 60 se considera sin bordes
 # mientras que cualquier valor por encima de 120 se considera borde.
 

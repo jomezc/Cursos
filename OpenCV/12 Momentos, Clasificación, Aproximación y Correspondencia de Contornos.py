@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
-# # **Momentos, Clasificación, Aproximación y Correspondencia de Contornos**
-#
-# ####**En esta lección aprenderemos:**
+###############################################################################
+# 12 Momentos, Clasificación, Aproximación y Correspondencia de Contorno ######
+###############################################################################
+
 # 1. Ordenar contornos por área
 # 2. Ordenar de izquierda a derecha (Excelente para OCR)
 # 3. Contornos aproximados
@@ -51,7 +51,8 @@ cv2.drawContours(image, contours, -1, (0,255,0), 3)
 imshow('All Contours', image)
 
 '''¿Y si quisiéramos ordenar por área de estos contornos?
-¿Cómo obtenemos el área de cada uno de estos objetos? para hacer eso, en realidad vamos a usar la función cv2.ContourArea'''
+¿Cómo obtenemos el área de cada uno de estos objetos? para hacer eso, en realidad vamos a usar la función 
+cv2.ContourArea'''
 # ## **Clasificación por área usando cv2.ContourArea y cv2.Moments**
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/moments.png)
 
@@ -98,7 +99,7 @@ for (i, c) in enumerate(sorted_contours):
 
 # lo que hemos realizado es clasificar de forma numerica por el tamaño del área de las figuras de la imagen
 # ( son 2cuadrados,1 circulo, 1 triangulo) que hemos calculado a raíz de los contornos, es decir, hemos dibujado
-# el controno y un número que clasifica de mas grande a pequeño las áreas de las figuras del ejemplo
+# el controno y un número que clasifica de más grande a pequeño las áreas de las figuras del ejemplo
 imshow('Contours by area', image)
 
 
@@ -193,7 +194,7 @@ imshow('Bounding Rectangles', orig_image)
 # ******
 # Iterar a través de cada contorno y calcular el contorno aproximado
 # una forma de limpiar sus contornos y aproximarlos, como en la imagen que es un dibujo a mano irregular y lo mejora
-for c in contours: # toma un contorno de una imagen
+for c in contours:  # toma un contorno de una imagen
     # Calcule la precisión como un porcentaje del perímetro del contorno
     #  Toma una precisión y precisión como un porcentaje del parámetro de contorno.
     # Así que quitas el 3 por ciento aquí del parámetro cuántico

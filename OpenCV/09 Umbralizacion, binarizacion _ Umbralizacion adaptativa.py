@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # **Umbralización, binarización y umbralización adaptativa**
-#
+########################################################################
+# 09 Umbralización, binarización y umbralización adaptativa ######
+########################################################################
 # ####**En esta lección aprenderemos:**
 # 1. Imágenes binarizadas, estamos conviertiendo a binario los colores, los píxeles de una imagen a 0 o 1, mediante un
 #    algoritmo de sesión binaria.
@@ -46,7 +47,7 @@ get_ipython().system('wget https://raw.githubusercontent.com/rajeevratan84/Moder
 image = cv2.imread('./images/scan.jpg',0)
 imshow("Original", image)
 
-# Los valores por debajo de 127 van a 0 o negro, todo lo anterior va a 255 (blanco)
+# Los valores por debajo de 127 van a 0 o negro, por encima va a 255 (blanco)
 ret,thresh1 = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)
 imshow('1 Threshold Binary @ 127', thresh1)
 
@@ -93,8 +94,6 @@ imshow("Original", image)
 ret, thresh1 = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)
 imshow('Threshold Binary', thresh1)
 
-# Es una buena práctica desenfocar las imágenes ya que elimina el ruido
-#imagen = cv2.GaussianBlur(imagen, (3, 3), 0)
 # Uso de umbral adaptativo # 3 y 5 por defecto en la documentación
 thresh = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 3, 5) 
 imshow("Adaptive Mean Thresholding", thresh) 
@@ -104,13 +103,17 @@ _, th2 = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 imshow("Otsu's Thresholding", th2) 
 
 # Umbralización de Otsu después del filtrado gaussiano
+# Es una buena práctica desenfocar las imágenes ya que elimina el ruido
+# imagen = cv2.GaussianBlur(imagen, (3, 3), 0)
 blur = cv2.GaussianBlur(image, (5,5), 0)
 _, th3 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 imshow("Guassian Otsu's Thresholding", th3) 
 
-# ### **Umbral local de SkImage**  USABLE EN LA VIDA REAL MUY BUENO
-# ``umbral_local(imagen, tamaño_bloque, desplazamiento=10)``
-# La función Threshold_local calcula umbrales en regiones con un tamaño característico ``block_size`` que rodea cada píxel (es decir, vecindarios locales). Cada valor de umbral es la media ponderada del vecindario local menos un valor de ``compensación``
+# ### **Umbral local de SkImage** USABLE EN LA VIDA REAL MUY BUENO
+# umbral_local(imagen, tamaño_bloque, desplazamiento=10)
+# La función Threshold_local calcula umbrales en regiones con un tamaño característico ``block_size`` que rodea cada
+# píxel (es decir, vecindarios locales). Cada valor de umbral es la media ponderada del vecindario local menos un valor
+# de ``compensación``
 # https://scikit-image.org/docs/stable/auto_examples/applications/plot_thresholding.html
 # https://scikit-image.org/docs/stable/auto_examples/applications/plot_thresholding.html
 

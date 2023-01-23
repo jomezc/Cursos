@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # **Transformaciones - Traslaciones y Rotaciones**
-#
+#########################################################
+#  **Transformaciones - Traslaciones y Rotaciones**######
+#########################################################
+
 # En esta lección aprenderemos a:
 # 1. Realizar traducciones de imágenes
 # 2. Rotaciones con getRotationMatrix2D
@@ -32,8 +34,8 @@ get_ipython().system('unzip -qq images.zip')
 # Esta es una transformación afín que simplemente cambia la posición de una imagen. (izquierda o derecha).
 # No cambia la relación de aspecto, Básicamente lo mueve hacia la izquierda, hacia arriba o hacia abajo
 # Usamos cv2.warpAffine para implementar estas transformaciones.
-#
-# ```cv2.warpAffine(imagen, T, (ancho, alto))```
+
+# cv2.warpAffine(imagen, T, (ancho, alto))
 # multiplica la imagen por una matriz T, en el que Tx representa el turno alrededor del eje horizontal y Ty vertical
 # ![](https://raw.githubusercontent.com/rajeevratan84/ModernComputerVision/main/warp.png)
 
@@ -70,10 +72,8 @@ imshow("Translated", img_translation)
 # ### **Rotaciones**
 # toma el punto de rotación x e y ( punto central o donde esté un pivote) y 'gira' la imagen (como un editor de fotos)
 # por el ángulo de rotación elegido ( antihorario)  y escala ( 1 significa mantener)
-# ```cv2.getRotationMatrix2D(rotación_centro_x, rotación_centro_y, ángulo de rotación, escala)```
+# cv2.getRotationMatrix2D(rotación_centro_x, rotación_centro_y, ángulo de rotación, escala)
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/rotation.png)
-#
-
 
 # Carga nuestra imagen
 image = cv2.imread('images/Volleyball.jpeg')
@@ -90,7 +90,7 @@ imshow("Rotated 90 degrees with scale = 1", rotated_image)
 # Otro ejemplo cambiando la escala
 # Divide por dos para rotar la imagen alrededor de su centro
 rotation_matrix = cv2.getRotationMatrix2D((width/2, height/2), 90, 0.5)
-# ese 0.5 reduce la escala de la imagen la hace más paqueña
+# ese 0.5 reduce la escala de la imagen la hace más pequeña
 print(rotation_matrix)
 '''[[ 3.061617e-17  5.000000e-01  4.600000e+02]
  [-5.000000e-01  3.061617e-17  6.800000e+02]]'''
@@ -102,8 +102,7 @@ imshow("Rotated 90 degrees with scale = 0.5", rotated_image)
 
 
 # ### **Rotaciones con cv2.transpose** (menos flexible)
-
-rotated_image = cv2.transpose(image) # menos control de lo que hacemos, solo gira la imagen y la hace espejo
+rotated_image = cv2.transpose(image)  # menos control de lo que hacemos, solo gira la imagen y la hace espejo
 imshow("Original", image)
 imshow("Rotated using Transpose", rotated_image)
 

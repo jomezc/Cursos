@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # **Operaciones aritméticas y bit a bit**
-#
+################################################
+# 07 Operaciones aritméticas y bit a bit** #####
+################################################
+
 # #### **En esta lección aprenderemos:**
 # 1. Operaciones aritméticas, aquellas que nos permiten sumar o restar la intensidad o los valores de la imagen
 # 2. Operaciones bit a bit
@@ -31,7 +33,7 @@ get_ipython().system('unzip -qq images.zip')
 # Calcula la operación por elemento de dos matrices. El efecto general es aumentar o disminuir el brillo.
 
 
-# Agregar coma cero en cv2.imread carga nuestra imagen como una imagen en escala de grises
+# 0 como segundo argumento en cv2.imread carga nuestra imagen como una imagen en escala de grises
 image = cv2.imread('images/liberty.jpeg', 0)  # 0 es como escala de grises
 imshow("Grayscaled Image",  image)
 print(image)
@@ -49,8 +51,8 @@ print(M)
 added = cv2.add(image, M)
 imshow("Increasing Brightness", added)
 
-# Ahora si lo acabamos de agregar, pero al no usar la funcíón el valor sobrepasa el 255 con lo que se resetea a
-# 0 sumandole la diferencia por ejemplo si es 288 pues 33 con lo que no se ve como se espera
+# Ahora si lo acabamos de agregar, pero al no usar la función el valor sobrepasa el 255 con lo que se resetea a
+# 0 sumándole la diferencia por ejemplo si es 288, pues 33 con lo que no se ve como se espera
 added2 = image + M 
 imshow("Simple Numpy Adding Results in Clipping", added2)
 
@@ -84,8 +86,7 @@ imshow("ellipse", ellipse)
 
 
 # ### **Experimentando con algunas operaciones bit a bit como AND, OR, XOR y NOT**
-# Muestra solo donde se cruzan, es decir donde ambos tienen info distinta de 0 ( 0 negro 255 blanco
-# soilo 1 si los dos 1)
+# Muestra solo donde se cruzan, es decir donde ambos tienen info distinta de 0 (0 negro, 255 blanco solo 1 si los dos 1)
 And = cv2.bitwise_and(square, ellipse)
 imshow("AND", And)
 

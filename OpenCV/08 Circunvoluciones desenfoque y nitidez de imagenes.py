@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # **Convoluciones, desenfoque y nitidez de imágenes**
-#
+############################################################
+# 08 Convoluciones, desenfoque y nitidez de imágenes** #####
+############################################################
 # ####**En esta lección aprenderemos:**
-# 1. Operaciones de convolución: una convolución es una operación en la que en realidad la composición es básicamnte
-#   una operación matemática realizada en dos funciones que producen una función escalonada que generalmente es una
-#   versión modificada de una de las funciones originales. No es más que una multiplicación de funciones del primero
-#   por todos de la otra su la suma
+# 1. Operaciones de convolución: una convolución es una operación matemática realizada en dos funciones que producen
+#    una función escalonada que generalmente es una versión modificada de una de las funciones originales. No es más que
+#    una multiplicación de funciones (primer elemento X resto y la suma de los resultados)
 # 2. Desenfoque
 # 3. Eliminación de ruido
 # 4. Afilado
@@ -41,7 +41,7 @@ image = cv2.imread('images/flowers.jpeg')
 imshow('Original Image', image)
 
 # estamos creando un "kernel" o matriz de árboles y la dividimos entre 9 para que podamos escalarla nuevamente por un
-# factor de uno de los 9, haciéndolo de esta forma para mantener consistente el brillo
+# factor del 11%, haciéndolo de esta forma para mantener consistente el brillo
 # Creando nuestro kernel 3 x 3
 kernel_3x3 = np.ones((3, 3), np.float32) / 9
 print(kernel_3x3)
@@ -70,8 +70,8 @@ import numpy as np
 
 image = cv2.imread('images/flowers.jpeg')
 
-# Promedio realizado convolucionando la imagen con un filtro de cuadro normalizado.
-# Esto toma los píxeles debajo del cuadro y reemplaza el elemento central
+# blur(Promedio) realizado convolucionando la imagen con un filtro de cuadro normalizado.
+# Esto toma los píxeles del paŕametro y reemplaza los píxeles de la imagen con el promedio
 # El tamaño de la caja debe ser impar y positivo
 blur = cv2.blur(image, (5,5))
 imshow('Averaging', blur)
@@ -87,7 +87,7 @@ imshow('Median Blurring', median)
 
 
 # ### **Filtro bilateral**
-# función de eliminación de ruido
+# función de ELIMININACION de ruido
 # #### ```dst = cv.bilateralFilter(src, d, sigmaColor, sigmaSpace[, dst[, borderType]])```
 # - **src** Imagen de origen de 8 bits o punto flotante, 1 canal o 3 canales.
 # - **dst** Imagen de destino del mismo tamaño y tipo que src .
@@ -118,7 +118,8 @@ imshow('Bilateral Blurring', bilateral)
 #                                      (imágenes en escala de grises)
 # - cv2.fastNlMeansDenoisingColoredMulti() - igual que arriba, pero para imágenes en color.
 #
-# fastNlMeansDenoisingColored(InputArray src, OutputArray dst, float h=3, float hColor=3, int templateWindowSize=7, int searchWindowSize=21 )¶```
+# fastNlMeansDenoisingColored(InputArray src, OutputArray dst, float h=3, float hColor=3, int templateWindowSize=7,
+#                               int searchWindowSize=21 )¶```
 #
 # #### Parámetros para fastNlMeansDenoisingColored:
 #
