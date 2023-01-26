@@ -15,6 +15,21 @@ el sistema operativo sabe cómo conducirlo y usa muchos trucos para conducir tod
 
 print("Texto")  # Imprimir por pantalla
 
+# versiones y basic pip
+
+import random , numpy
+from importlib.metadata import version
+print(random.sample((10,1.1,12,'dd'),2)) # funciona!, [10, 'dd']
+print(numpy.__version__)  # 1.24.1
+print(version('numpy'))  # 1.24.1
+
+# pip --version  # version de pip
+# python --version # versión de python
+# pip install paquete | pip install paquete==version # instalar paquete
+# pip unistall paquete # desistala
+# pip freeze # saca todas las versiones de todos los paquetes instalados, para migración
+
+
 # ***********************************
 # ********  VARIABLES  #############
 # ***********************************
@@ -199,6 +214,26 @@ for character in the_string:
 print(the_string[-1])  # k
 print(the_string[1:3])  # il
 print("f" in the_string)  # False
+
+# División exendida
+'''Los dos puntos dobles son un caso especial en la función de división extendida de Python . 
+La notación de división extendida string[start:stop:step]usa tres argumentos start, stopy step para crear una 
+subsecuencia. Accede a cada step-ésimo elemento entre los índices start(incluido) y stop(excluido). Los dos puntos 
+dobles aparecen ::si descarta el stop argumento. En este caso, Python usará el valor predeterminado y no asume una 
+parada artificial.
+
+string[::2]dice "índice de inicio predeterminado, índice de parada predeterminado, el tamaño del paso es dos: 
+            tomar cada segundo elemento" .
+string[::3]dice "índice de inicio predeterminado, índice de parada predeterminado, el tamaño del paso es tres: tomar 
+            cada tercer elemento" .
+string[::4]dice "índice de inicio predeterminado, índice de parada predeterminado, el tamaño del paso es cuatro: 
+            toma cada cuarto elemento " .
+string[2::2]lee "índice de inicio de dos, índice de parada predeterminado, el tamaño del paso es dos: tome cada
+            segundo elemento a partir del índice 2 " .
+
+'''
+s ='abcdef'
+h = s[::2]  #'ace'
 
 # ******** MÉTODOS DE CADENAS  #############
 
@@ -506,6 +541,107 @@ area = alto * ancho
 perimetro = (alto + ancho) * 2
 print(f'Área: {area}')
 print(f'Perímetro: {ancho}')
+
+# ***********************************
+# ********  exec, subprocess  ###############
+# ***********************************
+
+# **** instrucciones de python *****
+# ** 1 simple
+
+exec("a=1\nb=2\nprint(a+b)")  # 3
+
+# ** 2 que introduzcas una instrucción
+
+# get an entire program as input
+program = input('Enter a program:')
+
+# execute the program
+exec(program)
+# introducimos : [print(item) for item in [1, 2, 3]]
+# 1
+# 2
+# 3
+
+# ** compuesto con \n
+# get a multi-line program as input
+exec("name = input('Your name: '); print(f'Hello, {name}!')")
+exec("name = input('Your name: ')\nprint(f'Hello, {name}!')")
+
+
+
+program = input('Enter a program:')
+
+
+
+# ** compile(source, filename, mode, flags=0, dont_inherit=False, optimize=-1)
+# compile the program in execution mode
+b = compile(program, '<string>', 'exec')
+
+# execute the program
+exec(b)
+# Enter a program:a = 5;b=10;print(a+b)
+# 15
+
+# 2
+string_input = """
+def sum_of_even_squares(numbers):
+     return sum(number**2 for number in numbers if number % 2 == 0)
+print(sum_of_even_squares(numbers))
+ """
+
+compiled_code = compile(string_input, "<string>", "exec")
+numbers = [2, 3, 7, 4, 8]
+exec(compiled_code)  #
+
+"""
+# hello.py
+
+print("Hello, Pythonista!")
+print("Welcome to Real Python!")
+
+def greet(name="World"):
+    print(f"Hello, {name}!")
+"""
+"""
+with open("hello.py", mode="r", encoding="utf-8") as hello:
+     code = hello.read()
+
+
+exec(code)
+# Hello, Pythonista!
+# Welcome to Real Python!
+
+greet()
+Hello, World!
+
+greet("Pythonista")
+Hello, Pythonista!
+
+"""
+
+# ***** comandos de shell
+# import os
+# system('comando') no es recomendable usarlo mejor subprocess
+import subprocess
+
+# 1
+cmd = "git --version"
+
+returned_value = subprocess.call(cmd, shell=True)  # returns the exit code in unix
+print('returned value:', returned_value)
+
+# ***** 2
+cmd ='date'
+# returns output as byte string
+returned_output = subprocess.check_output(cmd)
+
+# using decode() function to convert byte string to string
+print('Current date is:', returned_output.decode("utf-8"))
+
+
+
+
 
 # ***********************************
 # ******** Operador asignación
