@@ -192,6 +192,14 @@ for day in temps:
             highest = temp
 print("The highest temperature was:", highest)
 
+
+# ***con if ... else
+# [f(x) if condition else g(x) for x in list]
+my_list = ['Ali','Mark', None, 'Sara', None, 'Rahul']
+
+new_list = [x.upper() if x is not None else '' for x in my_list]
+print(new_list)
+
 # ********  tridimensional
 # (ejemplo hotel 3 edificios de 15 plantas con 20 habitaciones true o false ocupadas
 # El primer índice (0 a 2) selecciona uno de los edificios; el segundo (0 a 14) selecciona el piso,

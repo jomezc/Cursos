@@ -434,6 +434,15 @@ de sus superclases.
 
 '''
 class Empleado(Persona):  # con (Padre) indicamos en la declaración que heredamos
+    """
+    Un método llamado __init__() es un constructor. Si una clase tiene un constructor, es invocado automática e
+    implícitamente cuando el objeto de la clase es instanciado.
+
+    Cuando una clase tiene una superclase y:
+    no tiene su propio constructor, entonces se invoca implícitamente un constructor de la superclase durante la
+    creación de la clase; tiene su propio constructor, entonces un constructor de superclase tiene que ser invocado
+    explícitamente.
+    """
     def __init__(self, nombre, apellido, edad, sueldo):
         # tenemos que inicializar los atributos del padre
         super().__init__(nombre, apellido, edad)  # no necesitamos saber el nombre ni hacer referencia a self

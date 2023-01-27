@@ -231,6 +231,10 @@ string[::4]dice "índice de inicio predeterminado, índice de parada predetermin
 string[2::2]lee "índice de inicio de dos, índice de parada predeterminado, el tamaño del paso es dos: tome cada
             segundo elemento a partir del índice 2 " .
 
+Nota: la rebanada que rompe los límites de la cadena no lanza una excepción - los caracteres inexistentes se 
+sustituyen por cadenas vacías en su lugar:
+"cadena"[2:100] se evalúa como "anillo";
+"cadena"[-100:-200] se evalúa como una cadena vacía.
 '''
 s ='abcdef'
 h = s[::2]  #'ace'
@@ -1667,6 +1671,14 @@ for room_number in range(20):
     if not rooms[2][14][room_number]:
         vacancy += 1
 
+
+# ***con if ... else
+# [f(x) if condition else g(x) for x in list]
+my_list = ['Ali','Mark', None, 'Sara', None, 'Rahul']
+
+new_list = [x.upper() if x is not None else '' for x in my_list]
+print(new_list)
+
 # ******** función filter()
 # para obtener una cadena específica en una lista de Python La función filter() filtra el iterable dado con la ayuda de
 # una función que comprueba si cada elemento satisface alguna condición o no. Devuelve un iterador que aplica la
@@ -1679,6 +1691,9 @@ print(filter(lambda x: 'a' in x, py_lst))  # Producción:<filter object at 0x7fd
 # Podemos usar la función list() como se muestra en el código siguiente para obtener una lista.
 list(filter(lambda x: 'a' in x, py_lst))  # Producción:['a-1','a-4']
 # En el código anterior, hemos utilizado filter() para encontrar una cadena con valores específicos en la lista py_list.
+
+
+
 
 
 # ***********************************
@@ -3997,6 +4012,15 @@ de sus superclases.
 
 '''
 class Empleado(Persona):  # con (Padre) indicamos en la declaración que heredamos
+    """
+    Un método llamado __init__() es un constructor. Si una clase tiene un constructor, es invocado automática e
+    implícitamente cuando el objeto de la clase es instanciado.
+
+    Cuando una clase tiene una superclase y:
+    no tiene su propio constructor, entonces se invoca implícitamente un constructor de la superclase durante la
+    creación de la clase; tiene su propio constructor, entonces un constructor de superclase tiene que ser invocado
+    explícitamente.
+    """
     def __init__(self, nombre, apellido, edad, sueldo):
         # tenemos que inicializar los atributos del padre
         super().__init__(nombre, apellido, edad)  # no necesitamos saber el nombre ni hacer referencia a self
@@ -6235,6 +6259,7 @@ objetivos.
 
 El objeto IOError está equipado con una propiedad llamada errno (el nombre proviene de la frase número de error) y 
 puede acceder a ella de la siguiente manera:
+Un código de error contenido en errno puede traducirse en forma de texto mediante la función os.strerror(error_code).
 '''
 from os import strerror
 

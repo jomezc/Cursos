@@ -226,6 +226,7 @@ objetivos.
 
 El objeto IOError está equipado con una propiedad llamada errno (el nombre proviene de la frase número de error) y 
 puede acceder a ella de la siguiente manera:
+Un código de error contenido en errno puede traducirse en forma de texto mediante la función os.strerror(error_code).
 '''
 from os import strerror
 

@@ -217,6 +217,28 @@ print(the_string[-1])  # k
 print(the_string[1:3])  # il
 print("f" in the_string)  # False
 
+# División exendida
+'''Los dos puntos dobles son un caso especial en la función de división extendida de Python . 
+La notación de división extendida string[start:stop:step]usa tres argumentos start, stopy step para crear una 
+subsecuencia. Accede a cada step-ésimo elemento entre los índices start(incluido) y stop(excluido). Los dos puntos 
+dobles aparecen ::si descarta el stop argumento. En este caso, Python usará el valor predeterminado y no asume una 
+parada artificial.
+
+string[::2]dice "índice de inicio predeterminado, índice de parada predeterminado, el tamaño del paso es dos: 
+            tomar cada segundo elemento" .
+string[::3]dice "índice de inicio predeterminado, índice de parada predeterminado, el tamaño del paso es tres: tomar 
+            cada tercer elemento" .
+string[::4]dice "índice de inicio predeterminado, índice de parada predeterminado, el tamaño del paso es cuatro: 
+            toma cada cuarto elemento " .
+string[2::2]lee "índice de inicio de dos, índice de parada predeterminado, el tamaño del paso es dos: tome cada
+            segundo elemento a partir del índice 2 " .
+
+Nota: la rebanada que rompe los límites de la cadena no lanza una excepción - los caracteres inexistentes se 
+sustituyen por cadenas vacías en su lugar:
+"cadena"[2:100] se evalúa como "anillo";
+"cadena"[-100:-200] se evalúa como una cadena vacía.
+'''
+
 # ******** MÉTODOS DE CADENAS  #############
 
 # ******** min() y max() (CADENAS Y NÚMEROS)
@@ -548,3 +570,4 @@ returned_output = subprocess.check_output(cmd)
 print('Current date is:', returned_output.decode("utf-8"))
 
 
+print(10 == "1"+"0")  # false
