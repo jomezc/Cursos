@@ -27,6 +27,7 @@ def imshow(title = "Image", image = None, size = 8):
     plt.show()
 
 
+
 '''# Download and unzip our images
 get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
 

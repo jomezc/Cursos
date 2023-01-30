@@ -25,6 +25,17 @@ def imshow(title = "Image", image = None, size = 10): # Mostrar por pantalla la 
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     plt.title(title)
     plt.show()
+
+
+def read_im_and_landmarks(image): # Obtienes la función simple de puntos de referencia.
+    im = image
+    im = cv2.resize(im,None,fx=1, fy=1, interpolation = cv2.INTER_LINEAR)
+    im = cv2.resize(im, (im.shape[1] * SCALE_FACTOR,
+                         im.shape[0] * SCALE_FACTOR))
+    s = get_landmarks(im)
+
+    return im, s
+
 def annotate_landmarks(im, landmarks):  # Dibuja las marcas de línea que tenemos en la cara.
     im = im.copy()
     for idx, point in enumerate(landmarks):
@@ -47,15 +58,15 @@ def get_landmarks(im): # Toma una imagen.
      los cuales corresponde a un rostro en la imagen.
     """
 
-    rects = detector(im, 1)  # Lo pasa por el detector.
+    rects = detector(im, 1)  # Lo pasa por el detector. Es el de la "T"
 
-    # resuelve los cuadros delimitadores aqui, pues solo queremos 1
+    # resuelve los cuadros delimitadores aquí, pues solo queremos 1
     if len(rects) > 1:
         raise TooManyFaces
     if len(rects) == 0:
         raise NoFaces
 
-    # Es donde realmente llamamos a predictor (codemos la imagen , una x en particular , siendo el 1º el único que
+    # Es donde realmente llamamos a predictor (cogemos la imagen, una x en particular , siendo el 1º el único que
     # queremos) lo ejecutamos a través del predictor
     # mediante la lista de comprensión obtenemos las predicciones históricas que obtenemos del predictor. vamos metiendo
     # las coordenadas X e Y de todas esas predicciones históricas.
@@ -116,9 +127,36 @@ def transformation_from_points(points1, points2):
                                  c2.T - (s2 / s1) * R * c1.T)),
                       np.matrix([0., 0., 1.])])
 
-#Esta es una función de imagen distorsionada donde simplemente eliminamos la imagen, la matriz y la forma, y
-# simplemente emita la imagen final en función de esos parámetros.
-def warp_im(im, M, dshape): #  asigna la segunda imagen a la primera
+# get_face_mask para obtener la primera masa para que podamos extraer la cara de la imagen para ponerla en la primera
+# imagen.
+def get_face_mask(im, landmarks):
+    """
+    Se define una rutina para generar una máscara para una imagen y una matriz de puntos de referencia. Dibuja dos
+    polígonos convexos en blanco: uno que rodea el área de los ojos y otro que rodea el área de la nariz y la boca.("T")
+    Luego, desvanece el borde de la máscara hacia afuera en 11 píxeles. El calado ayuda a ocultar las discontinuidades
+    remanentes
+    """
+    im = np.zeros(im.shape[:2], dtype=np.float64)
+
+    for group in OVERLAY_POINTS:
+        draw_convex_hull(im,
+                         landmarks[group],
+                         color=1)
+
+    im = np.array([im, im, im]).transpose((1, 2, 0))
+    im = (cv2.GaussianBlur(im, (FEATHER_AMOUNT, FEATHER_AMOUNT), 0) > 0) * 1.0
+    im = cv2.GaussianBlur(im, (FEATHER_AMOUNT, FEATHER_AMOUNT), 0)
+    return im
+
+# draw_convex_hull es un casco convexo de dibujo, que nos permite mapear los puntos correctamente en tres interfaces.
+def draw_convex_hull(im, points, color):
+    points = cv2.convexHull(points)
+    cv2.fillConvexPoly(im, points, color=color)
+
+
+# Crea una máscara negra del tamaño de la imagen de la que saca la T con los datos de la matriz M que corresponde a la
+# Otra imagen
+def warp_im(im, M, dshape): # asigna la segunda imagen a la primera
     output_im = np.zeros(dshape, dtype=im.dtype)
     cv2.warpAffine(im,
                    M[:2],
@@ -126,6 +164,8 @@ def warp_im(im, M, dshape): #  asigna la segunda imagen a la primera
                    dst=output_im,
                    borderMode=cv2.BORDER_TRANSPARENT,
                    flags=cv2.WARP_INVERSE_MAP)
+    plt.imshow(output_im)
+    plt.show()
     return output_im
 
 
@@ -165,55 +205,20 @@ def correct_colours(im1, im2, landmarks1):
             im2_blur.astype(np.float64))
 
 
-# draw_convex_hull es un casco convexo de dibujo, que nos permite mapear los puntos correctamente en tres interfaces.
-def draw_convex_hull(im, points, color):
-    points = cv2.convexHull(points)
-    cv2.fillConvexPoly(im, points, color=color)
 
 
-# get_face_mask para obtener la primera masa para que podamos extraer la cara de la imagen para ponerla en la primera
-# imagen.
-def get_face_mask(im, landmarks):
-    """
-    Se define una rutina para generar una máscara para una imagen y una matriz de puntos de referencia. Dibuja dos
-    polígonos convexos en blanco: uno que rodea el área de los ojos y otro que rodea el área de la nariz y la boca.
-    Luego, desvanece el borde de la máscara hacia afuera en 11 píxeles. El calado ayuda a ocultar las discontinuidades
-    remanentes
 
-    Dicha máscara facial se genera para ambas imágenes. La máscara de la segunda se transforma en el espacio de
-    coordenadas de la imagen 1, usando la misma transformación que en el paso 2.
-    """
-    im = np.zeros(im.shape[:2], dtype=np.float64)
 
-    for group in OVERLAY_POINTS:
-        draw_convex_hull(im,
-                         landmarks[group],
-                         color=1)
 
-    im = np.array([im, im, im]).transpose((1, 2, 0))
-    im = (cv2.GaussianBlur(im, (FEATHER_AMOUNT, FEATHER_AMOUNT), 0) > 0) * 1.0
-    im = cv2.GaussianBlur(im, (FEATHER_AMOUNT, FEATHER_AMOUNT), 0)
-
-    return im
-
-# Obtienes la función simple de puntos de referencia.
-def read_im_and_landmarks(image):
-    im = image
-    im = cv2.resize(im,None,fx=1, fy=1, interpolation = cv2.INTER_LINEAR)
-    im = cv2.resize(im, (im.shape[1] * SCALE_FACTOR,
-                         im.shape[0] * SCALE_FACTOR))
-    s = get_landmarks(im)
-
-    return im, s
 
 
 def swappy(image1, image2):
-    # 1. Detección de puntos de referencia faciales : get_landmarks
+    # 1. Detección de puntos de referencia faciales: read_im_and_landmarks llama a get_landmarks
     # 2. Rotar, escalar y traducir la segunda imagen para que se ajuste a la primera: transformation_from_points y warp_im
     #    Luego, el resultado se puede conectar a la cv2.warpAffinefunción de OpenCV para asignar la segunda imagen a la
-    #    primera:
+    #    primera: obtenemos la máscara de la "T" de la primera imagen get_face_mask, con ella llamamos a warp_im
     # 3. Ajuste del balance de color en la segunda imagen para que coincida con el de la primera: correct_colours
-    # 4 .Fusión de características de la segunda imagen encima de la primera: *_POINTS, draw_convex_hull, get_face_mask
+    # 4 .Fusión de características de la segunda imagen encima de la primera: *_POINTS, draw_convex_hull,
     im1, landmarks1 = read_im_and_landmarks(image1)
     im2, landmarks2 = read_im_and_landmarks(image2)
 
@@ -230,7 +235,10 @@ def swappy(image1, image2):
                               axis=0)
 
     warped_im2 = warp_im(im2, M, im1.shape)
+
+    # correcciones de color de las imágenes
     warped_corrected_im2 = correct_colours(im1, warped_im2, landmarks1)
+
     # Luego, las máscaras se combinan en una tomando un máximo de elementos. La combinación de ambas máscaras asegura
     # que las características de la imagen 1 estén cubiertas y que las características de la imagen 2 se vean.
     output_im = im1 * (1.0 - combined_mask) + warped_corrected_im2 * combined_mask
@@ -239,7 +247,7 @@ def swappy(image1, image2):
     return image
 
 
-# 27. Aplicar la detección de puntos de referencia faciales
+# ******  27. Aplicar la detección de puntos de referencia faciales
 '''# Descarga y descomprime nuestras imágenes y el modelo Facial landmark
 get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
 get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/shape_predictor_68_face_landmarks.zip')
@@ -281,9 +289,9 @@ PREDICTOR_PATH = "modelos/shape_predictor_68_face_landmarks.dat"
 # En primer lugar, declaramos algunas variables, que es un camino para el efecto de escala del modelo de predicción.
 
 SCALE_FACTOR = 1
-FEATHER_AMOUNT = 11 # y la cantidad, que es básicamente cuánto estamos haciendo las capas de las caras.
+FEATHER_AMOUNT = 11  # y la cantidad, que es básicamente cuánto estamos haciendo las capas de las caras.
 
-'''Tenemos de cero a 68 puntos, cada uno de esos puntos Cada uno de esos puntos tiene algunos rangos, que corresponden 
+'''Tenemos de cero a 68 puntos, cada uno de esos puntos  tiene algunos rangos, que corresponden 
 a las partes de la cara. Son los puntos que necesitamos engranar y alinear para que podamos alinearnos en la cara.
 '''
 FACE_POINTS = list(range(17, 68))

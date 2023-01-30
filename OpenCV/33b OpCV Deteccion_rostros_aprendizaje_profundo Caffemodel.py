@@ -1,6 +1,6 @@
-# ********************************************************
-# ***** Deteccion de rostros mediante aprendizaje profundo
-# ********************************************************
+# *******************************************************************
+# ***** Deteccion de rostros mediante aprendizaje profundo Caffemodel
+# *******************************************************************
 '''Para detectar los rostros, podemos utilizar OpenCV que nos permitirá leer en un modelo previamente entrenado y
 realizar inferencias usando ese modelo'''
 import cv2

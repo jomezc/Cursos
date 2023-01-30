@@ -4066,7 +4066,7 @@ while True:
 cap.release()
 out.release()
 
-#!/usr/bin/env python
+# !/usr/bin/env python
 ##########################################################################################
 # 27 y 28 Detección de puntos de referencia faciales con Dlib e intercambio de caras######
 ##########################################################################################
@@ -4077,22 +4077,36 @@ import dlib  # librería de machine learning
 import numpy as np
 from matplotlib import pyplot as plt
 
+
 # CLASES UTILIZADAS
 class TooManyFaces(Exception):
     pass
+
 
 class NoFaces(Exception):
     pass
 
 
 # FUNCIONES UTILIZADAS EXPLICADAS DESDE 27 y 28 y leyendolas para entender todo el proceso correctamente
-def imshow(title = "Image", image = None, size = 10): # Mostrar por pantalla la imagen
+def imshow(title="Image", image=None, size=10):  # Mostrar por pantalla la imagen
     w, h = image.shape[0], image.shape[1]
-    aspect_ratio = w/h
-    plt.figure(figsize=(size * aspect_ratio,size))
+    aspect_ratio = w / h
+    plt.figure(figsize=(size * aspect_ratio, size))
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     plt.title(title)
     plt.show()
+
+
+def read_im_and_landmarks(image):  # Obtienes la función simple de puntos de referencia.
+    im = image
+    im = cv2.resize(im, None, fx=1, fy=1, interpolation=cv2.INTER_LINEAR)
+    im = cv2.resize(im, (im.shape[1] * SCALE_FACTOR,
+                         im.shape[0] * SCALE_FACTOR))
+    s = get_landmarks(im)
+
+    return im, s
+
+
 def annotate_landmarks(im, landmarks):  # Dibuja las marcas de línea que tenemos en la cara.
     im = im.copy()
     for idx, point in enumerate(landmarks):
@@ -4104,7 +4118,9 @@ def annotate_landmarks(im, landmarks):  # Dibuja las marcas de línea que tenemo
                     color=(0, 0, 255))
         cv2.circle(im, pos, 3, color=(0, 255, 255))
     return im
-def get_landmarks(im): # Toma una imagen.
+
+
+def get_landmarks(im):  # Toma una imagen.
     """
     La función get_landmarks()toma una imagen en forma de matriz numpy y devuelve una matriz de elementos de 68x2, cada
     una de las cuales se corresponde con las coordenadas x, y de un punto de característica particular en la imagen de
@@ -4115,15 +4131,15 @@ def get_landmarks(im): # Toma una imagen.
      los cuales corresponde a un rostro en la imagen.
     """
 
-    rects = detector(im, 1)  # Lo pasa por el detector.
+    rects = detector(im, 1)  # Lo pasa por el detector. Es el de la "T"
 
-    # resuelve los cuadros delimitadores aqui, pues solo queremos 1
+    # resuelve los cuadros delimitadores aquí, pues solo queremos 1
     if len(rects) > 1:
         raise TooManyFaces
     if len(rects) == 0:
         raise NoFaces
 
-    # Es donde realmente llamamos a predictor (codemos la imagen , una x en particular , siendo el 1º el único que
+    # Es donde realmente llamamos a predictor (cogemos la imagen, una x en particular , siendo el 1º el único que
     # queremos) lo ejecutamos a través del predictor
     # mediante la lista de comprensión obtenemos las predicciones históricas que obtenemos del predictor. vamos metiendo
     # las coordenadas X e Y de todas esas predicciones históricas.
@@ -4184,9 +4200,38 @@ def transformation_from_points(points1, points2):
                                  c2.T - (s2 / s1) * R * c1.T)),
                       np.matrix([0., 0., 1.])])
 
-#Esta es una función de imagen distorsionada donde simplemente eliminamos la imagen, la matriz y la forma, y
-# simplemente emita la imagen final en función de esos parámetros.
-def warp_im(im, M, dshape): #  asigna la segunda imagen a la primera
+
+# get_face_mask para obtener la primera masa para que podamos extraer la cara de la imagen para ponerla en la primera
+# imagen.
+def get_face_mask(im, landmarks):
+    """
+    Se define una rutina para generar una máscara para una imagen y una matriz de puntos de referencia. Dibuja dos
+    polígonos convexos en blanco: uno que rodea el área de los ojos y otro que rodea el área de la nariz y la boca.("T")
+    Luego, desvanece el borde de la máscara hacia afuera en 11 píxeles. El calado ayuda a ocultar las discontinuidades
+    remanentes
+    """
+    im = np.zeros(im.shape[:2], dtype=np.float64)
+
+    for group in OVERLAY_POINTS:
+        draw_convex_hull(im,
+                         landmarks[group],
+                         color=1)
+
+    im = np.array([im, im, im]).transpose((1, 2, 0))
+    im = (cv2.GaussianBlur(im, (FEATHER_AMOUNT, FEATHER_AMOUNT), 0) > 0) * 1.0
+    im = cv2.GaussianBlur(im, (FEATHER_AMOUNT, FEATHER_AMOUNT), 0)
+    return im
+
+
+# draw_convex_hull es un casco convexo de dibujo, que nos permite mapear los puntos correctamente en tres interfaces.
+def draw_convex_hull(im, points, color):
+    points = cv2.convexHull(points)
+    cv2.fillConvexPoly(im, points, color=color)
+
+
+# Crea una máscara negra del tamaño de la imagen de la que saca la T con los datos de la matriz M que corresponde a la
+# Otra imagen
+def warp_im(im, M, dshape):  # asigna la segunda imagen a la primera
     output_im = np.zeros(dshape, dtype=im.dtype)
     cv2.warpAffine(im,
                    M[:2],
@@ -4194,6 +4239,8 @@ def warp_im(im, M, dshape): #  asigna la segunda imagen a la primera
                    dst=output_im,
                    borderMode=cv2.BORDER_TRANSPARENT,
                    flags=cv2.WARP_INVERSE_MAP)
+    plt.imshow(output_im)
+    plt.show()
     return output_im
 
 
@@ -4233,55 +4280,13 @@ def correct_colours(im1, im2, landmarks1):
             im2_blur.astype(np.float64))
 
 
-# draw_convex_hull es un casco convexo de dibujo, que nos permite mapear los puntos correctamente en tres interfaces.
-def draw_convex_hull(im, points, color):
-    points = cv2.convexHull(points)
-    cv2.fillConvexPoly(im, points, color=color)
-
-
-# get_face_mask para obtener la primera masa para que podamos extraer la cara de la imagen para ponerla en la primera
-# imagen.
-def get_face_mask(im, landmarks):
-    """
-    Se define una rutina para generar una máscara para una imagen y una matriz de puntos de referencia. Dibuja dos
-    polígonos convexos en blanco: uno que rodea el área de los ojos y otro que rodea el área de la nariz y la boca.
-    Luego, desvanece el borde de la máscara hacia afuera en 11 píxeles. El calado ayuda a ocultar las discontinuidades
-    remanentes
-
-    Dicha máscara facial se genera para ambas imágenes. La máscara de la segunda se transforma en el espacio de
-    coordenadas de la imagen 1, usando la misma transformación que en el paso 2.
-    """
-    im = np.zeros(im.shape[:2], dtype=np.float64)
-
-    for group in OVERLAY_POINTS:
-        draw_convex_hull(im,
-                         landmarks[group],
-                         color=1)
-
-    im = np.array([im, im, im]).transpose((1, 2, 0))
-    im = (cv2.GaussianBlur(im, (FEATHER_AMOUNT, FEATHER_AMOUNT), 0) > 0) * 1.0
-    im = cv2.GaussianBlur(im, (FEATHER_AMOUNT, FEATHER_AMOUNT), 0)
-
-    return im
-
-# Obtienes la función simple de puntos de referencia.
-def read_im_and_landmarks(image):
-    im = image
-    im = cv2.resize(im,None,fx=1, fy=1, interpolation = cv2.INTER_LINEAR)
-    im = cv2.resize(im, (im.shape[1] * SCALE_FACTOR,
-                         im.shape[0] * SCALE_FACTOR))
-    s = get_landmarks(im)
-
-    return im, s
-
-
 def swappy(image1, image2):
-    # 1. Detección de puntos de referencia faciales : get_landmarks
+    # 1. Detección de puntos de referencia faciales: read_im_and_landmarks llama a get_landmarks
     # 2. Rotar, escalar y traducir la segunda imagen para que se ajuste a la primera: transformation_from_points y warp_im
     #    Luego, el resultado se puede conectar a la cv2.warpAffinefunción de OpenCV para asignar la segunda imagen a la
-    #    primera:
+    #    primera: obtenemos la máscara de la "T" de la primera imagen get_face_mask, con ella llamamos a warp_im
     # 3. Ajuste del balance de color en la segunda imagen para que coincida con el de la primera: correct_colours
-    # 4 .Fusión de características de la segunda imagen encima de la primera: *_POINTS, draw_convex_hull, get_face_mask
+    # 4 .Fusión de características de la segunda imagen encima de la primera: *_POINTS, draw_convex_hull,
     im1, landmarks1 = read_im_and_landmarks(image1)
     im2, landmarks2 = read_im_and_landmarks(image2)
 
@@ -4295,10 +4300,13 @@ def swappy(image1, image2):
     """
     warped_mask = warp_im(mask, M, im1.shape)
     combined_mask = np.max([get_face_mask(im1, landmarks1), warped_mask],
-                              axis=0)
+                           axis=0)
 
     warped_im2 = warp_im(im2, M, im1.shape)
+
+    # correcciones de color de las imágenes
     warped_corrected_im2 = correct_colours(im1, warped_im2, landmarks1)
+
     # Luego, las máscaras se combinan en una tomando un máximo de elementos. La combinación de ambas máscaras asegura
     # que las características de la imagen 1 estén cubiertas y que las características de la imagen 2 se vean.
     output_im = im1 * (1.0 - combined_mask) + warped_corrected_im2 * combined_mask
@@ -4307,16 +4315,15 @@ def swappy(image1, image2):
     return image
 
 
-# 27. Aplicar la detección de puntos de referencia faciales
+# ******  27. Aplicar la detección de puntos de referencia faciales
 '''# Descarga y descomprime nuestras imágenes y el modelo Facial landmark
 get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
 get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/shape_predictor_68_face_landmarks.zip')
 get_ipython().system('unzip -qq images.zip')
 get_ipython().system('unzip -qq shape_predictor_68_face_landmarks.zip')'''
 
-
 # ## **Detección de puntos de referencia faciales**
-PREDICTOR_PATH = "modelos/shape_predictor_68_face_landmarks.dat" # poniendo la parte del modelo en esta variable de aquí
+PREDICTOR_PATH = "modelos/shape_predictor_68_face_landmarks.dat"  # poniendo la parte del modelo en esta variable de aquí
 predictor = dlib.shape_predictor(PREDICTOR_PATH)  # cargando el predictor que es un objeto predictor de dylib.
 # entra lo que ella predice y solo señalamos la parte del modelo.
 detector = dlib.get_frontal_face_detector()  # creamos el detector
@@ -4328,14 +4335,12 @@ landmarks = get_landmarks(image)
 image_with_landmarks = annotate_landmarks(image, landmarks)
 imshow('Result', image_with_landmarks)
 
-
 # Otra imagen
 image = cv2.imread('images/Hillary.jpg')
 imshow('Original', image)
 landmarks = get_landmarks(image)
 image_with_landmarks = annotate_landmarks(image, landmarks)
 imshow('Result', image_with_landmarks)
-
 
 # ##
 # ## ** 28 Intercambio de caras**
@@ -4349,9 +4354,9 @@ PREDICTOR_PATH = "modelos/shape_predictor_68_face_landmarks.dat"
 # En primer lugar, declaramos algunas variables, que es un camino para el efecto de escala del modelo de predicción.
 
 SCALE_FACTOR = 1
-FEATHER_AMOUNT = 11 # y la cantidad, que es básicamente cuánto estamos haciendo las capas de las caras.
+FEATHER_AMOUNT = 11  # y la cantidad, que es básicamente cuánto estamos haciendo las capas de las caras.
 
-'''Tenemos de cero a 68 puntos, cada uno de esos puntos Cada uno de esos puntos tiene algunos rangos, que corresponden 
+'''Tenemos de cero a 68 puntos, cada uno de esos puntos  tiene algunos rangos, que corresponden 
 a las partes de la cara. Son los puntos que necesitamos engranar y alinear para que podamos alinearnos en la cara.
 '''
 FACE_POINTS = list(range(17, 68))
@@ -4365,7 +4370,7 @@ JAW_POINTS = list(range(0, 17))
 
 # Puntos utilizados para alinear las imágenes.
 ALIGN_POINTS = (LEFT_BROW_POINTS + RIGHT_EYE_POINTS + LEFT_EYE_POINTS +
-                               RIGHT_BROW_POINTS + NOSE_POINTS + MOUTH_POINTS)
+                RIGHT_BROW_POINTS + NOSE_POINTS + MOUTH_POINTS)
 
 # Puntos de la segunda imagen a superponer sobre la primera. Se superpondrá el casco convexo de cada
 # elemento se superpondrá.
@@ -4391,8 +4396,6 @@ imshow('Face Swap 1', swapped)
 
 swapped = swappy(image2, image1)
 imshow('Face Swap 2', swapped)
-
-
 
 # Copyright (c) 2015 Matthew Earl
 #
@@ -4428,6 +4431,942 @@ script is run like so:
 If successful, a file `output.jpg` will be produced with the facial features
 from `<head image>` replaced with the facial features from `<face image>`.
 """
+
+#!/usr/bin/env python
+# coding: utf-8
+
+##############################################
+# 29 **Implement the Tilt Shift Effect**######
+##############################################
+# Tilt Shift  es un efecto que toma nuestra imagen estándar normal, como el paisaje de una ciudad o de arriba hacia
+# abajo, algo que es bonito y lo hace parecer parece que es un modelo miniaturizado, enfocándose en ciertas áreas y
+# luego difuminando otras.
+
+# - En esta lección veremos algo de código que genera nuestro efecto Titl Shift en nuestras imágenes de ejemplo
+# Fuente - https://github.com/powersj/tilt-shift
+
+
+# Nuestra configuración, importar librerías, crear nuestra función Imshow y descargar nuestras imágenes
+from matplotlib import pyplot as plt
+import cv2
+import math
+import os
+import numpy as np
+import scipy.signal
+import shutil
+
+# Define nuestra función imshow
+def imshow(title = "Image", image = None, size = 10):
+    w, h = image.shape[0], image.shape[1]
+    aspect_ratio = w/h
+    plt.figure(figsize=(size * aspect_ratio,size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
+
+'''# Download our images
+get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images_tilt.zip')
+get_ipython().system('unzip -qq images_tilt.zip')
+get_ipython().system('find . -name ".DS_Store" -delete')
+get_ipython().system('find . -name ".ipynb_checkpoints" -delete')'''
+
+
+# #### **Nuestras funciones para implementar Tilt Shift**
+"""Script para mezclar dos imágenes"""
+
+def get_images(sourcefolder):
+    """Carga las fotos de cada carpeta y las devuelve"""
+    filenames = os.listdir(sourcefolder)
+
+    # Según el nombre del fichero carga la foto
+    for photo in filenames:
+        black_img = cv2.imread('images/images_tilt/original/' + photo)
+        white_img = cv2.imread('images/images_tilt/blur/' + photo)
+        mask_img = cv2.imread('images/images_tilt/mask/' + photo)
+
+        # comprueba la carga de las imágenes
+        if mask_img is None:
+            print('Oops! There is no mask of image: ', photo)
+            continue
+        if white_img is None:
+            print('Oops! There is no blurred version of image: ', photo)
+            continue
+
+        # Comprueba que el tamaño de la imagen, su imagen difuminada y su máscara sean iguales
+        assert black_img.shape == white_img.shape, \
+            "Error - los tamaños de orignal y blur no son iguales"
+
+        assert black_img.shape == mask_img.shape, \
+            "Error - los tamaños del original y la máscara no son iguales"
+
+        print(photo)
+        yield photo, white_img, black_img, mask_img
+
+def run_blend(black_image, white_image, mask):
+    """ Esta función administra la mezcla de las dos imágenes según la máscara. Asume que todas las imágenes son de
+    tipo float, y devuelve un tipo float. Recordar que la función ha recibido un solo canal de cada imagen
+    """
+    # Calcula automáticamente el tamaño
+    min_size = min(black_image.shape)
+    # calcula la profundidad, al menos 16x16 en el nivel más alto.
+    depth = int(math.floor(math.log(min_size, 2))) - 4
+
+    # llama a gauss_pyramid, para construir una pirámide a partir de la imagen
+    gauss_pyr_mask = gauss_pyramid(mask, depth)
+    gauss_pyr_black = gauss_pyramid(black_image, depth)
+    gauss_pyr_white = gauss_pyramid(white_image, depth)
+
+    # Construye una pirámide laplaciana, reduce la imagen de una mayor a otra menor perdiendo poca calidad
+    lapl_pyr_black = lapl_pyramid(gauss_pyr_black)
+    lapl_pyr_white = lapl_pyramid(gauss_pyr_white)
+
+    # Mezcla las dos pirámides laplacianas ponderándolas según la máscara gaussiana
+    outpyr = blend(lapl_pyr_white, lapl_pyr_black, gauss_pyr_mask)
+    # Colapsa una pirámide de entrada, ( une las imágenes de la pirámide en una expandiendo y añadiendo)
+    outimg = collapse(outpyr)
+
+    # la mezcla a veces resulta en números ligeramente fuera de límites.
+    outimg[outimg < 0] = 0
+    outimg[outimg > 255] = 255
+    outimg = outimg.astype(np.uint8)
+
+    # *La imagen es de 1 canal*, devuelve el resultado
+    return outimg
+
+
+def gauss_pyramid(image, levels):
+    """ Construye una pirámide a partir de la imagen reduciéndola por el número de
+    niveles introducidos en la entrada.
+
+    Nota: Necesitas usar tu función reduce en esta función para generar la salida.
+    salida.
+    Args:
+      image (numpy.ndarray): Una imagen en escala de grises de dimensión (r,c) y dtype
+      float.
+      levels (uint8): Un entero positivo que especifica el número de
+                    reducciones que debe hacer. Así, si levels = 0, debe
+                    devolver una lista que contenga sólo la imagen de entrada. Si
+                    levels = 1, debe hacer una reducción.
+                    len(salida) = niveles + 1
+    Devuelve:
+      output (lista): Una lista de matrices de dtype np.float. El primer elemento de
+                la lista (output[0]) es la capa 0 de la pirámide (la imagen
+                output[1] es la capa 1 de la pirámide (la imagen reducida
+                una vez), etc. Ya hemos incluido la imagen original en
+                la matriz de salida. Las matrices son de tipo numpy.ndarray.
+    """
+    output = [image]
+    for level in range(levels):
+        output.append(reduce_img(output[level]))
+    return output
+
+
+def lapl_pyramid(gauss_pyr):
+    """ Construye una pirámide laplaciana a partir de la pirámide gaussiana, de altura
+    niveles. Reduce la imagen de una mayor a otra menor perdiendo poca calidad ( el algoritmo de wats up se basa en
+    este vamos.
+
+    Nota: Debes usar tu función expand en esta función para generar la
+    salida. La pirámide gaussiana que se pasa es la salida de su función
+    gauss_pyramid.
+
+    Args:
+      gauss_pyr (lista): Una pirámide gaussiana devuelta por la función gauss_pyramid
+                     gauss_pyramid. Es una lista de elementos numpy.ndarray.
+
+    Devuelve:
+      output (list): Una pirámide Laplaciana del mismo tamaño que gauss_pyr. Esta pirámide
+                   pirámide debe ser representada de la misma manera que guassPyr,
+                   como una lista de matrices. Cada elemento de la lista
+                   corresponde a una capa de la pirámide de Laplaciano, que contiene
+                   la diferencia entre dos capas de la pirámide de Gauss.
+
+           output[k] = gauss_pyr[k] - expand(gauss_pyr[k + 1])
+
+           Nota: El último elemento de la salida debe ser idéntico a la última
+           capa de la pirámide de entrada ya que no se puede restar más.
+
+    Nota: A veces, el tamaño de la imagen expandida será mayor que la capa
+    capa dada. Debe recortar la imagen expandida para que coincida en forma con
+    con la capa dada.
+
+    Por ejemplo, si mi capa es de tamaño 5x7, reduciendo y expandiendo resultará
+    una imagen de tamaño 6x8. En este caso, recorte la capa expandida a 5x7.
+    """
+    output = []
+    # revisa las listas, pero ignora el último elemento ya que no puede ser
+    # restado
+    for image1, image2 in zip(gauss_pyr[:-1], gauss_pyr[1:]):
+        # añadir la diferencia restada
+        # expandir y enlazar la segunda imagen en función de las dimensiones de la primera
+        output.append(
+            image1 - expand(image2)[:image1.shape[0], :image1.shape[1]])
+
+    # añade ahora el último elemento
+    plt.imshow(gauss_pyr[-1])
+    output.append(gauss_pyr[-1])
+
+    return output
+
+
+def blend(lapl_pyr_white, lapl_pyr_black, gauss_pyr_mask):
+    """ Mezcla las dos pirámides laplacianas ponderándolas según la máscara gaussiana. Máscara gaussiana.
+    Args:
+      lapl_pyr_white (lista): Una pirámide laplaciana de una imagen, construida por su función lapl_pyramid.
+      lapl_pyr_black (lista): Una pirámide de Laplaciano de otra imagen, construida por la función lapl_pyramid.
+                        construida por su función lapl_pyramid.
+      gauss_pyr_mask (lista): Una pirámide gaussiana de la máscara. Cada valor está en el rango de [0, 1].
+
+    Las pirámides tendrán el mismo número de niveles. Además, se garantiza que cada capa
+    tiene garantizada la misma forma que los niveles anteriores.
+
+    Debe devolver una pirámide Laplaciana que tenga las mismas dimensiones que las
+    pirámides de entrada. Cada capa debe ser una mezcla alfa de las correspondientes
+    capas de las pirámides de entrada, ponderadas por la máscara gaussiana. Esto significa que
+    siguiente cálculo para cada capa de la pirámide:
+      salida[i, j] = máscara_actual[i, j] * imagen_blanca[i, j] +
+                   (1 - máscara_actual[i, j]) * imagen_negra[i, j]
+    Por lo tanto:
+      Los píxeles en los que máscara_actual == 1 deben tomarse completamente de la imagen blanca.
+      blanca.
+      Los píxeles en los que máscara_actual == 0 deben tomarse completamente de la imagen negra.
+      negra.
+
+    Nota: máscara_actual, imagen_blanca e imagen_negra son variables que se refieren a la imagen de la capa actual que
+    estamos viendo a la imagen de la capa actual que estamos viendo. Este
+    cálculo para cada capa de la pirámide.
+    """
+
+    blended_pyr = []
+    for lapl_white, lapl_black, gauss_mask in \
+            zip(lapl_pyr_white, lapl_pyr_black, gauss_pyr_mask):
+        blended_pyr.append(gauss_mask * lapl_white +
+                           (1 - gauss_mask) * lapl_black)
+
+    plt.imshow(blended_pyr[0])
+    plt.show()
+    return blended_pyr
+
+
+def collapse(pyramid):
+    """ Colapsa una pirámide de entrada.
+
+    Args:
+      pyramid (list): Una lista de imágenes numpy.ndarray. Se puede asumir que la entrada
+            se toma de blend() o lapl_pyramid().
+
+    Devuelve:
+      output(numpy.ndarray): Una imagen de la misma forma que la capa base de
+            la pirámide y dtype float.
+
+    Plantea este problema de la siguiente manera, empieza por la capa más pequeña de la
+    pirámide. Expande la capa más pequeña y añádela a la segunda capa más pequeña.
+    más pequeña. Luego, expanda la segunda a la capa más pequeña, y continúe el proceso
+    hasta llegar a la imagen más grande. Este es el resultado.
+
+        Nota: a veces expandir devolverá una imagen más grande que la siguiente
+    siguiente. En este caso, debe recortar la imagen expandida hasta el tamaño de la siguiente capa.
+    la siguiente capa. Mira en numpy slicing / lee nuestro README para hacer esto
+    fácilmente.
+
+    Por ejemplo, expandir una capa de tamaño 3x4 resultará en una imagen de tamaño
+    6x8. Si la siguiente capa es de tamaño 5x7, recorta la imagen expandida a tamaño 5x7.
+    """
+    output = pyramid[-1]
+    for image in reversed(pyramid[:-1]):
+        output = image + expand(output)[:image.shape[0], :image.shape[1]]
+
+    return output
+
+def generating_kernel(parameter):
+    """ Devuelve un kernel generador 5x5 basado en un parámetro de entrada.
+     Nota: Esta función se proporciona para ti, no la cambies.
+     Args:
+         parameter (float): Rango de valor: [0, 1].
+     output:
+        numpy.ndarray: Un núcleo de 5x5.
+     """
+    kernel = np.array([0.25 - parameter / 2.0, 0.25, parameter,
+                       0.25, 0.25 - parameter / 2.0])
+    return np.outer(kernel, kernel)
+
+
+def reduce_img(image):
+    """ Convoluciona la imagen de entrada con un kernel generador de parámetro de 0.4
+        y luego reducir su anchura y altura por dos.
+        Puedes utilizar cualquiera / todas las funciones para convolucionar y reducir la imagen, aunque
+        las conferencias han recomendado métodos que aconsejamos ya que hay un montón de
+        de piezas en esta tarea que necesitan trabajar 'justo a la derecha'.
+        Args:
+        image (numpy.ndarray): una imagen en escala de grises de forma (r, c)
+        Devuelve:
+        output (numpy.ndarray): una imagen de la forma (ceil(r/2), ceil(c/2))
+          Por ejemplo, si la entrada es 5x7, la salida será 3x4.
+
+    """
+    # según las instrucciones, utilice 0.4 para la generación del kernel
+    kernel = generating_kernel(0.4)
+
+    # usa convolve2d con la imagen y el kernel enviados
+    output = scipy.signal.convolve2d(image, kernel, 'same')
+
+    # devuelve cada dos líneas y filas
+    return output[:output.shape[0]:2, :output.shape[1]:2]
+
+
+def expand(image):
+    """ Expandir la imagen al doble de tamaño y luego convolucionarla con un
+    kernel generador con un parámetro de 0.4.
+
+    Deberías aumentar el tamaño de la imagen y luego convolucionarla con un kernel generador
+    kernel generador de a = 0,4.
+
+    Por último, multiplique la imagen de salida por un factor de 4 para volver a escalarla.
+    escala. Si no hace esto (y le recomiendo que lo pruebe sin
+    esto) verá que sus imágenes se oscurecen al aplicar la convolución.
+    Por favor, explica por qué ocurre esto en tu PDF de presentación.
+
+    Por favor, consulte las conferencias y readme para una discusión más a fondo de
+    cómo abordar la función de expansión.
+
+    Puede utilizar cualquier / todas las funciones para convolucionar y reducir la imagen, aunque
+    las conferencias han recomendado métodos que aconsejamos ya que hay un montón de
+    piezas de esta tarea que tienen que funcionar "a la perfección".
+
+    Args:
+    image (numpy.ndarray): una imagen en escala de grises de forma (r, c)
+
+    Devuelve:
+    output (numpy.ndarray): una imagen de la forma (2*r, 2*c)
+    """
+    # según las instrucciones, usa 0.4 para la generación del kernel
+    kernel = generating_kernel(0.4)
+
+    # hacer un nuevo array del doble de tamaño, asignar valores iniciales
+    output = np.zeros((image.shape[0] * 2, image.shape[1] * 2))
+    output[:output.shape[0]:2, :output.shape[1]:2] = image
+
+    # usa convolve2d para rellenar el resto
+    # multiplicar por 4 por instrucciones para volver a escalar
+    output = scipy.signal.convolve2d(output, kernel, 'same') * 4
+    return output
+
+
+
+def main():
+    """Dadas las dos imágenes, mézclalas según la máscara"""
+
+    sourcefolder = 'images/images_tilt/original'
+    outfolder = 'images/images_tilt/output'
+
+    # si no encuentra el directorio de salida, lo crea
+    if os.path.isdir(outfolder):
+        shutil.rmtree(outfolder)
+    os.mkdir(outfolder)
+
+    # Mediante el uso de la función get_images, usándola como un Iterador gracias a Yield,
+    # va mos a cargar de cada imagen original su máscara y su blur, cargándola en las 3 variables
+    for photo, white_img, black_img, mask_img in get_images(sourcefolder):
+        imshow("Original Image", black_img)
+        print("...applying blending")
+        black_img = black_img.astype(float)
+        white_img = white_img.astype(float)
+        mask_img = mask_img.astype(float) / 255
+
+        # inicializa la salida
+        out_layers = []
+
+        # para cada canal de color (RGB) llama a run_blend (mezcla las imágenes según la máscara)
+        for channel in range(3):
+            outimg = run_blend(black_img[:, :, channel],
+                               white_img[:, :, channel],
+                               mask_img[:, :, channel])
+            out_layers.append(outimg)
+
+        # la salida es la fusión de cada canal ya tratado
+        outimg = cv2.merge(out_layers)
+
+        # escribe en la carpeta de salida la imagen ya calculada
+        cv2.imwrite(os.path.join(outfolder, photo), outimg)
+        imshow("Tilt Shift Effect", outimg)
+        print('...[DONE]')
+
+if __name__ == "__main__":
+    main()
+
+#############################################################
+# 30 **Algoritmo GrabCut para la eliminación del fondo**#####
+#############################################################
+# Es un algoritmo de segmentación.
+# - En esta lección vamos a utilizar el algoritmo GrabCut para la eliminación de fondo
+
+# Nuestra configuración, importar librerías, crear nuestra función Imshow y descargar nuestras imágenes
+import cv2
+import dlib
+import sys
+import numpy as np
+from matplotlib import pyplot as plt
+
+
+# Define our imshow function
+def imshow(title = "Image", image = None, size = 10):
+    w, h = image.shape[0], image.shape[1]
+    aspect_ratio = w/h
+    plt.figure(figsize=(size * aspect_ratio,size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
+
+
+'''
+get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/woman.jpeg')
+'''
+
+### **¿Cómo funciona Grab Cut?**
+#
+# - **El usuario introduce el rectángulo**. Todo lo que esté fuera de este rectángulo se tomará como fondo. Todo dentro
+#   del rectángulo es desconocido.
+# - El algoritmo etiqueta los píxeles de primer plano y de fondo (o los etiqueta).
+#   A continuación, se utiliza un modelo de mezcla gaussiana (GMM) para modelar el primer plano y el fondo.
+# - Dependiendo de los datos que hemos dado, GMM aprende y crea una nueva distribución de píxeles. Es decir, los
+#   **píxeles desconocidos se etiquetan como probable primer plano o probable fondo** dependiendo de su relación con los
+#   otros píxeles etiquetados en términos de estadísticas de color (es como la agrupación).
+
+# A partir de esta distribución de píxeles se construye un gráfico. Los nodos del gráfico son píxeles. Se añaden dos
+# nodos adicionales, Source node y Sink node. Cada píxel en primer plano está conectado al nodo Fuente y cada píxel en
+# segundo plano está conectado al nodo Sumidero.
+# Los pesos de las aristas que conectan los píxeles al nodo origen/nodo final se definen por la probabilidad de que un
+# píxel esté en primer plano/fondo. Los pesos entre los píxeles se definen por la información de borde o similitud de
+# píxeles. Si hay una gran diferencia en el color de los píxeles, el borde entre ellos tendrá un peso bajo.
+
+# A continuación, se utiliza un algoritmo de corte mínimo para segmentar el gráfico. Corta el gráfico en dos separando
+# el nodo de origen y el nodo de destino con la función de coste mínimo. La función de coste es la suma de todos
+# los pesos de las aristas que se cortan. Tras el corte, todos los píxeles conectados al nodo origen pasan a primer
+# plano y los conectados al nodo sumidero pasan a segundo plano.
+# El proceso continúa hasta que la clasificación converge.
+#
+# ![](https://docs.opencv.org/3.4/grabcut_scheme.jpg)
+# Paper - http://dl.acm.org/citation.cfm?id=1015720
+# Más información - https://docs.opencv.org/3.4/d8/d83/tutorial_py_grabcut.html
+
+
+# Cargar nuestra imagen
+image = cv2.imread('images/woman.jpeg')
+copy = image.copy()
+
+# Crear una máscara (de ceros uint8 tipo de datos) que es el mismo tamaño (ancho, alto) como nuestra imagen original
+mask = np.zeros(image.shape[:2], np.uint8)
+
+bgdModel = np.zeros((1,65), np.float64)
+fgdModel = np.zeros((1,65), np.float64)
+
+# Necesita ser establecido manualmente o seleccionado con cv2.selectROI() ( seleccionarlo vamos)
+
+x1, y1, x2, y2 = 190, 70, 350, 310
+start = (x1, y1)
+end = (x2, y2)
+
+# El formato es X,Y,W,H
+rect = (x1, y1, x2-x1, y2-y1)
+
+# MODIFICADO
+rect = cv2.selectROI(copy)  # PARA SELECCIONARLO NOSOTROS
+
+# Mostrar rectángulo
+cv2.rectangle(copy, start, end, (0,0,255), 3)
+imshow("Input Image", copy) # se muestra el por defecto pero el algoritmo coge el "nuevo"
+
+
+
+# #### **Argumentos de recorte**
+#
+# - **img** - Imagen de entrada
+# - **mask** - Es una imagen máscara donde especificamos qué áreas son fondo, primer plano o probable fondo/primer plano
+#              , etc. Se hace mediante las siguientes banderas, cv.GC_BGD, cv.GC_FGD, cv.GC_PR_BGD, cv.GC_PR_FGD, o
+#              simplemente pasando 0,1,2,3 a la imagen.
+# - **rec**t - Son las coordenadas de un rectángulo que incluye el objeto en primer plano en el formato (x,y,w,h)
+# - **bdgModel, fgdModel** - Son matrices utilizadas por el algoritmo internamente. Basta con crear dos arrays de tipo
+#                            np.float64 de tamaño cero (1,65).
+# - **iterCount** - Número de iteraciones que debe ejecutar el algoritmo.
+# - **mode** - Debe ser cv.GC_INIT_WITH_RECT o cv.GC_INIT_WITH_MASK o combinado que decide si estamos dibujando
+#              rectángulo o trazos de retoque final.
+
+# Deja que el algoritmo se ejecute durante 5 iteraciones. El modo debe ser cv.GC_INIT_WITH_RECT ya que estamos usando
+# rectángulo.
+# Grabcut modifica la imagen de máscara.
+# En la nueva imagen de máscara, los píxeles serán marcados con cuatro banderas que denotan fondo/primer plano como
+# se especificó anteriormente.
+
+cv2.grabCut(image, mask, rect, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_RECT)
+
+# Así que modificamos la máscara de tal manera que todos los 0-píxeles y 2-píxeles se ponen a 0 (es decir, de fondo)
+# y todos los 1-píxeles y 3-píxeles se ponen a 1 (es decir, los píxeles de primer plano).
+mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
+
+# Ahora nuestra máscara final está lista. Sólo hay que multiplicarla con la imagen de entrada para obtener la imagen
+# segmentada.
+image = image * mask2[:,:,np.newaxis]
+
+imshow("Mask", mask * 80)
+imshow("Mask2", mask2 * 255)
+
+#!/usr/bin/env python
+# coding: utf-8
+#########################################################################
+# 31 **Reconocimiento Óptico de Caracteres con PyTesseract & EASY OCR**#####
+#########################################################################
+# - En esta lección implementaremos OCR en algunas imágenes usando PyTesseract
+#
+# ![](https://miro.medium.com/max/1400/1*X7RfC5wOZ-Gsoo95Ez1FvQ.png)
+# Fuente - https://medium.com/@balaajip/optical-character-recognition-99aba2dad314
+
+# #### **Install PyTesseract **
+#  librería de código abierto, a alto nivel toma una entrada de imagen, reconoce el texto de la misma, lo detecta ,
+#  trata y limpia devolviendo un texto como una cadena
+'''# Install PyTesseract and setup on Colab
+get_ipython().system('sudo apt install tesseract-ocr')
+get_ipython().system('pip install pytesseract')
+get_ipython().system('pip install easyocr')'''
+
+
+# Nuestra configuración, importar librerías, crear nuestra función Imshow y descargar nuestras imágenes
+import cv2
+import pytesseract
+import numpy as np
+from matplotlib import pyplot as plt
+from skimage.filters import threshold_local
+from pytesseract import Output
+from easyocr import Reader
+import pandas as pd
+import time
+
+# importamos las librerías instaladas en sistema
+pytesseract.pytesseract.tesseract_cmd = (
+    r'/usr/bin/tesseract'
+)
+
+# Definir nuestra función imshow
+def imshow(title = "Image", image = None, size = 10):
+    w, h = image.shape[0], image.shape[1]
+    aspect_ratio = w/h
+    plt.figure(figsize=(size * aspect_ratio,size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
+
+'''# Descargar y descomprimir nuestras imágenes
+get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/OCRSamples.zip')
+get_ipython().system('unzip -qq OCRSamples.zip')
+get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/Receipt-woolworth.jpg')
+
+get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/whatsapp_conv.jpeg')
+'''
+
+# ## **Nuestra primera prueba de OCR**
+img = cv2.imread('images/OCR Samples/OCR1.png')
+imshow("Input Image", img)
+
+# Ejecutar nuestra imagen a través de PyTesseract, esta línea es la que realiza la detección, procesamiento y devuelve
+# el texto de la imagen
+output_txt = pytesseract.image_to_string(img)
+
+print("PyTesseract Extracted: {}".format(output_txt))  # PyTesseract Extracted: Welcome to OCR
+
+
+# ## **¿Funciona el texto blanco sobre fondo negro?**
+img = cv2.imread('images/OCR Samples/OCR2.png')
+imshow("Input Image", img)
+# Ejecutar nuestra imagen a través de PyTesseract
+output_txt = pytesseract.image_to_string(img)
+
+print("PyTesseract Extracted: {}".format(output_txt))  # PyTesseract Extracted: Welcome to OCR
+
+
+# ## **¿Qué pasa con los fondos más desordenados?**
+img = cv2.imread('images/OCR Samples/OCR3.png')
+imshow("Input Image", img)
+
+# Ejecutar nuestra imagen a través de PyTesseract
+output_txt = pytesseract.image_to_string(img)
+
+print("PyTesseract Extracted: {}".format(output_txt))  # no funciona
+
+
+# ## **¿Qué tal un escaneo de la vida real?**
+img = cv2.imread('images/OCR Samples/scan2.jpeg')
+imshow("Input Image", img, size = 48)
+
+# Ejecutar nuestra imagen a través de PyTesseract
+output_txt = pytesseract.image_to_string(img)
+print("PyTesseract Extracted: {}".format(output_txt))  # funciona hasta cierto punto
+
+
+# **Necesitamos limpiar nuestras imágenes**
+image = cv2.imread('images/OCR Samples/scan2.jpeg')
+imshow("Input Image", image, size = 48)
+
+# Obtenemos el componente Valor del espacio de color HSV
+# luego aplicamos umbralización adaptativa a
+V = cv2.split(cv2.cvtColor(image, cv2.COLOR_BGR2HSV))[2]
+T = threshold_local(V, 25, offset=15, method="gaussian")
+
+# Aplicar la operación umbral
+thresh = (V > T).astype("uint8") * 255
+imshow("threshold_local", thresh, size = 48)
+
+output_txt = pytesseract.image_to_string(thresh)
+print("PyTesseract Extracted: {}".format(output_txt))  # se ve mucho mejor
+
+
+# ### **Umbralizar ayuda mucho**
+# Típicamente un buen pipeline de preprocesamiento para reconocimiento OCR contendrá algunos o más de los siguientes
+# procesos:
+# 1. Desenfoque
+# 2. Umbralización
+# 3. Desenfoque
+# 4. Dilatación/Erosión/Apertura/Cierre
+# 5. 5. Eliminación de ruido
+
+### **Dibujemos sobre regiones reconocidas por PyTesseract**
+
+
+image = cv2.imread('images/Receipt-woolworth.jpg')
+
+# Obtenemos el componente Valor del espacio de color HSV
+# luego aplicamos umbralización adaptativa a
+V = cv2.split(cv2.cvtColor(image, cv2.COLOR_BGR2HSV))[2]
+T = threshold_local(V, 25, offset=15, method="gaussian")
+
+# Aplicar la operación umbral
+thresh = (V > T).astype("uint8") * 255
+imshow("threshold_local", thresh)
+
+output_txt = pytesseract.image_to_string(thresh)
+print("PyTesseract Extracted: {}".format(output_txt))
+
+
+
+
+d = pytesseract.image_to_data(thresh, output_type = Output.DICT)
+print(d.keys())  # dict_keys(['level', 'page_num', 'block_num', 'par_num', 'line_num', 'word_num', 'left', 'top',
+#                             'width', 'height', 'conf', 'text'])
+# Usando este diccionario, podemos obtener de cada palabra detectada en la imagen, la información (con coordenadas) de
+# su cuadro delimitador, el texto que contiene y las puntuaciones de confianza de cada una.
+#
+n_boxes = len(d['text'])
+
+# recorre los elementos (etiquetas del diccionario)
+for i in range(n_boxes):
+    # si la confianza obtenida es mayor de 60
+    if int(d['conf'][i]) > 60:
+        # extrae de esa etiqueta  las coordenadas y el tamaño para poder dibujar su cuadro delimitador
+        (x, y, w, h) = (d['left'][i], d['top'][i], d['width'][i], d['height'][i])
+        # dibuja el rectángula verde
+        image = cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+# muestra la imagen
+imshow('Output', image, size = 12)
+
+
+# ## **EASY OCR**
+# esta librería funciona mejor que la anterior, pero necesita más capacidad de procesamiento, siendo lento en CPU pero
+# pudiendo aprovechar la GPU
+# ### **Instalar OpenCV antiguo (EasyOCR no es compatible con el último OpenCV aquí en Colab)**
+'''get_ipython().system('pip uninstall opencv-python -y')
+get_ipython().system('pip install opencv-python-headless==4.1.2.30')
+'''
+
+# ## **Detectar Texto en Imagen y Mostrar nuestra Imagen de Entrada**
+
+# cargar la imagen de entrada desde el disco
+image = cv2.imread("images/whatsapp_conv.jpeg")
+imshow("Original Image", image, size = 12)
+
+# OCR de la imagen de entrada utilizando EasyOCR
+print("Detecting and OCR'ing text from input image...")
+# reader importado de EasyOcr, va a buscar texto en inglés ['en'] y vamos a usarlo sin GPU
+# se descarga y utiliza automáticamente el modelo
+reader = Reader(['en'], gpu = False)
+
+
+ts = time.time()
+results = reader.readtext(image) # introducimos en results todo el texto detectado ( en "cajas")
+# [ ([[24, 12], [192, 12], [192, 38], [24, 38]], 'bmobile _ill < 82', 0.12457801531641248)
+#   ([[396, 12], [510, 12], [510, 38], [396, 38]], '"\'0 ^ (50%', 0.33694383567965347) ...
+
+te = time.time()  # usamos time y para comprobar cuanto tiempo ha tardado en realizar el procesamiento de la imagen
+td = te - ts
+print(f'Completed in {td} seconds')  # 7.667776107788086 seconds
+
+
+# ## **Mostrar texto superpuesto a nuestra imagen**
+all_text = []
+
+# iterar sobre el texto extraído
+for (bbox, text, prob) in results:
+    # mostrar el texto OCR y la probabilidad asociada de que sea texto
+    print(f" Probability of Text: {prob*100:.3f}% OCR'd Text: {text}")
+
+    # obtener las coordenadas del cuadro delimitador
+    (tl, tr, br, bl) = bbox
+    tl = (int(tl[0]), int(tl[1]))
+    tr = (int(tr[0]), int(tr[1]))
+    br = (int(br[0]), int(br[1]))
+    bl = (int(bl[0]), int(bl[1]))
+
+    # Elimina los caracteres no ASCII del texto para que, uniendo el no eliminado con join y usando el codepoint de
+    # los caracteres detectados
+    # podamos dibujar el recuadro que rodea el texto superpuesto a la imagen original
+    text = "".join([c if ord(c) < 128 else "" for c in text]).strip()
+    all_text.append(text)
+    cv2.rectangle(image, tl, br, (255, 0, 0), 2)
+    cv2.putText(image, text, (tl[0], tl[1] - 10),
+    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
+
+# mostrar la imagen de salida
+imshow("OCR'd Image", image, size = 12)
+
+
+# ## **Ejecutar en nuestro WoolWorth Reciept**
+
+def clean_text(text):
+    # elimina el texto no ASCII para que podamos dibujar el texto en la imagen
+    return "".join([c if ord(c) < 128 else "" for c in text]).strip()
+
+image = cv2.imread('images/Receipt-woolworth.jpg')
+
+reader = Reader(["en","ar"], gpu=False)
+results = reader.readtext(image)
+
+# bucle sobre los resultados
+for (bbox, text, prob) in results:
+    # mostrar el texto OCR y la probabilidad asociada
+    print("[INFO] {:.4f}: {}".format(prob, text))
+
+    # descomprimir el cuadro delimitador
+    (tl, tr, br, bl) = bbox
+    tl = (int(tl[0]), int(tl[1]))
+    tr = (int(tr[0]), int(tr[1]))
+    br = (int(br[0]), int(br[1]))
+    bl = (int(bl[0]), int(bl[1]))
+
+    # limpia el texto y dibuja el recuadro que lo rodea a lo largo de
+    text = clean_text(text)
+    cv2.rectangle(image, tl, br, (0, 255, 0), 2)
+    cv2.putText(image, text, (tl[0], tl[1] - 10),
+    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+
+
+#Aplicar la operación umbral
+#thresh = (V > T).astype("uint8") * 255
+imshow("EASY OCR", image)
+print("EASY OCR Extracted: {}".format(text))
+'''
+...
+[INFO] 0.0220: 900
+[INFO] 0.9213: Woolworths
+[INFO] 0.2355: The fregh food
+[INFO] 0.6164: VICIURIA HARBOUR PH:  0383476527
+[INFO] 0.7185: Store Hanager
+[INFO] 0.6325: i$ ٥avid
+[INFO] 0.3334: WUULWURIHS TAX INVOICE
+[INFO] 0.6674: ABN 88 000 014 675
+...EASY OCR Extracted: .50/k9
+'''
+
+
+#!/usr/bin/env python
+# coding: utf-8
+#########################################################################
+# 32 **Generación y lectura de códigos de barras**#####
+#########################################################################
+
+# - In this lesson we'll to create barcodes of various standards as well reading what's on them.
+
+# In[1]:
+
+
+'''# Our Setup, Import Libaries, Create our Imshow Function and Download our Images
+
+get_ipython().system('pip install python-barcode[images]')
+get_ipython().system('pip install qrcode')
+get_ipython().system('apt install libzbar0')
+get_ipython().system('pip install pyzbar')
+'''
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+from barcode import EAN13
+from barcode.writer import ImageWriter
+
+# Define nuestra función imshow
+
+def imshow(title = "Image", image = None, size = 10):
+    w, h = image.shape[0], image.shape[1]
+    aspect_ratio = w/h
+    plt.figure(figsize=(size * aspect_ratio,size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
+
+
+# ## **Generación de códigos de barras**
+# los códigos de barras son solo representaciones lineales del símbolo de la información codificada que podemos
+# decodificar de un texto, dígitos o cualquier tipo de información relativa a los códigos de barras de las tiendas.
+#
+# O podemos almacenar información de manera efectiva.
+# Vamos a generar códigos de barras usando nuestro paquete python-barcode.
+# Formatos soportados
+# En el momento de escribir esto, este paquete soporta los siguientes formatos:
+# - EAN-8
+# - EAN-13
+# - EAN-14
+# UPC-A
+# - JAN
+# - ISBN-10
+# - ISBN-13
+# - ISSN
+# Código 39
+# - Código 128
+# - PZN
+
+with open('images/barcode.png', 'wb') as f:
+    # el número es una entidad para guardar el resultado, podemos introducir el que queramos
+    EAN13('123456789102', writer=ImageWriter()).write(f)
+
+barcode = cv2.imread("images/barcode.png")
+imshow("Barcode", barcode)
+
+
+# ## **Generación de Códigos QR**
+# Vamos a generar Códigos QR usando nuestro paquete qrcode.
+
+# Un código QR (abreviatura de Quick Response code) es un tipo de código de barras matricial (o código de barras
+# bidimensional) diseñado por primera vez en 1994 para la industria del automóvil en Japón. Un código de barras es una
+# etiqueta óptica legible por máquina que contiene información sobre el artículo al que está adherido. En la práctica,
+# los códigos QR suelen contener datos para un localizador, identificador o rastreador que apunta a un sitio web o una
+# aplicación. Un código QR utiliza cuatro modos de codificación estandarizados (numérico, alfanumérico, byte/binario y
+# kanji) para almacenar datos de forma eficiente; también se pueden utilizar extensiones.
+#
+# Un código QR consiste en cuadrados negros dispuestos en una cuadrícula cuadrada sobre un fondo blanco, que pueden ser
+# leídos por un dispositivo de imagen como una cámara, y procesados utilizando la corrección de errores Reed-Solomon
+# hasta que la imagen puede ser interpretada adecuadamente. A continuación, se extraen los datos necesarios de los
+# patrones presentes en los componentes horizontal y vertical de la imagen.
+#
+# ![](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/QR_Code_Structure_Example_3.svg/800px-QR_Code_Structure_Example_3.svg.png)
+
+import qrcode
+from PIL import Image  # librería similar a OpenCV pero no tan extensa
+
+# **Configuración de los códigos QR**:
+#
+# - version - Controla el tamaño del Código QR. Acepta un número entero de 1 a 40. La versión 1 consiste en una matriz
+#             de 21 x 21.
+# - error_correction - Controla la corrección de errores utilizada para el Código QR.
+# - box_size - Controla el número de píxeles de cada caja del código QR.
+# - border - Controla el grosor del borde de las cajas. El valor por defecto es 4, que es también el valor mínimo según
+#            la especificación.
+#
+# Hay 4 constantes disponibles para error_correction. Cuanto mayor sea la corrección de errores, mejor será.
+# pero a mayor corrección de errores menos información puedes almacenar en el codigo.
+# - ERROR_CORRECT_L - Alrededor del 7% o menos errores pueden ser corregidos.
+# - ERROR_CORRECT_M - Alrededor del 15% o menos errores pueden ser corregidos. Este es el valor por defecto.
+# ERROR_CORRECT_Q - Se pueden corregir un 25% o menos de errores.
+# ERROR_CORRECT_H - Alrededor del 30% o menos de errores pueden ser corregidos.
+
+# creando el objeto QR code con la configuración
+qr = qrcode.QRCode(
+    version=1,
+    error_correction=qrcode.constants.ERROR_CORRECT_H,
+    box_size=10,
+    border=4,
+)
+
+# Vamos a generar un código QR con la web de openCV
+qr.add_data("https://wwww.opencv.org")
+qr.make(fit=True)
+img = qr.make_image(fill_color="black", back_color="white")
+img.save("images/qrcode.png")
+
+qrcode = cv2.imread("images/qrcode.png")
+imshow("QR Code", qrcode, size = 8)
+
+
+
+
+# ## **Descifrar códigos QR**
+from pyzbar.pyzbar import decode
+from PIL import Image
+img = Image.open('images/qrcode.png')
+# decodifica la imagen con la función decode del módulo pyzbar de la librería pyzbar
+result = decode(img)
+for i in result:
+    print(i.data.decode("utf-8"))  # https://wwww.opencv.org
+
+'''
+get_ipython().system('wget https://i.stack.imgur.com/1DwED.jpg')
+'''
+# ### **Detección de códigos QR**
+from pyzbar.pyzbar import decode
+
+image = cv2.imread("images/1DwED.jpg")
+
+# Detectar y decodificar el qrcode
+codes = decode(image)
+
+# bucle sobre los códigos de barras detectados
+for bc in codes:
+  # Obtener los rectángulos coordiantes para la colocación del texto
+  (x, y, w, h) = bc.rect
+  print(bc.polygon)
+  pt1,pt2,pt3,pt4 = bc.polygon
+
+  # Dibuja una caja delimitadora sobre nuestro código QR detectado
+  pts = np.array( [[pt1.x,pt1.y], [pt2.x,pt2.y], [pt3.x,pt3.y], [pt4.x,pt4.y]], np.int32)
+  pts = pts.reshape((-1,1,2))
+  cv2.polylines(image, [pts], True, (0,0,255), 3)
+
+  # extraer los datos de información de la cadena y el tipo de nuestro objeto
+  barcode_text = bc.data.decode()
+  barcode_type = bc.type
+
+  # mostrar nuestro
+  text = "{} ({})".format(barcode_text, barcode_type)
+  cv2.putText(image, barcode_text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
+  cv2.putText(image, barcode_type, (x+w, y+h - 15), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
+  print("QR Code revealed: {}".format(text))
+
+# mostrar nuestra salida
+imshow("QR Scanner", image, size = 12)
+
+'''get_ipython().system('wget https://www.differencebetween.com/wp-content/uploads/2011/04/1024px-ISBN.jpg')
+'''
+
+image = cv2.imread("images/1024px-ISBN.jpg")
+
+# Detectar y decodificar el qrcode
+barcodes = decode(image)
+
+# bucle sobre los códigos de barras detectados
+for bc in barcodes:
+  # Obtener los rectángulos coordiantes para la colocación del texto
+  (x, y, w, h) = bc.rect
+  cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 3)
+
+  # extraer los datos de información de la cadena y el tipo de nuestro objeto
+  barcode_text = bc.data.decode()
+  barcode_type = bc.type
+
+  # Mostrar nuestro
+  text = "{} ({})".format(barcode_text, barcode_type)
+  cv2.putText(image, barcode_text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
+  cv2.putText(image, barcode_type, (x+w, y+h - 15), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
+  print("Barcode revealed: {}".format(barcode_text))
+  print("Barcode revealed: {}".format(barcode_text))
+
+# mostrar nuestra salida
+imshow("QR Scanner", image, size = 16)
+
 
 
 
