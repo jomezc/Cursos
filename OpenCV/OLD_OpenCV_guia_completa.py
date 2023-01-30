@@ -1890,8 +1890,8 @@ import matplotlib.pyplot as plt
 Se ha incluido un archivo de configuración de muestra en la carpeta de modelos'''
 
 
-# frozen_inference_graph.pb, que es el archivo de pesos para el modelo.
-modelFile = "models/ssd_mobilenet_v2_coco_2018_03_29/frozen_inference_graph.pb"
+# frozen_inference_graph2.pb, que es el archivo de pesos para el modelo.
+modelFile = "models/ssd_mobilenet_v2_coco_2018_03_29/frozen_inference_graph2.pb"
 # Archivo de configuración para la red
 configFile = "models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt"
 # etiquetas de clase para el conjunto de datos que se usó para entrenar este modelo
@@ -2223,4 +2223,5 @@ plt.imshow(imSkeleton);
 # plt.title('Displaying Skeleton')
 plt.show()
 
-
+# !/usr/bin/env python
+# coding: utf-8

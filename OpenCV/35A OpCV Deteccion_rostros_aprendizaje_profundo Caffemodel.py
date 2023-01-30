@@ -39,7 +39,7 @@ se entrenó ese modelo como el factor de escala, alto, ancho y rgb.
 Cuando llamamos a este método readNetFromCaffe, regresa para una instancia de la red neuronal, cuyo objeto se usará a 
 continuación para realizar inferencias en nuestras imágenes de prueba de la transmisión de video'
 '''
-net = cv2.dnn.readNetFromCaffe("deploy.prototxt", "res10_300x300_ssd_iter_140000_fp16.caffemodel")
+net = cv2.dnn.readNetFromCaffe("modelos/faceDetector/deploy.prototxt", "modelos/faceDetector/res10_300x300_ssd_iter_140000_fp16.caffemodel")
 
 '''Identifica los parámetros del modelo que se asociaron con la forma en que se realizó el modelo entrenado siendo 
 importante porque cualquier imagen que pasemos a través del modelo para realizar la inferencia también deben procesarse

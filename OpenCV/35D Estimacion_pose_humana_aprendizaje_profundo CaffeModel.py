@@ -1,5 +1,5 @@
 # *******************************************************************
-# ***** Estimacion de la pose humana mediante el aprendizaje profundo
+# *****35D Estimacion de la pose humana mediante el aprendizaje profundo
 # *******************************************************************
 '''
 La estimación de la pose humana puede ser difícil:
@@ -22,8 +22,8 @@ from IPython import get_ipython
 # if not os.path.isdir('model'):
 #   os.mkdir("model")
 #
-protoFile = "model/pose_deploy_linevec_faster_4_stages.prototxt"
-weightsFile = "model/pose_iter_160000.caffemodel"
+protoFile = "modelos/pose/pose_deploy_linevec_faster_4_stages.prototxt"
+weightsFile = "modelos/pose/pose_iter_160000.caffemodel"
 #
 # # Descargamos el modelo si no se encuentra en el directorio
 # if not os.path.isfile(protoFile):
@@ -52,7 +52,7 @@ POSE_PAIRS = [[0,1], [1,2], [2,3], [3,4], [1,5], [5,6], [6,7], [1,14], [14,8], [
 net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
 
 # leemos la imagen
-im = cv2.imread("Tiger_Woods.png")
+im = cv2.imread("images/Tiger_Woods.png")
 im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)  # intercambiamos los canales de color rojo y azúl
 # recuperamos el tamaño de la imagen
 inWidth = im.shape[1]

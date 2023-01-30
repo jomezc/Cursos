@@ -408,7 +408,7 @@ get_ipython().system('ls {output_directory}')
 
 import os
 
-pb_fname = os.path.join(os.path.abspath(output_directory), "frozen_inference_graph.pb")
+pb_fname = os.path.join(os.path.abspath(output_directory), "frozen_inference_graph2.pb")
 assert os.path.isfile(pb_fname), '`{}` not exist'.format(pb_fname)
 
 

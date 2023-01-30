@@ -5368,6 +5368,1239 @@ for bc in barcodes:
 imshow("QR Scanner", image, size = 16)
 
 
+#########################################################################
+# 32 **YOLOv3 usando cv2.dnn.readNetFrom()**#####
+#########################################################################
+# tutorial oficial en https://opencv-tutorial.readthedocs.io/en/latest/yolo/yolo.html
+# https://towardsdatascience.com/object-detection-using-yolov3-and-opencv-19ee0792a420
+# https://neptune.ai/blog/object-detection-with-yolo-hands-on-tutorial
+# YOLO es uno de los algoritmos de detección de objetos en tiempo real más rápidos (45 cuadros por segundo) en
+# comparación con la familia R-CNN (R-CNN, Fast R-CNN, Faster R-CNN, etc.)
+# La familia de algoritmos R-CNN utiliza regiones para localizar los objetos en las imágenes, lo que significa que el
+# modelo se aplica a varias regiones y las regiones de la imagen con una puntuación alta se consideran objetos
+# detectados. Pero YOLO sigue un enfoque completamente diferente. En lugar de seleccionar algunas regiones, aplica una
+# red neuronal a toda la imagen para predecir los cuadros delimitadores y sus probabilidades.
+
+# ####**En esta lección aprenderemos a cargar un Modelo YOLOV3 pre-entrenado y usar OpenCV para ejecutar inferencias
+# sobre algunas imágenes**
+# YOLOV -> detector de objetos
+# importar los paquetes necesarios
+import numpy as np
+import time
+import cv2
+import os
+from os import listdir
+from os.path import isfile, join
+from matplotlib import pyplot as plt
+
+
+# Define nuestra función imshow
+def imshow(title="Image", image=None, size=8):
+    w, h = image.shape[0], image.shape[1]
+    aspect_ratio = w / h
+    plt.figure(figsize=(size * aspect_ratio, size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
+
+
+'''# Download and unzip our images and YOLO files
+get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/YOLO.zip')
+get_ipython().system('unzip -qq YOLO.zip')
+'''
+
+# ## **Detección de Objetos YOLO**
+# ![](https://opencv-tutorial.readthedocs.io/en/latest/_images/yolo1_net.png)
+# Pasos necesarios
+# 1. Usar pesos YOLOV3 preentrenados (237MB)- https://pjreddie.com/media/files/yolov3.weights
+# 2. Crear nuestro objeto blob que es nuestro modelo cargado
+# 3. Establecer el backend que ejecuta el modelo
+
+# Cargar las etiquetas de clase COCO con las que se ha entrenado nuestro modelo YOLO
+# coco es un tipo de conjunto de datos de objetos comunes
+# ImageNet es un conjunto de datos clasificado que ha demostrado se invaluable para la investigación de computer vision
+# contiene los nombres de los diferentes objetos que nuestro modelo ha sido entrenado para identificar.
+
+labelsPath = "modelos/YOLO3/yolo/coco.names"
+'''
+person
+bicycle
+car
+motorbike'''
+LABELS = open(labelsPath).read().strip().split("\n")
+
+# Ahora necesitamos inicializar una lista de colores para representar cada posible etiqueta de clase
+COLORS = np.random.randint(0, 255, size=(len(LABELS), 3), dtype="uint8")
+
+print("Loading YOLO weights...")
+
+# almacena todos los pesos para el modelo
+weights_path = "modelos/YOLO3/yolo/yolov3.weights"
+
+# Es la estructura del modelo, define toda la estructura del modelo YOLOV que está codificada en su campo de cisión
+cfg_path = "modelos/YOLO3/yolo/yolov3.cfg"
+
+# Crear nuestro objeto blob
+'''OpenCV tiene varias funciones de conveniencia que nos permiten leer y pre-entrenar modelos que fueron entrenados 
+usando marcos de trabajo como NetFromDarknet y pytorch que son marcos de aprendizaje profundo que permiten diseñar y 
+entrenar redes neuronales. Además OpenCV tiene una funcionalidad  integrada para usar redes pre-entrenadas para realizar
+inferencias ( es decir, no podemos usare OpenCV  para entrenar una red neuronal, pero puede usarlo para realizar 
+inferencias en una red entrenada)
+
+la función cv2.dnn.readNetFromDarknet es una función diseñada específicamente para cargar un modelo . necesita dos
+argumentos:
+- configuración (modelo)
+- pesos
+'''
+net = cv2.dnn.readNetFromDarknet(cfg_path, weights_path)
+
+# Establece nuestro backend
+net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+# net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
+
+print("Our YOLO Layers")
+# nombres de las capas, La red neuronal YOLO tiene 254 componentes
+ln = net.getLayerNames()
+
+# Hay 254 capas, Los 524 elementos consisten en capas convolucionales ( conv), unidades lineales rectificadoras ( relu),
+print(len(ln), ln)  # 254 ('conv_0', 'bn_0', 'leaky_1', 'conv_1', 'bn_1', 'leaky_2', 'conv_2', 'bn_2', 'leaky_3',
+# 'conv_3', 'bn_3', 'leaky_4', 'shortcut_4', 'conv_5', 'bn_5', 'leaky_6', 'conv_6', 'bn_6', 'leaky_7', 'conv_7', '
+# bn_7', 'leaky_8', 'shortcut_8', 'conv_9', 'bn_9', 'leaky_10', 'conv_10', 'bn_10', 'leaky_11', 'shortcut_11', ...)
+
+
+# Necesitamos pasar los nombres de las capas para las cuales se calculará la salida. net.getUnconnectedOutLayers()
+# devuelve los índices de las capas de salida de la red.
+ln_unconnected = net.getUnconnectedOutLayers()
+
+print(len(ln_unconnected), ln_unconnected)  # 3 [200 227 254]
+
+#  sólo queremos los nombres de las capas *de salida* que necesitamos de YOLO
+ln = [ln[i - 1] for i in net.getUnconnectedOutLayers()]
+
+# Hay 3 capas
+print(len(ln), ln)  # 3 ['yolo_82', 'yolo_94', 'yolo_106']
+
+# La entrada a la red es un objeto llamado blob.
+# Estamos haciendo un preprocesamiento en el fotograma, llamando a este método blobFromImage. lo que
+# realiza es un preprocesamiento en la imagen de entrada y ponerla en el formato adecuado para que luego podamos
+# realizar inferencias en esa imagen.
+# Un blob es un objeto de matriz numpy 4D (imágenes, canales, ancho, alto) y la siguiente función lo transforma a ese
+# formato (blob)
+
+# ***    cv.dnn.blobFromImage(img, scale,    size,       mean) ejemplo:
+# blob = cv.dnn.blobFromImage(img, 1/255.0, (416, 416), swapRB=True, crop=False)
+# Tiene los siguientes parámetros:**
+#
+# 1. la imagen a transformar
+# 2. el factor de escala (1/255 para escalar los valores de los píxeles a [0..1]) no tiene que ser el mismo siempre
+# 3. el tamaño, aquí una imagen cuadrada de 416x416 (ancho y alto del fotograma)
+# 4. el valor medio que se va a restar de todos los fotogramas (por defecto=0)
+# 5. la opción swapBR=True (ya que OpenCV usa BGR) para cambiar el orden de los canales de color en la imagen
+# 6. Recorte de argumento de entrada, indica que puede recortar su imagen de entrada para que tenga el tamaño correcto
+#     o puede cambiar su tamaño, al ponerlo a False, significa que simplemente vamos a cambiar el tamaño de la imagen para
+#      300x300
+
+# La llamada a la función devuelve una representación del blob del fotograma con el pre-procesamiento realizado
+
+# **Nota** Un blob es un objeto 4D numpy array (imágenes, canales, ancho, alto). La imagen de abajo muestra el canal
+# rojo del blob. Observa el brillo de la chaqueta roja en el fondo.
+#
+#
+
+
+print("Starting Detections...")
+# Obtener imágenes ubicadas en la carpeta ./images
+mypath = "modelos/YOLO3/images/"
+file_names = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+print(file_names)
+# Recorre las imágenes y pásalas por nuestro clasificador
+for file in file_names:
+    # cargar nuestra imagen de entrada y tomar sus dimensiones espaciales
+    print(mypath + file)
+    image = cv2.imread(mypath + file)
+    (H, W) = image.shape[:2]
+
+    #  Ahora construimos nuestro blob a partir de nuestras imágenes de entrada
+    blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
+
+    # Estas dos instrucciones calculan la respuesta de la red:
+    # *** 1: Establecemos nuestra entrada a nuestro blob de imagen
+    net.setInput(blob)
+    # **** 2 A continuación, ejecutamos un pase hacia adelante a través de la red
+    # Los outputs por defecto objetos son vectores de longitud 85
+    # 4x el cuadro delimitador (centerx, centery, ancho, alto)
+    # 1x caja de confianza
+    # 80x confianza de clase
+
+    # Pasamos en ln sólo de los componentes de salida que necesitamos
+    # La función forward() del módulo cv2.dnn devuelve una lista anidada que contiene información sobre todos los
+    # objetos detectados, que incluye las coordenadas x e y del centro del objeto detectado, la altura y el ancho del
+    # cuadro delimitador, la confianza y las puntuaciones de todos. las clases de objetos enumerados en coco.names. La
+    # clase con la puntuación más alta se considera la clase predicha.
+    layerOutputs = net.forward(ln)
+
+    # inicializamos nuestras listas para nuestras cajas delimitadoras, confidencias y clases detectadas
+    boxes = []
+    confidences = []
+    IDs = []
+
+    # Recorremos cada una de las salidas de las capas
+    """
+    se crea una lista llamada scores que almacena la confianza correspondiente a cada objeto. Luego identificamos 
+    el índice de clase con la mayor confianza/puntuación mediante np.argmax() . Podemos obtener el nombre de la clase 
+    correspondiente al índice de la lista de clases que creamos en ln .
+    """
+    for output in layerOutputs:
+
+        # Recorrer cada detección
+        for detection in output:
+            # [4.4197343e-02 4.8798084e-02 3.2957375e-01 1.4272095e-01 1.1992421e-06
+            #  0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00
+            #  0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00
+
+            # Obtener ID de clase y probabilidad de detección
+            scores = detection[5:]
+            # [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+            #  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+            #  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+            #  0. 0. 0. 0. 0. 0. 0. 0.]
+
+            classID = np.argmax(scores)  # 0 en este ejemplo, índice de clase con la mayor confianza/puntuación
+            confidence = scores[classID]
+            """
+            He seleccionado todos los cuadros delimitadores previstos con una confianza de más del 75 %. 
+            Puedes jugar con este valor.
+            """
+            # Nos quedamos sólo con las predicciones más probables
+            if confidence > 0.75:
+                # Escalamos las coordenadas del cuadro delimitador respecto a la imagen
+                # Nota: YOLO en realidad devuelve el centro (x, y) de la caja # delimitadora seguido de la anchura y
+                # la altura.
+                # caja delimitadora seguido de la anchura y la altura de la caja
+                box = detection[0:4] * np.array([W, H, W, H])
+                (centerX, centerY, width, height) = box.astype("int")
+
+                # Obtener la esquina superior e izquierda de la caja delimitadora
+                # Recuerda que ya tenemos la anchura y la altura
+                x = int(centerX - (width / 2))
+                y = int(centerY - (height / 2))
+
+                # Añade nuestra lista de coordenadas de la caja delimitadora, confidencias e IDs de clase
+                boxes.append([x, y, int(width), int(height)])
+                confidences.append(float(confidence))
+                IDs.append(classID)
+
+    """
+    Ahora que tenemos los vértices del cuadro delimitador predicho y class_id (índice de la clase de objeto predicha), 
+    necesitamos dibujar el cuadro delimitador y agregarle una etiqueta de objeto. Lo haremos con la ayuda de la función 
+    draw_labels().
+    """
+    # NMSBoxes
+    # Aunque eliminamos los cuadros delimitadores de baja confianza, existe la posibilidad de que todavía tengamos
+    # detecciones duplicadas alrededor de un objeto. Para solucionar esta situación, necesitaremos aplicar la supresión
+    # no máxima (NMS) , también llamada supresión no máxima . Pasamos el valor de umbral de confianza y el valor de
+    # umbral de NMS como parámetros para seleccionar un cuadro delimitador. Del rango de 0 a 1, debemos seleccionar
+    # un valor intermedio como 0.4 o 0.5 para asegurarnos de que detectamos los objetos superpuestos, pero no terminamos
+    # obteniendo múltiples cuadros delimitadores para el mismo objeto.
+
+    # Ahora aplicamos la supresión de no-máximos para reducir el solapamiento de las cajas delimitadoras
+    # ## **NOTA:** **Cómo realizar la supresión no máxima dadas las cajas y las puntuaciones correspondientes.**
+    #
+    # ```indices = cv.dnn.NMSBoxes( bboxes, scores, score_threshold, nms_threshold[, eta[, top_k]]```
+    # Parámetros
+    # - bboxes un conjunto de cuadros delimitadores para aplicar NMS.
+    # - scores un conjunto de confidencias correspondientes.
+    # - score_threshold un umbral usado para filtrar cajas por puntuación.
+    # - nms_threshold un umbral utilizado en la supresión no máxima.
+    # - índices los índices mantenidos de bboxes después de NMS.
+    # - eta un coeficiente en la fórmula del umbral adaptativo: nms_thresholdi+1=eta⋅nms_thresholdi.
+    # - top_k if >0, keep at most top_k picked índices.
+    idxs = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.3)
+
+    # Procedemos una vez encontrada una detección
+    if len(idxs) > 0:
+        # iteramos sobre los índices que vamos conservando
+        for i in idxs.flatten():
+            # Obtenemos las coordenadas de la caja delimitadora
+            (x, y) = (boxes[i][0], boxes[i][1])
+            (w, h) = (boxes[i][2], boxes[i][3])
+
+            # Dibujar nuestras cajas delimitadoras y poner nuestra etiqueta de clase en la imagen
+            color = [int(c) for c in COLORS[IDs[i]]]
+            cv2.rectangle(image, (x, y), (x + w, y + h), color, 3)
+            text = "{}: {:.4f}".format(LABELS[IDs[i]], confidences[i])
+            cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+    # mostrar la imagen de salida
+    imshow("YOLO Detections", image, size=12)
+
+
+##############################
+#### 33b YOLOV8 INFERENCIA ########
+###############################
+
+from ultralytics import YOLO
+from ultralytics.yolo.v8.detect.predict import DetectionPredictor
+import cv2
+model = YOLO("modelos/YOLO8/yolo/Yolov8s.pt")
+results = model.predict(source="modelos/YOLO8/1.mov", show=True)  # acepta todos los formatos - img/carpeta/video
+print(results)
+
+
+# *******************************************************
+# ***** 34 Transferencia de Estilos Neuronales con OpenCV
+# *******************************************************
+# ####**En esta lección aprenderemos a usar Modelos pre-entrenados para implementar la Transferencia Neuronal de
+# Estilos en OpenCV**
+#
+# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/NSTdemo.png)
+#
+# **Acerca de la Transferencia Neuronal de Estilos**
+#
+# Introducido por Leon Gatys et al. en 2015, en su artículo titulado "[A Neural Algorithm for Artistic Style]
+# (https://arxiv.org/abs/1508.06576)", el algoritmo Neural Style Transfer se hizo viral dando lugar a una explosión de
+# trabajos posteriores y aplicaciones móviles.
+#
+# ¡Neural Style Transfer permite aplicar el estilo artístico de una imagen a otra! Copia los patrones de color, las
+# combinaciones y las pinceladas de la imagen de origen y lo aplica a la imagen de entrada. Y es una de las
+# implementaciones más impresionantes de Redes Neuronales en mi opinión.
+#
+# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/NST.png)
+
+
+# importamos los paquetes necesarios
+import numpy as np
+import time
+import cv2
+import os
+from os import listdir
+from os.path import isfile, join
+from matplotlib import pyplot as plt
+
+
+# Define nuestra función imshow
+def imshow(title="Image", image=None, size=10):
+    w, h = image.shape[0], image.shape[1]
+    aspect_ratio = w / h
+    plt.figure(figsize=(size * aspect_ratio, size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
+
+
+'''# Descargar y descomprimir nuestras imágenes y archivos YOLO
+get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/NeuralStyleTransfer.zip')
+get_ipython().system('unzip -qq NeuralStyleTransfer.zip')
+'''
+
+'''
+get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/city.jpg')'''
+
+### **Implementar la Transferencia Neuronal de Estilos usando Modelos preentrenados**
+#
+# Usamos modelos PyTorch t7 preentrenados que pueden ser importados usando ``cv2.dnn.readNetFromTouch()```
+#
+# Estos modelos que utilizamos provienen del artículo *Perceptual Losses for Real-Time Style Transfer and
+# Super-Resolution* de Johnson et al.
+#
+# Mejoraron proponiendo un algoritmo Neural de Transferencia de Estilo que funcionaba 3 veces más rápido utilizando un
+# problema similar a la super-resolución basado en la función de pérdida perceptual.
+
+
+# Cargar nuestros modelos de transferencia neural t7
+model_file_path = "modelos/NeuralStyleTransfer/models/"
+model_file_paths = [f for f in listdir(model_file_path) if isfile(join(model_file_path, f))]
+
+# Cargar nuestra imagen de prueba
+img = cv2.imread("images/city.jpg")
+
+# Recorrer y aplicar cada estilo de modelo a nuestra imagen de entrada
+for (i, model) in enumerate(model_file_paths):
+    # imprimir el modelo utilizado
+    print(str(i + 1) + ". Using Model: " + str(model)[:-3])
+    style = cv2.imread("modelos/NeuralStyleTransfer/art/" + str(model)[:-3] + ".jpg")
+    # cargar nuestro modelo neural style transfer
+    neuralStyleModel = cv2.dnn.readNetFromTorch(model_file_path + model)
+
+    # Vamos a redimensionar a una altura fija de 640 (siéntete libre de cambiar)
+    height, width = int(img.shape[0]), int(img.shape[1])
+    newWidth = int((640 / height) * width)
+    resizedImg = cv2.resize(img, (newWidth, 640), interpolation=cv2.INTER_AREA)
+
+    # Creamos nuestro blob a partir de la imagen y a continuación realizamos una pasada hacia delante de la red
+    inpBlob = cv2.dnn.blobFromImage(resizedImg, 1.0, (newWidth, 640), (103.939, 116.779, 123.68), swapRB=False,
+                                    crop=False)
+
+    neuralStyleModel.setInput(inpBlob)
+    output = neuralStyleModel.forward()
+
+    # Remodelar el tensor de salida, añadiendo de nuevo la sustracción de la media y reordenando los canales
+    # Eso se suma debido a los datos en los que se entrenó el modelo.
+    # estos valores preestablecidos que están codificados establecen un valor específico para este
+    # modelo y los datos con los que fueron entrenados.
+
+    output = output.reshape(3, output.shape[2], output.shape[3])
+    output[0] += 103.939
+    output[1] += 116.779
+    output[2] += 123.68
+    output /= 255
+    output = output.transpose(1, 2, 0)
+
+    # Mostrar nuestra imagen original, el estilo que se está aplicando y la Transposición Neural de Estilos final
+    imshow("Original", img)
+    imshow("Style", style)
+    imshow("Neural Style Transfers", output)
+
+# ## **Utilizando el algoritmo NST actualizado de ECCV16**
+#
+# En la publicación de Ulyanov et al. de 2017, *Instance Normalization: The Missing Ingredient for Fast Stylization*,
+# se descubrió que cambiar la normalización de lotes por la normalización de instancias (y aplicar la normalización de
+# instancias tanto en el entrenamiento como en la prueba), conduce a un rendimiento en tiempo real aún más rápido y
+# podría decirse que también a resultados estéticamente más agradables.
+#
+# Usemos ahora los modelos utilizados por Johnson et al. en su documento ECCV.
+#
+#
+
+
+# Cargar nuestros modelos de transferencia neural t7
+model_file_path = "modelos/NeuralStyleTransfer/models/ECCV16/"
+model_file_paths = [f for f in listdir(model_file_path) if isfile(join(model_file_path, f))]
+
+# Cargar nuestra imagen de prueba
+img = cv2.imread("images/city.jpg")
+
+# Recorrer y aplicar cada estilo de modelo a nuestra imagen de entrada
+for (i, model) in enumerate(model_file_paths):
+    # imprimir el modelo utilizado
+    print(str(i + 1) + ". Using Model: " + str(model)[:-3])
+    style = cv2.imread("modelos/NeuralStyleTransfer/art/" + str(model)[:-3] + ".jpg")
+    # cargar nuestro modelo neural style transfer
+    neuralStyleModel = cv2.dnn.readNetFromTorch(model_file_path + model)
+
+    # Vamos a cambiar el tamaño a una altura fija de 640 (siéntase libre de cambiar)
+    height, width = int(img.shape[0]), int(img.shape[1])
+    newWidth = int((640 / height) * width)
+    resizedImg = cv2.resize(img, (newWidth, 640), interpolation=cv2.INTER_AREA)
+
+    # Creamos nuestro blob a partir de la imagen y a continuación realizamos una pasada hacia delante de la red
+    inpBlob = cv2.dnn.blobFromImage(resizedImg, 1.0, (newWidth, 640), (103.939, 116.779, 123.68), swapRB=False,
+                                    crop=False)
+
+    neuralStyleModel.setInput(inpBlob)
+    output = neuralStyleModel.forward()
+
+    # Remodelar el tensor de salida, añadiendo de nuevo la sustracción de la media y reordenando los canales
+    output = output.reshape(3, output.shape[2], output.shape[3])
+    output[0] += 103.939
+    output[1] += 116.779
+    output[2] += 123.68
+    output /= 255
+    output = output.transpose(1, 2, 0)
+
+    # Mostrar nuestra imagen original, el estilo que se está aplicando y la Transposición Neural de Estilos final
+    imshow("Original", img)
+    imshow("Style", style)
+    imshow("Neural Style Transfers", output)
+
+'''get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/dj.mp4')
+'''
+
+# Cargar nuestros modelos de transferencia neuronal t7
+model_file_path = "modelos/NeuralStyleTransfer/models/ECCV16/starry_night.t7"
+
+# Cargar flujo de vídeo, clip largo
+cap = cv2.VideoCapture('modelos/NeuralStyleTransfer/dj.mp4')
+
+# Obtener la altura y la anchura del fotograma (se requiere que sea un interger)
+w = int(cap.get(3))
+h = int(cap.get(4))
+
+# Definir el codec y crear el objeto VideoWriter. La salida se almacena en un archivo '*.avi'.
+out = cv2.VideoWriter('NST_Starry_Night.avi', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 30, (w, h))
+
+# Recorrer y aplicar cada estilo de modelo a nuestra imagen de entrada
+# for (i,model) in enumerate(model_file_paths):
+style = cv2.imread("modelos/NeuralStyleTransfer/art/starry_night.jpg")
+i = 0
+while (1):
+
+    ret, img = cap.read()
+
+    if ret == True:
+        i += 1
+        print("Completed {} Frame(s)".format(i))
+        # cargar nuestro modelo de transferencia de estilo neural
+        neuralStyleModel = cv2.dnn.readNetFromTorch(model_file_path)
+
+        # Vamos a cambiar el tamaño a una altura fija de 640 (siéntase libre de cambiar)
+        height, width = int(img.shape[0]), int(img.shape[1])
+        newWidth = int((640 / height) * width)
+        resizedImg = cv2.resize(img, (newWidth, 640), interpolation=cv2.INTER_AREA)
+
+        # Creamos nuestro blob a partir de la imagen y a continuación realizamos una pasada hacia delante de la red
+        inpBlob = cv2.dnn.blobFromImage(resizedImg, 1.0, (newWidth, 640),
+                                        (103.939, 116.779, 123.68), swapRB=False, crop=False)
+
+        neuralStyleModel.setInput(inpBlob)
+        output = neuralStyleModel.forward()
+
+        # Remodelar el tensor de salida, añadiendo la resta de medias
+        # y reordenando los canales
+        output = output.reshape(3, output.shape[2], output.shape[3])
+        output[0] += 103.939
+        output[1] += 116.779
+        output[2] += 123.68
+        output /= 255
+        output = output.transpose(1, 2, 0)
+
+        # Mostrar nuestra imagen original, el estilo aplicado y la Transposición Neural final
+        # imshow("Original", img)
+        # imshow("Style", style)
+        # imshow("Neural Style Transfers", output)
+        vid_output = (output * 255).astype(np.uint8)
+        vid_output = cv2.resize(vid_output, (w, h), interpolation=cv2.INTER_AREA)
+        out.write(vid_output)
+    else:
+        break
+
+cap.release()
+out.release()
+
+# ## **¿Quieres entrenar tu propio modelo NST?**
+#
+# ## **Mira secciones posteriores del curso donde echaremos un vistazo a la Implementación de nuestro propio
+# Algoritmo NST de Aprendizaje Profundo**
+#
+# Alternativamente, dale una oportunidad a este repositorio de github y pruébalo tú mismo -
+# https://github.com/jcjohnson/fast-neural-style
+
+
+
+# *******************************************************************
+# ***** 35A Deteccion de rostros mediante aprendizaje profundo Caffemodel
+# *******************************************************************
+'''Para detectar los rostros, podemos utilizar OpenCV que nos permitirá leer en un modelo previamente entrenado y
+realizar inferencias usando ese modelo'''
+import cv2
+import sys
+
+# Establece el índice para la cámara si no se introduce otro por parámetro.
+s = 0
+if len(sys.argv) > 1:
+    s = sys.argv[1]
+
+# crea un objeto de captura de vídeo
+source = cv2.VideoCapture(s)
+
+# crea una ventana de salida para enviar todos los resultados a la pantalla
+win_name = 'Detección de cámara'
+cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
+
+'''OpenCV tiene varias funciones de conveniencia que nos permiten leer y pre-entrenar modelos que fueron entrenados 
+usando marcos de trabajo como NetFromCaffe y pytorch que son marcos de aprendizaje profundo que permiten diseñar y 
+entrenar redes neuronales. Además OpenCV tiene una funcionalidad  integrada para usar redes pre-entrenadas para realizar
+inferencias ( es decir, no podemos usare OpenCV  para entrenar una red neuronal, pero puede usarlo para realizar 
+inferencias en una red entrenada)
+
+la función cv2.dnn.readNetFromCaffe es una función diseñada específicamente para leer un modelo caffemodel. necesita dos
+argumentos:
+- El primer argumento aquí es el archivo deploy.prototxt, que contiene la información de la arquitectura de la red,
+- El segundo archivo es el archivo res10_300x300_ssd_iter_140000_fp16.caffemodel, un archivo mucho más grande que 
+contiene los pesos del modelo que ha sido entrenado.
+
+en https://github.com/opencv/opencv/tree/4.x/samples/dnn tenemos varios ejemplos de modelos pre entrenados para diversas
+utilidades. Hay un archivo Léame que contiene una descripción e instrucciones sobre cómo usar el script para descargar 
+varios modelos. El script hace referencia a un archivo de un modelo con una referencia en el bloque de la parte superior 
+al modelo que va a utilizar y la URL para descargar el archivo de pesos, así como otros parámetros relacionados con como
+se entrenó ese modelo como el factor de escala, alto, ancho y rgb.
+
+Cuando llamamos a este método readNetFromCaffe, regresa para una instancia de la red neuronal, cuyo objeto se usará a 
+continuación para realizar inferencias en nuestras imágenes de prueba de la transmisión de video'
+'''
+net = cv2.dnn.readNetFromCaffe("deploy.prototxt", "res10_300x300_ssd_iter_140000_fp16.caffemodel")
+
+'''Identifica los parámetros del modelo que se asociaron con la forma en que se realizó el modelo entrenado siendo 
+importante porque cualquier imagen que pasemos a través del modelo para realizar la inferencia también deben procesarse
+de la misma manera que se procesaron las imágenes de entrenamiento.'''
+in_width = 300  # se usaron imágenes de 300x300 para entrenar este modelo
+in_height = 300
+mean = [104, 117, 123]  # lista de valores medios de los canales de color de las imágenes usadas en el entrenamiento
+conf_threshold = 0.7  # Umbral de competencia, es un valor que determinará la sensibilidad de las detecciones
+
+while cv2.waitKey(1) != 27:  # mientras no pulsemos la tecla con ord 27 (esc)
+    has_frame, frame = source.read()  # leemos un fotograma del vídeo
+    if not has_frame:  # lo comprobamos
+        break
+    frame = cv2.flip(frame, 1)  # giramos horizontalmente el fotograma para mejor interpretación visual de las señales
+    # se recupera el tamaño del fotograma
+    frame_height = frame.shape[0]
+    frame_width = frame.shape[1]
+
+    # Cree un blob 4D a partir de un fotograma.
+    '''Estamos haciendo un preprocesamiento en el fotograma, llamando a este método blobFromImage. lo que 
+    realiza es un preprocesamiento en la imagen de entrada y ponerla en el formato adecuado para que luego podamos 
+    realizar inferencias en esa imagen. argumentos:
+    - fotograma de la imagen
+    - factor de escala (1.0) no tiene que ser el mismo siempre
+    - ancho y alto del fotograma (300x300)
+    - valor medio que se va a restar de todos los fotogramas
+    - cambio de flag swapRB (rojo azul), en este caso no es necesario porque caffemodel y OpenCV usan la misma conveción
+     para los 3 canales de color
+    - Recorte de argumento de entrada, indica que puede recortar su imagen de entrada para que tenga el tamaño correcto 
+    o puede cambiar su tamaño, al ponerlo a False, significa que simplemente vamos a cambiar el tamaño de la imagen para
+     300x300
+     La llamada a la función devuelve una representación del blob del fotograma con el pre-procesamiento realizado'''
+    blob = cv2.dnn.blobFromImage(frame, 1.0, (in_width, in_height), mean, swapRB=False, crop=False)
+    # Corremos el modelo
+    net.setInput(blob)  # pasamos el blob a esta función, establecemos la entrada, prepara para la inferencia
+    detections = net.forward()  # Avanza a través de la red, realiza la inferencia sobre la representación del fotograma
+
+    for i in range(detections.shape[2]):  # para las detecciones devueltas por la inferencia las recorre
+        confidence = detections[0, 0, i, 2]
+        # Determina si la competencia de una detección particular excede el umbral de detección establecido
+        if confidence > conf_threshold:
+            '''si lo hace profundiza y consulta en la lista de detecciones las coordenadas del fotograma de esa  
+            detección en particular.'''
+            x_left_bottom = int(detections[0, 0, i, 3] * frame_width)
+            y_left_bottom = int(detections[0, 0, i, 4] * frame_height)
+            x_right_top = int(detections[0, 0, i, 5] * frame_width)
+            y_right_top = int(detections[0, 0, i, 6] * frame_height)
+            '''Genera un cuadro delimitador ( rectángulo) con los puntos de coordenadas obtenidos, así como un texto con
+             el % de confiaza de la detección'''
+            cv2.rectangle(frame, (x_left_bottom, y_left_bottom), (x_right_top, y_right_top), (0, 255, 0))
+            label = "Confidence: %.4f" % confidence
+            label_size, base_line = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+            # y lo dibuja en el fotograma
+            cv2.rectangle(frame, (x_left_bottom, y_left_bottom - label_size[1]),
+                                (x_left_bottom + label_size[0], y_left_bottom + base_line),
+                                (255, 255, 255), cv2.FILLED)
+            cv2.putText(frame, label, (x_left_bottom, y_left_bottom),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+
+    '''Una vez que ha terminado de procesar todas las detecciones, llama a getPerfProfile, que devuelve el tiempo 
+    necesitado para realizar la inferencia, lo convertimos a milisegundos y lo introduce en la imagen'''
+    t, _ = net.getPerfProfile()
+    label = 'Inference time: %.2f ms' % (t * 1000.0 / cv2.getTickFrequency())
+    cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+    cv2.imshow(win_name, frame)  # muestra el fotograma relleno en la ventana de salida
+
+source.release()
+cv2.destroyWindow(win_name)
+
+# !/usr/bin/env python
+# coding: utf-8
+
+# ***************************************************************
+# ***** 35 Detectores de disparo único (SSD) con OpenCV Caffemodel
+# *****************************************************************
+# ####**En esta lección aprenderemos a usar modelos pre-entrenados para implementar un SSD en OpenCV**
+# Fuente - https://github.com/datitran/object_detector_app/tree/master/object_detection
+'''
+SSD significa detección de caja múltiple de un solo disparo. "un solo disparo" se refiere a que vamos a hacer un único
+pase hacia adelante por la red neuronal para realizar inferencias y, sin embargo, detectar múltiples objetos dentro de
+una imagen. Al igual que otros tipos de redes, los modelos SSD se pueden entrenar con diferentes estructuras troncales
+arquitectónicas, lo que esencialmente significa que puede modelar un solo concepto pero usar diferentes columnas
+dependiendo de la solicitud.
+
+Entonces, en este caso, estamos usando una arquitectura de red móvil, que es un modelo más pequeño diseñado para
+dispositivos móviles.
+'''
+# Nuestra configuración, importar librerías, crear nuestra función Imshow y descargar nuestras imágenes
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+
+# Definir nuestra función imshow
+def imshow(title="Image", image=None, size=10):
+    w, h = image.shape[0], image.shape[1]
+    aspect_ratio = w / h
+    plt.figure(figsize=(size * aspect_ratio, size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
+
+
+'''# Descargar y descomprimir nuestras imágenes
+get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
+get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/SSDs.zip')
+get_ipython().system('unzip -qq images.zip')
+get_ipython().system('unzip -qq SSDs.zip')
+'''
+
+# Descargar archivos del repositorio oficial de TensorFlow, con numerosos modelos disponibles
+# https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
+# Utilizamos un modelo TensorFlow de TensorFlow modelo de detección de objetos zoo se puede utilizar para detectar
+# objetos de 90 clases:
+# http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_11_06_2017.tar.gz
+#
+# La definición del grafo de texto debe tomarse de opencv_extra:
+# https://github.com/opencv/opencv_extra/tree/master/testdata/dnn/ssd_mobilenet_v1_coco.pbtxt
+## **Encuentra otros modelos preentrenados aquí**
+# https://github.com/tensorflow/models/tree/master/research/object_detection/samples/configs
+
+
+# Cargar nuestras imágenes
+
+# frame = cv2.imread('./images/elephant.jpg')
+# frame = cv2.imread('./images/Volleyball.jpeg')
+# frame = cv2.imread('./images/coffee.jpg')
+# frame = cv2.imread('./images/hilton.jpeg')
+frame = cv2.imread('./images/tommys_beers.jpeg')
+imshow("original", frame)
+
+print("Running our Single Shot Detector on our image...")
+# Hacer una copia de nuestra imagen cargada
+image = frame.copy()
+
+# Establecer las anchuras y alturas que se necesitan para la entrada en nuestro modelo
+inWidth = 300
+inHeight = 300
+WHRatio = inWidth / float(inHeight)
+
+# Estos son necesarios para el preprocesamiento de nuestra imagen
+inScaleFactor = 0.007843
+meanVal = 127.5
+
+# Apuntar a las rutas de nuestros pesos y la arquitectura del modelo en un búfer de protocolo
+prototxt = "modelos/SSDs/ssd_mobilenet_v1_coco.pbtxt"  # Esta es la definición del modelo,solo la descripción del modelo
+weights = "modelos/SSDs/frozen_inference_graph2.pb"
+
+# Número de clases
+num_classes = 90
+
+# Umbral de probabilidad
+thr = 0.5
+
+# *****  leer el modelo de Tensorflow
+# Toma como entrada, un archivo de modelo y el archivo de configuración y nos devolverá una instancia de la red
+net = cv2.dnn.readNetFromTensorflow(weights, prototxt)
+
+'''Hay una gran diferencia entre un detector de objetos de aprendizaje profundo y un objeto de visión artificial 
+tradicional ( los revisados hasta ahora) Solíamos tener un detector para cada clase, por ejemplo, teníamos un detector 
+de rostros, un detector de personas y así sucesivamente, todos modelos separados. Pero con los modelos de aprendizaje 
+profundo, tenemos una enorme capacidad para aprender. Por lo tanto, un solo modelo puede detectar múltiples objetos en 
+una amplia gama de ángulos de aspecto y escalas, lo que es la verdadera belleza del aprendizaje profundo'''
+# ***** Comprobar las etiquetas de la clase
+swapRB = True
+classNames = {0: 'background',
+              1: 'person', 2: 'bicycle', 3: 'car', 4: 'motorcycle', 5: 'airplane', 6: 'bus',
+              7: 'train', 8: 'truck', 9: 'boat', 10: 'traffic light', 11: 'fire hydrant',
+              13: 'stop sign', 14: 'parking meter', 15: 'bench', 16: 'bird', 17: 'cat',
+              18: 'dog', 19: 'horse', 20: 'sheep', 21: 'cow', 22: 'elephant', 23: 'bear',
+              24: 'zebra', 25: 'giraffe', 27: 'backpack', 28: 'umbrella', 31: 'handbag',
+              32: 'tie', 33: 'suitcase', 34: 'frisbee', 35: 'skis', 36: 'snowboard',
+              37: 'sports ball', 38: 'kite', 39: 'baseball bat', 40: 'baseball glove',
+              41: 'skateboard', 42: 'surfboard', 43: 'tennis racket', 44: 'bottle',
+              46: 'wine glass', 47: 'cup', 48: 'fork', 49: 'knife', 50: 'spoon',
+              51: 'bowl', 52: 'banana', 53: 'apple', 54: 'sandwich', 55: 'orange',
+              56: 'broccoli', 57: 'carrot', 58: 'hot dog', 59: 'pizza', 60: 'donut',
+              61: 'cake', 62: 'chair', 63: 'couch', 64: 'potted plant', 65: 'bed',
+              67: 'dining table', 70: 'toilet', 72: 'tv', 73: 'laptop', 74: 'mouse',
+              75: 'remote', 76: 'keyboard', 77: 'cell phone', 78: 'microwave', 79: 'oven',
+              80: 'toaster', 81: 'sink', 82: 'refrigerator', 84: 'book', 85: 'clock',
+              86: 'vase', 87: 'scissors', 88: 'teddy bear', 89: 'hair drier', 90: 'toothbrush'}
+
+# Crear nuestra imagen de entrada blob necesaria para la entrada en nuestra red
+# Crea un blob a partir de la imagen,
+'''cuando preparamos una imagen para la inferencia, necesitamos realizar cualquier preprocesamiento en esa archivo 
+que se realizó en el conjunto de entrenamiento. Esta función contiene varios argumentos relacionados con el 
+preprocesamiento requerido.
+- La imagen, 
+- Factor de escala, establecido en uno que indica que el conjunto de entrenamiento no se le realizó ninguna 
+  escala especial.
+- tamaño de las imágenes de entrenamiento, (dim=300) por lo que la imagen de prueba, 
+  deberán ser remodelados de acuerdo con este tamaño.
+- valor medio, Si a las imágenes de entrenamiento se les hubiera aplicado un valor medio sustraído, entonces esto 
+ habría sido otro vector, estas imágenes no requieren ninguna resta de medios, simplemente estamos indicando 0.
+- swapRB por si queremos o no cambiar  loa canales de colores rojo y azul. EN este ejemplo queremos hacer eso, ya 
+  que las imágenes de entrenamiento usan una convención diferente que lo que usa OpenCV.
+- Flag de recorte, que se establece como predeterminada, es decir, las imágenes simplemente cambiarán de tamaño en 
+lugar de recortarlas a la derecha.
+Esta función nos devuelve una representación de blob de esa imagen que ha sido preprocesada, con lo que hay un paso 
+de procesamiento previo, y luego también hay un paso de conversión de formato'''
+blob = cv2.dnn.blobFromImage(frame, inScaleFactor, (inWidth, inHeight), (meanVal, meanVal, meanVal), swapRB)
+net.setInput(blob)
+
+# Pasar nuestra imagen/blob de entrada a la red
+detections = net.forward()
+
+# Recorta el marco si es necesario, ya que no redimensionamos la entrada sino que tomamos una entrada cuadrada
+cols = frame.shape[1]
+rows = frame.shape[0]
+
+if cols / float(rows) > WHRatio:
+    cropSize = (int(rows * WHRatio), rows)
+else:
+    cropSize = (cols, int(cols / WHRatio))
+
+y1 = int((rows - cropSize[1]) / 2)
+y2 = y1 + cropSize[1]
+x1 = int((cols - cropSize[0]) / 2)
+x2 = x1 + cropSize[0]
+frame = frame[y1:y2, x1:x2]
+
+cols = frame.shape[1]
+rows = frame.shape[0]
+
+# Iterar sobre cada detección
+for i in range(detections.shape[2]):
+    confidence = detections[0, 0, i, 2]  # y sus puntuaciones
+    # Una vez que la confianza es mayor que el umbral obtenemos nuestra caja delimitadora es decir, Comprueba si la
+    # detección es de buena calidad
+    if confidence > thr:
+        class_id = int(detections[0, 0, i, 1])  # recupera su ID de clase
+
+        # Recuperar las coordenadas originales de las coordenadas normalizadas para el cuadro delimitador
+        xLeftBottom = int(detections[0, 0, i, 3] * cols)
+        yLeftBottom = int(detections[0, 0, i, 4] * rows)
+        xRightTop = int(detections[0, 0, i, 5] * cols)
+        yRightTop = int(detections[0, 0, i, 6] * rows)
+
+        # Dibujar nuestro cuadro delimitador sobre nuestra imagen
+        cv2.rectangle(frame, (xLeftBottom, yLeftBottom), (xRightTop, yRightTop),
+                      (0, 255, 0), 3)
+        # Obtenemos los nombres de nuestras clases y los ponemos sobre nuestra imagen (usando un fondo blanco)
+        if class_id in classNames:
+            label = classNames[class_id] + ": " + str(confidence)
+            labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+
+            yLeftBottom = max(yLeftBottom, labelSize[1])
+            cv2.rectangle(frame, (xLeftBottom, yLeftBottom - labelSize[1]),
+                          (xLeftBottom + labelSize[0], yLeftBottom + baseLine),
+                          (255, 255, 255), cv2.FILLED)
+            cv2.putText(frame, label, (xLeftBottom, yLeftBottom),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+
+# Mostrar nuestras detecciones
+imshow("detections", frame)
+
+
+# ********************************************************
+# ***** 35C Detección de video mediante aprendizaje profundo
+# ********************************************************
+# 1.Arquitectura: Multi-Box (SSD) basado en Mobilenet
+# 2.Marco: Tensorflow
+'''
+SSD significa detección de caja múltiple de un solo disparo. "un solo disparo" se refiere a que vamos a hacer un único
+pase hacia adelante por la red neuronal para realizar inferencias y, sin embargo, detectar múltiples objetos dentro de
+una imagen. Al igual que otros tipos de redes, los modelos SSD se pueden entrenar con diferentes estructuras troncales
+arquitectónicas, lo que esencialmente significa que puede modelar un solo concepto pero usar diferentes columnas
+dependiendo de la solicitud.
+
+Entonces, en este caso, estamos usando una arquitectura de red móvil, que es un modelo más pequeño diseñado para
+dispositivos móviles.
+
+# Descargar archivos del repositorio oficial de TensorFlow, con numerosos modelos disponibles
+https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
+
+**The cell given below downloads a mobilenet model**
+## Download mobilenet model file
+The code below will run on Linux / MacOS systems.
+Please download the file http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz
+
+Uncompress it and put it in models folder.
+'''
+import cv2
+import sys
+
+# Establece el índice para la cámara si no se introduce otro por parámetro.
+s = 0
+# s = 'video/pr.mp4'
+# s = 'rtsp://10.9.0.31/videodevice'
+if len(sys.argv) > 1:
+    s = sys.argv[1]
+
+# crea un objeto de captura de vídeo
+source = cv2.VideoCapture(s)
+
+# crea una ventana de salida para enviar todos los resultados a la pantalla
+win_name = 'Prueba_de_concepto'
+cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
+
+# **** Escribir el vídeo usando OpenCV ( ojo con no haber ya recorrido el objeto de video)
+'''
+Para escribir el video, debe crear un objeto de videowriter con los parámetros correctos.
+
+Sintaxis de la función
+VideoWriter objeto = cv.VideoWriter (nombre de archivo, fourcc, fps, frameSize)
+Parámetros
+-filename: Nombre del archivo de vídeo de salida.
+-fourcc: código de códec de 4 caracteres que se utiliza para comprimir los fotogramas.
+ Por ejemplo, VideoWriter::fourcc('P','I','M','1') es un códec MPEG-1, VideoWriter::fourcc('M','J','P','G ') es un códec
+ jpeg de movimiento, etc. La lista de códigos se puede obtener en la página Video Codecs by FOURCC. El backend FFMPEG 
+ con contenedor MP4 usa de forma nativa otros valores como código fourcc: consulte ObjectType, por lo que puede recibir 
+ un mensaje de advertencia de OpenCV sobre la conversión del código fourcc.
+- fps: velocidad de fotogramas de la transmisión de video creada.
+- frameSize: Tamaño de los fotogramas de vídeo tupla (ancho,alto).
+
+*El tamaño del marco es importante porque deben ser las dimensiones de los marcos que tiene en la memoria que desea 
+ escribir en el disco
+
+
+Lo primero que vamos a hacer es usar el objeto de captura de video para llamar a este método de get(), que
+nos va a recuperar las dimensiones del cuadro de video que tenemos en memoria.'''
+# Se obtienen las resoluciones predeterminadas del cuadro, int() Convierte las resoluciones de float a entero
+frame_width = int(source.get(3))  # en 3 guarda el ancho
+frame_height = int(source.get(4))  # en 4 guarda el alto
+
+# Define el códec y crea el objeto VideoWriter.
+out_mp4 = cv2.VideoWriter('Video_camara.mp4', cv2.VideoWriter_fourcc(*'XVID'), 10, (frame_width, frame_height))
+
+# frozen_inference_graph2.pb, que es el archivo de pesos para el modelo.
+modelFile = "modelos/SSDs/frozen_inference_graph2.pb"
+# Archivo de configuración para la red (Ultimo encontrado)
+configFile = "modelos/SSDs/ssd_mobilenet_v2_coco_2018_03_29.pbtxt"
+# etiquetas de clase para el conjunto de datos que se usó para entrenar este modelo
+classFile = "modelos/SSDs/coco_class_labels.txt"
+
+'''Hay una gran diferencia entre un detector de objetos de aprendizaje profundo y un objeto de visión artificial 
+tradicional ( los revisados hasta ahora) Solíamos tener un detector para cada clase, por ejemplo, teníamos un detector 
+de rostros, un detector de personas y así sucesivamente, todos modelos separados. Pero con los modelos de aprendizaje 
+profundo, tenemos una enorme capacidad para aprender. Por lo tanto, un solo modelo puede detectar múltiples objetos en 
+una amplia gama de ángulos de aspecto y escalas, lo que es la verdadera belleza del aprendizaje profundo'''
+
+# ***** Comprobar las etiquetas de la clase
+with open(classFile) as fp:
+    labels = fp.read().split("\n")
+print(labels)
+
+# *****  leer el modelo de Tensorflow
+# Toma como entrada, un archivo de modelo y el archivo de configuración y nos devolverá una instancia de la red
+net = cv2.dnn.readNetFromTensorflow(modelFile, configFile)
+
+# ***** Detectar Objetos
+# Definimos una función para detectar archivos, Para cada archivo en el directorio
+def detect_objects(net, im):  # toma como entrada la instancia de la red y la imagen
+    dim = 300
+
+    # Crea un blob a partir de la imagen,
+    '''cuando preparamos una imagen para la inferencia, necesitamos realizar cualquier preprocesamiento en esa archivo 
+    que se realizó en el conjunto de entrenamiento. Esta función contiene varios argumentos relacionados con el 
+    preprocesamiento requerido.
+    - La imagen, 
+    - Factor de escala, establecido en uno que indica que el conjunto de entrenamiento no se le realizó ninguna 
+      escala especial.
+    - tamaño de las imágenes de entrenamiento, (dim=300) por lo que la imagen de prueba, 
+      deberán ser remodelados de acuerdo con este tamaño.
+    - valor medio, Si a las imágenes de entrenamiento se les hubiera aplicado un valor medio sustraído, entonces esto 
+     habría sido otro vector, estas imágenes no requieren ninguna resta de medios, simplemente estamos indicando 0.
+    - swapRB por si queremos o no cambiar  loa canales de colores rojo y azul. EN este ejemplo queremos hacer eso, ya 
+      que las imágenes de entrenamiento usan una convención diferente que lo que usa OpenCV.
+    - Flag de recorte, que se establece como predeterminada, es decir, las imágenes simplemente cambiarán de tamaño en 
+    lugar de recortarlas a la derecha.
+    Esta función nos devuelve una representación de blob de esa imagen que ha sido preprocesada, con lo que hay un paso 
+    de procesamiento previo, y luego también hay un paso de conversión de formato'''
+    blob = cv2.dnn.blobFromImage(im, 1.0, size=(dim, dim), mean=(0, 0, 0), swapRB=True, crop=False)
+
+    # pasa el blob a la red neuronal como entrada
+    net.setInput(blob)
+
+    # realiza la predicción, se realiza la inferencia en la imagen mediante el método net.forward()
+    objects = net.forward()
+    return objects
+
+
+def display_text(im, text, x, y):  # toma le fotograma, el texto y coordenadas
+    '''anotará un cuadro delimitador con la etiqueta de clase dibujando un rectángulo negro y lo  mete en el fotograma
+    con algún texto que indique la etiqueta de clase dentro del negro'''
+    # Obtener el tamaño del texto
+    textSize = cv2.getTextSize(text, FONTFACE, FONT_SCALE, THICKNESS)
+    dim = textSize[0]
+    baseline = textSize[1]
+
+    # Usa el tamaño del texto para crear un rectángulo negro
+    cv2.rectangle(im, (x, y - dim[1] - baseline), (x + dim[0], y + baseline), (0, 0, 0), cv2.FILLED);
+    # Display text inside the rectangle
+    cv2.putText(im, text, (x, y - 5), FONTFACE, FONT_SCALE, (0, 255, 255), THICKNESS, cv2.LINE_AA)
+
+
+# **** Mostrar Objetos
+# configuración del texto
+FONTFACE = cv2.FONT_HERSHEY_SIMPLEX
+FONT_SCALE = 0.7
+THICKNESS = 1
+
+
+# toma el fotograma, una lista de objetos detectados y el umbral de detección
+def display_objects(im, objects, threshold=0.25):
+    rows = im.shape[0]
+    cols = im.shape[1]
+
+    # NUEVO probar para fallo
+    WHRatio = 330/300
+    # Recorta el marco si es necesario, ya que no redimensionamos la entrada sino que tomamos una entrada cuadrada
+    cols = im.shape[1]
+    rows = im.shape[0]
+
+    if cols / float(rows) > WHRatio:
+        cropSize = (int(rows * WHRatio), rows)
+    else:
+        cropSize = (cols, int(cols / WHRatio))
+
+    y1 = int((rows - cropSize[1]) / 2)
+    y2 = y1 + cropSize[1]
+    x1 = int((cols - cropSize[0]) / 2)
+    x2 = x1 + cropSize[0]
+    im = im[y1:y2, x1:x2]
+
+    cols = frame.shape[1]
+    rows = frame.shape[0]
+    # fin nuevo
+
+    # Para cada objeto detectado
+    for i in range(objects.shape[2]):
+        # Encuentra la clase y la confianza
+        classId = int(objects[0, 0, i, 1])  # recupera su ID de clase
+        score = float(objects[0, 0, i, 2])  # y sus puntuaciones
+
+        # Recuperar las coordenadas originales de las coordenadas normalizadas para el cuadro delimitador
+        x = int(objects[0, 0, i, 3] * cols)
+        y = int(objects[0, 0, i, 4] * rows)
+        w = int(objects[0, 0, i, 5] * cols - x)
+        h = int(objects[0, 0, i, 6] * rows - y)
+
+        # Comprueba si la detección es de buena calidad
+        if score > threshold:
+            display_text(im, "{}".format(labels[classId]), x, y)  # llama a la función arriba definida
+            cv2.rectangle(im, (x, y), (x + w, y + h), (255, 255, 255), 2)  # introduce en la imagen un rectángulo blanco
+
+    return im
+
+
+while cv2.waitKey(1) != 27:  # mientras no pulsemos la tecla con ord 27 (esc)
+    try:
+        has_frame, frame = source.read()  # leemos un fotograma del vídeo
+        if not has_frame:  # lo comprobamos
+            break
+        # frame = cv2.flip(frame, 1)  # giramos horizontalmente el fotograma para mejor interpretación visual de las señales
+        # se recupera el tamaño del fotograma
+        frame_height = frame.shape[0]
+        frame_width = frame.shape[1]
+
+        objects = detect_objects(net, frame)
+
+
+
+        frame = display_objects(frame, objects, 0.2)
+
+        '''Una vez que ha terminado de procesar todas las detecciones, llama a getPerfProfile, que devuelve el tiempo 
+        necesitado para realizar la inferencia, lo convertimos a milisegundos y lo introduce en la imagen'''
+        t, _ = net.getPerfProfile()
+        label = 'Inference time: %.2f ms' % (t * 1000.0 / cv2.getTickFrequency())
+        cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+        cv2.imshow(win_name, frame)  # muestra el fotograma relleno en la ventana de salida
+
+        # **** Escribe cada frame en el fichero
+        out_mp4.write(frame)
+
+    except Exception as e:
+        print(e)
+
+
+'''Cuando todo esté listo, liberamos los objetos VideoCapture y VideoWriter'''
+source.release()
+out_mp4.release()
+cv2.destroyWindow(win_name)
+
+# *******************************************************************
+# *****35D Estimacion de la pose humana mediante el aprendizaje profundo
+# *******************************************************************
+'''
+La estimación de la pose humana puede ser difícil:
+ - Los contornos es no siempre son muy visibles
+ - la ropa u otra los objetos pueden oscurecer aún más la imagen.
+ - la complejidad añadida de no solo identificar los puntos clave, sino también asociarlos con las personas adecuadas
+
+Usaremos el modelo Open Pose Cafe que se entrenó en el multipropósito conjunto de datos de imagen, y lo haremos usando
+una sola imagen, señalando antes que la estimación de la pose humana a menudo se aplica a las transmisiones de video
+para varias aplicaciones, como entrenadores inteligentes, por ejemplo.
+'''
+import cv2
+import time
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+from IPython import get_ipython
+
+#
+# # Cargamos el Modelo  si no está en el directorio
+# if not os.path.isdir('model'):
+#   os.mkdir("model")
+#
+protoFile = "modelos/pose/pose_deploy_linevec_faster_4_stages.prototxt"
+weightsFile = "modelos/pose/pose_iter_160000.caffemodel"
+#
+# # Descargamos el modelo si no se encuentra en el directorio
+# if not os.path.isfile(protoFile):
+#   # Descargamos el archivo del prototipo
+#   get_ipython().system('wget https://raw.githubusercontent.com/CMU-Perceptual-Computing-Lab/openpose/master/models/pose/mpi/pose_deploy_linevec_faster_4_stages.prototxt -O $protoFile')
+#
+# if not os.path.isfile(weightsFile):
+#   # Descargamso el modelo con el archivo de lso pesos de la red
+#   get_ipython().system('wget http://posefs1.perception.cs.cmu.edu/OpenPose/models/pose/mpi/pose_iter_160000.caffemodel -O $weightsFile')
+
+# Especificamos el número de puntos en el modelo y el asociado de pares de ligamiento por sus índices
+'''
+cada uno  de estos bloques aquí se refiere a un vínculo en la anatomía humana:
+- 0 -> cabeza.
+- 1 -> cuello
+- 2 -> hombro derecho 
+- 3 -> codo derecho
+... y así sucesivamente
+
+Es un mapeo que el modelo usa durante el entrenamiento, y vamos a necesitar este mapeo para procesar la salida de la red
+'''
+nPoints = 15
+POSE_PAIRS = [[0, 1], [1, 2], [2, 3], [3, 4], [1, 5], [5, 6], [6, 7], [1, 14], [14, 8], [8, 9], [9, 10], [14, 11],
+              [11, 12], [12, 13]]
+# leemos el modelo pasamos el archivo del prototipo y los pesos y nos devolverá una instancia de la red que usaremos
+# en la inferencia
+net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
+
+# leemos la imagen
+im = cv2.imread("images/Tiger_Woods.png")
+im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)  # intercambiamos los canales de color rojo y azúl
+# recuperamos el tamaño de la imagen
+inWidth = im.shape[1]
+inHeight = im.shape[0]
+
+'''cuando preparamos una imagen para la inferencia, necesitamos realizar cualquier preprocesamiento en esa archivo 
+    que se realizó en el conjunto de entrenamiento. Esta función contiene varios argumentos relacionados con el 
+    preprocesamiento requerido.
+    - La imagen, 
+    - Factor de escala, que es el mismo factor de escala que se aplicó a las imágenes de entrenamiento. Así que 
+      necesitamos realizar esa misma transformación aquí en la imagen de entrada.
+    - tamaño de las imágenes de entrenamiento, (netInputSize) por lo que la imagen de prueba, 
+      deberán ser remodelados de acuerdo con este tamaño.
+    - valor medio, Si a las imágenes de entrenamiento se les hubiera aplicado un valor medio sustraído, entonces esto 
+     habría sido otro vector, estas imágenes no requieren ninguna resta de medios, simplemente estamos indicando 0.
+    - swapRB por si queremos o no cambiar  loa canales de colores rojo y azul. EN este ejemplo queremos hacer eso, ya 
+      que las imágenes de entrenamiento usan una convención diferente que lo que usa OpenCV.
+    - Flag de recorte, que se establece como predeterminada, es decir, las imágenes simplemente cambiarán de tamaño en 
+    lugar de recortarlas a la derecha.
+    Esta función nos devuelve una representación de blob de esa imagen que ha sido preprocesada, con lo que hay un paso 
+    de procesamiento previo, y luego también hay un paso de conversión de formato
+'''
+netInputSize = (368, 368)
+# Convertimos la imagen a blob
+inpBlob = cv2.dnn.blobFromImage(im, 1.0 / 255, netInputSize, (0, 0, 0), swapRB=True, crop=False)
+net.setInput(inpBlob)
+
+# realiza la predicción, se realiza la inferencia en la imagen mediante el método net.forward(), devuelve es la salida
+# de la red, que consta de mapas de confianza y afinidad.
+output = net.forward()
+
+# Mostrar mapas de probabilidad
+'''
+solo usaremos los mapas de confianza para realizar la clave detección de puntos en esta demostración. para cada punto, 
+vamos a recibir un mapa de probabilidad '''
+plt.figure(figsize=(20, 10))
+plt.title('Probability Maps of Keypoints')
+for i in range(nPoints):
+    probMap = output[0, i, :, :]  # recibimos ese mapa de probabilidad
+    '''y luego simplemente vamos a trazar cada uno de estos mapas de probabilidad y se podrá observar que están 
+    codificados por colores, sus mapas de calor que indican la probabilidad, de la ubicación del punto clave detectado.
+    El rojo es una probabilidad muy alta. en cada uno de estos mapas de probabilidad, la ubicación probable para un 
+    punto clave (punto cero, cabeza,  uno cuello  y así sucesivamente.
+    '''
+    displayMap = cv2.resize(probMap, (inWidth, inHeight), cv2.INTER_LINEAR)
+    plt.subplot(3, 5, i + 1);
+    plt.axis('off');
+    plt.imshow(displayMap, cmap='jet')
+
+'''Podemos usar estos mapas de probabilidad para superponer esos puntos clave en la imagen original. Y para hacer eso,
+vamos a tener que escalarlos en la misma escala que la imagen de entrada. Estamos usando la forma de salida de la red, 
+es decir, la forma de los mapas de probabilidad y también la forma de entrada de la imagen de prueba para calcular a 
+escala los factores X e Y que terminaremos usando a continuación para determinar la ubicación de los puntos clave en 
+la imagen de prueba real.
+Antes, vamos a necesitar determinar la ubicación de los puntos clave en el mapa de probabilidad
+'''
+
+# ***** Extraemos los puntos
+
+# X and Y Scale
+scaleX = float(inWidth) / output.shape[3]
+scaleY = float(inHeight) / output.shape[2]
+
+# Lista vacía para almacenar los puntos clave detectados
+points = []
+
+# Umbral de confianza
+threshold = 0.1
+# Recorre todos los puntos clave, y para cada punto clave, vamos a recuperar el mapa de probabilidad de la matriz de
+# salida de la red.
+for i in range(nPoints):
+    # Obtener mapa de probabilidad
+    probMap = output[0, i, :, :]
+
+    # Encuentra los máximos globales del probMap.
+    '''llamamos a la función de OpenCV cv2.minMaxLoc pasándole el mapa de probabilidad. Y esto va devolver La ubicación
+    del punto asociado con la máxima probabilidad.
+    * En point se encuentran las coordenadas del punto
+    '''
+    minVal, prob, minLoc, point = cv2.minMaxLoc(probMap)
+
+    '''Una vez que tengamos esa ubicación en las coordenadas del mapa de probabilidad, la multiplicaremos por los 
+    factores de escala X e Y que calculamos arriba para obtener la ubicación del punto clave en la imagen de prueba 
+    original.'''
+    # Escale el punto para que encaje en la imagen original
+    x = scaleX * point[0]
+    y = scaleY * point[1]
+
+    if prob > threshold:  # Si la probabilidad devuelta es mayor que el umbral
+        # Tomamos ese punto, agregándolo a la lista.
+        points.append((int(x), int(y)))
+    else:
+        points.append(None)
+
+# Y ahora estamos listos para renderizar esos puntos en la imagen de prueba.
+
+# **** Puntos de visualización y esqueleto
+# Estamos haciendo una copia de la imagen de entrada, en uno la llamamos punto y en otro esqueleto
+imPoints = im.copy()
+imSkeleton = im.copy()
+
+# **** Dibujamos puntos
+'''vamos a recorrer todos los puntos que fueron los que acabamos de crear en los bucles anteriores. Y esas son las 
+coordenadas de los puntos clave en el cuadro de coordenadas de la imagen de prueba.
+'''
+for i, p in enumerate(points):
+    # vamos a usar el círculo y el texto para dibujar y etiquetar esos puntos en la imagen de los puntos finales (izq)
+    cv2.circle(imPoints, p, 8, (255, 255, 0), thickness=-1, lineType=cv2.FILLED)
+    cv2.putText(imPoints, "{}".format(i), p, cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, lineType=cv2.LINE_AA)
+
+# dibujar esqueleto
+'''
+vamos a renderizar la vista de esqueleto (derecha del resultado). Con este ciclo for, estamos recorriendo todos los 
+pares de publicaciones, que definimos antes, y luego estamos recuperando esos pares y vamos a configurar esas dos 
+partes A y parte B aquí y luego utilizarlas como índices.
+'''
+for pair in POSE_PAIRS:
+    partA = pair[0]
+    partB = pair[1]
+    '''
+    Ingresamos la lista de puntos que creamos anteriormente, que contiene la lista de ubicaciones de puntos clave en la 
+    imagen de prueba Y ahora simplemente vamos a usar las funciones de círculo y línea CV abiertas para dibujar una 
+    línea desde un punto hasta el siguiente codificado por colores, además de dibujar un círculo en el primer punto 
+    clave en ese enlace.'''
+    if points[partA] and points[partB]:
+        cv2.line(imSkeleton, points[partA], points[partB], (255, 255, 0), 2)
+        cv2.circle(imSkeleton, points[partA], 8, (255, 0, 0), thickness=-1, lineType=cv2.FILLED)
+
+plt.figure(figsize=(20, 10))
+plt.subplot(121);
+plt.axis('off');
+plt.imshow(imPoints);  # Usamos plt.imshow para mostrar ambas imágenes
+# plt.title('Displaying Points')
+plt.subplot(122);
+plt.axis('off');
+plt.imshow(imSkeleton);
+# plt.title('Displaying Skeleton')
+plt.show()
+
+
 
 
 
