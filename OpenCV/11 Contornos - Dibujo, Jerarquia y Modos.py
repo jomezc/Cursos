@@ -1,8 +1,6 @@
-#!/usr/bin/env python
-# coding: utf-8
-#####################
-# 11 contornos ######
-#####################
+########################################################
+# 11 contornos, encontrar dibujar jerarquía modos ######
+########################################################
 # ####**En esta lección aprenderemos:**
 # 1. Usando findContours
 # 2. Dibujo de contornos
@@ -23,13 +21,8 @@ def imshow(title = "Image", image = None, size = 10):
     plt.title(title)
     plt.show()
 
-'''# Descarga y descomprime nuestras imágenes
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')'''
-
-
 # ## **¿Qué son los contornos?**
-# Los contornos son líneas o curvas continuas que limitan o cubren el límite total de un objeto en una imagen.
+# Los contornos son líneas o curvas continuas ¿bordes? que limitan o cubren el límite total de un objeto en una imagen.
 
 # Carguemos una imagen simple de placa de matrícula
 image = cv2.imread('images/LP.jpg')
@@ -41,12 +34,13 @@ imshow('Input Image', image)
 #
 # **Modos de recuperación**
 # - **RETR_LIST** - Recupera todos los contornos, pero no crea ninguna relación padre-hijo. Padres e hijos son iguales
-# bajo esta regla, y son solo contornos. es decir, todos pertenecen al mismo nivel de jerarquía.
-# - **RETR_EXTERNAL** - devuelve solo banderas externas extremas. Todos los contornos secundarios se dejan atrás.
+#                   bajo esta regla, y son solo contornos. es decir, todos pertenecen al mismo nivel de jerarquía.
+# - **RETR_EXTERNAL** - devuelve unicamente banderas EXTERNAS extremas. Todos los contornos secundarios se dejan atrás.
 # - **RETR_CCOMP** - Esta bandera recupera todos los contornos y los organiza en una jerarquía de 2 niveles. es decir,
-# los contornos externos del objeto (es decir, su límite) se colocan en la jerarquía-1. Y los contornos de los agujeros
-# dentro del objeto (si los hay) se colocan en la jerarquía-2. Si hay algún objeto dentro de él, su contorno se coloca
-# nuevamente en la jerarquía-1 solamente. Y su agujero en la jerarquía-2 y así sucesivamente.
+#                    los contornos externos del objeto (es decir, su límite) se colocan en la jerarquía-1. Y los
+#                    contornos de los agujeros dentro del objeto (si los hay) se colocan en la jerarquía-2. Si hay algún
+#                    objeto dentro de él, su contorno se coloca
+#                    nuevamente en la jerarquía-1 solamente. Y su agujero en la jerarquía-2 y así sucesivamente.
 # - **RETR_TREE** - Recupera todos los contornos y crea una lista de jerarquía familiar completa.
 #
 # **Opciones de método de aproximación**
@@ -59,7 +53,7 @@ image = cv2.imread('images/LP.jpg')
 # Convertir a escala de grises
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-# aplicamos el un umbral para modificar una imagen a una representación binaria ( visto en 09 y en 07 info bit)
+# aplicamos el umbral para modificar una imagen a una representación binaria ( visto en 09 y en 07 info bit)
 # se realiza porque las funciones de contorno funcionan mejor con el umbral de las imágenes y los binarios
 _, th2 = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 imshow('After thresholding', th2)
@@ -107,7 +101,7 @@ imshow('Contours overlaid on original image', image) # no encuentra
 print("Number of Contours found = " + str(len(contours)))  # Number of Contours found = 1
 
 
-# # **NOTA: Para que findContours funcione, el fondo debe ser negro y de primer plano (es decir, el texto o los objetos)**
+# # **NOTA: Para que findContours funcione, el fondo debe ser negro y de primer plano (es decir, el texto o los objetos)
 # #### De lo contrario, deberá invertir la imagen utilizando **cv2..bitwise_not(input_image)**
 # #### **Podemos usar Canny Edges en lugar de Thresholding**
 
@@ -133,8 +127,8 @@ print("Number of Contours found = " + str(len(contours)))
 
 ## ## **Recuerda estos pasos para contornear**
 # 1. Escala de grises
-# 2. Detección de umbral o Canny Edge para binarizar la imagen
 # **Nota:** Se recomienda desenfocar antes del Paso 2 para eliminar contornos ruidosos
+# 2. Detección de umbral o Canny Edge (bordes) para binarizar la imagen
 
 
 

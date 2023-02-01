@@ -1,3 +1,14 @@
+##### *******
+#the files are a combination of:
+- Compute Vision with OpenCV Python
+    https://www.udemy.com/course/computer-vision-with-opencv-official-opencv-free-course/
+- Rajeev Ratan's Modern Computer Vision™ PyTorch, Tensorflow2 Keras & OpenCV4
+    https://www.udemy.com/course/modern-computer-vision/ course
+- medium.com
+    https://medium.com/@balaajip/optical-character-recognition-99aba2dad314
+- original resources of oficial python and OpenCV packages included in each section
+#####
+
 #                          License Agreement
 #                         3-clause BSD License
 #
@@ -30,9 +41,3 @@
 # or tort (including negligence or otherwise) arising in any way out of
 # the use of this software, even if advised of the possibility of such damage.
 
-#Interpretación y explicación propia del curso procedente en www.udemy.com
-#Computer Vision with OpenCV Python | Official OpenCV Course
-
-##### *******
-# Also the files ending in RR are a realization of Rajeev Ratan's modern computer vision.com course on undemy.com
-#####

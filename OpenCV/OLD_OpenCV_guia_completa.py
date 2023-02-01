@@ -949,7 +949,7 @@ import sys
 # especificamos un índice de dispositivo de cámara predeterminado de cero.
 s = 0
 print(sys.argv)  # contiene los argumentos de la librería sys, por ejemplo 0 es la ruta
-# ['C:\\Users\\jgomcano\\PycharmProjects\\guiapython\\OpenCV\\Usando la camara en openCV\\Usando_camara_OpenCV.py']
+# ['C:\\Users\\jgomcano\\PycharmProjects\\guiapython\\OpenCV\\Usando la camara en openCV\\16 Usando_camara_OpenCV.py']
 # y simplemente estamos verificando si hubo una especificación de línea de comando para anular ese valor predeterminado.
 if len(sys.argv) > 1:
     s = sys.argv[1]

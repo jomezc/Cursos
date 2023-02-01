@@ -1,0 +1,6 @@
+Venv principal con conda:
+    OpenCV - > pip install opencv-contrib-python matplotlib IPython scikit-image pandas python-barcode qrcode pyzbar cmake dlib
+
+Por incompatibilidad de ultralytics un venv aparte:
+    Ultralytics -> pip install ultralitycs
+

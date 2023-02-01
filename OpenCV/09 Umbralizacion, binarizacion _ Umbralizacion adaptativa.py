@@ -1,17 +1,8 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 ########################################################################
 # 09 Umbralización, binarización y umbralización adaptativa ######
 ########################################################################
-# ####**En esta lección aprenderemos:**
-# 1. Imágenes binarizadas, estamos conviertiendo a binario los colores, los píxeles de una imagen a 0 o 1, mediante un
-#    algoritmo de sesión binaria.
-# 2. Métodos de Umbral
-# 3. Umbral adaptativo
-# 4. Umbral local de SkImage
-# In[1]:
 
+#Imágenes binarizadas, estamos conviertiendo a binario los colores, los píxeles de una imagen a 0 o 1, mediante un
 
 # Nuestra configuración, importar bibliotecas, crear nuestra función Imshow y descargar nuestras imágenes
 import cv2
@@ -28,20 +19,133 @@ def imshow(title = "Image", image = None, size = 10):
     plt.show()
 
 
-# ### **Métodos de umbral**
-#  explicación de que la binarización Convirtió pasa a blanco o negro una escala de grises de una imagen en mediante un
-#  umbral todo por encima de un cierto umbral se vuelve blanco y por debajo negro mediant eun algortimo , exisitiendo la
-#  operación binaria contraria ( en vez de blanco negro y viceversa).
-#  El truncamiento es que todo lo que está por encima d eun umbral se convierte en ese valor máximo del umbral
-#  TOZERO es que todo lo que es menor que el umbral se vuelve 0 y TOZERO_INV lo contrario
+# ******* Aplicación Operaciones bit a bit: manipulación de logotipos  ##########
+
+# **** Leer imagen en primer plano
+img_bgr = cv2.imread("images/coca-cola-logo.png")
+img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+plt.imshow(img_rgb)
+plt.show()
+print(img_rgb.shape)
+logo_w = img_rgb.shape[0]  # guardamos el ancho de la imagen
+logo_h = img_rgb.shape[1]  # guardamos el alto de la imagen
+
+# **** leer la imagen de fondo
+# Leer en la imagen del fondo del tablero de color
+img_background_bgr = cv2.imread("images/checkerboard_color.png")
+img_background_rgb = cv2.cvtColor(img_background_bgr, cv2.COLOR_BGR2RGB)
+
+# Establecer el ancho deseado (logo_w) y mantener la relación de aspecto de la imagen
+aspect_ratio = logo_w / img_background_rgb.shape[1]
+dim = (logo_w, int(img_background_rgb.shape[0] * aspect_ratio))
+
+# Cambiar el tamaño de la imagen de fondo al mismo tamaño que la imagen del logotipo
+img_background_rgb = cv2.resize(img_background_rgb, dim, interpolation=cv2.INTER_AREA)
+plt.imshow(img_background_rgb)
+plt.show()
+print(img_background_rgb.shape)
+
+# **** se cra una máscara de la imagen de primer plano
+img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2GRAY)
+
+'''vamos a pasar el logotipo aquí para ver el color, convertirlo a gris. y luego use la treshold para 
+crear una máscara binaria a partir de la imagen en escala de grises.Entonces esto solo va a contener valores de cero y 
+255.
+
+Umbralización o thresholding: Consiste en modificar una imagen a una representación binaria, por medio de la 
+modificación de los valores de los pixeles estableciendo un valor umbral, es decir realizar la Binarización,  pasar a 
+blanco o negro una escala de grises de una imagen en mediante un umbral todo por encima de un  cierto umbral se vuelve 
+blanco y por debajo negro mediante un algortimo , exisitiendo la operación binaria contraria ( en vez de blanco negro y 
+viceversa). 
+El truncamiento es que todo lo que está por encima d eun umbral se convierte en ese valor máximo del umbral
+TOZERO es que todo lo que es menor que el umbral se vuelve 0 y TOZERO_INV lo contrario
 # ![](https://raw.githubusercontent.com/rajeevratan84/ModernComputerVision/main/Screenshot%202020-11-17%20at%2012.57.55%20am.png)
 # ![](https://raw.githubusercontent.com/rajeevratan84/ModernComputerVision/main/Screenshot%202020-11-17%20at%2012.58.09%20am.png)
 # https://docs.opencv.org/master/d7/d4d/tutorial_py_thresholding.html
 
+sintaxis: 
+ret,thresh = cv2.threshold(img, umbral, valorMax , tipo)
 
+Los parámetros son los siguientes:
+- img es la imagen gris que va a ser analizada
+- umbral es el valor indicado a analizar en cada píxel
+- valorMax Valor que se coloca a un píxel si sobrepasa el umbral
+- tipo se elige un tipo de umbralización: THRESH_BINARY, THRESH_BINARY_INV, THRESH_TRUNC, THRESH_TOZERO], 
+  THRESH_TOZERO_INV, THRESH_OTSU.
+
+La función devuelve:
+- thresh imagen binarizada
+- ret valor del umbral
+
+THRESH_BINARY
+Y muestra que, si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que superaron 
+el umbral se les asigna el valor máximo establecido.
+
+THRESH_BINARY_INV
+si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que superaron el umbral se les 
+asigna cero 0 y a los que no superaron el umbral se les asigna el valor máximo establecido (maxval en este ejemplo es 
+255)
+
+THRESH_TRUNC
+Estas muestran que, si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que 
+superaron el umbral se les asigna el mismo valor del umbral y a los que no superaron el umbral se les asigna los mismos
+valores que tenían originalmente.
+
+THRESH_TOZERO
+si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que superaron el umbral 
+mantienen el valor de los pixeles originalmente, y cuando no superan el umbral se les asigna cero.
+
+THRESH_TOZERO_INV
+si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que superaron el umbral se les 
+asigna cero, y a los píxeles que no superaron el umbral se les asigna el mismo valor que originalmente tenías.
+.'''
+# Aplique un umbral global para crear una máscara binaria del logotipo
+retval, img_mask = cv2.threshold(img_gray, 127, 255, cv2.THRESH_BINARY)
+plt.imshow(img_mask, cmap="gray")
+plt.show()
+print(img_mask.shape)
+
+# **** Se invierte la máscara
+# Se cre una máscara inversa
 '''
-get_ipython().system('wget https://raw.githubusercontent.com/rajeevratan84/ModernComputerVision/main/scan.jpeg')
+Y luego vamos a realizar una operación similar aquí abajo, pero sin usar la función de umbral.
+Aunque podríamos haberlo hecho, podríamos haber usado la función de umbral aquí abajo y especificar un umbral
+máscara inversa binaria:
+retval2, img_mask2 = cv2.threshold(img_gray, 127, 255, cv2.THRESH_BINARY_INV)
+
+pero en su lugar podemos simplemente llamar a la función bitwise_not en la máscara de imagen para devolver la máscara 
+inversa
 '''
+img_mask_inv = cv2.bitwise_not(img_mask)
+plt.imshow(img_mask_inv, cmap="gray")
+plt.show()
+
+# **** Se aplica el fondo a la máscara
+'''para mostrar el fondo  "detrás" de las letras del logotipo se utiliza bitwise_and usando 
+la imagen de fondo consigo misma pero utilizando la máscara original creada pero solo la va a aplicar a la máscara, que 
+es las letras blancas en este caso, es decir vamos a hacer una comparación bit a bit entre estas dos imágenes y el valor
+devuelto de esa comparación será el de la imagen si los píxeles correspondientes en ambas imágenes son iguales solo en 
+las letras y en el resto 0 (negro), con esto obtenemos solo los colores que se muestran en el logotipo.'''
+img_background = cv2.bitwise_and(img_background_rgb, img_background_rgb, mask=img_mask)
+plt.imshow(img_background)
+plt.show()
+
+# **** Se aísla el primer plano de la imagen
+'''Aísle el primer plano (rojo de la imagen original) usando la máscara inversa consigo misma y aplicándolo a la mascara
+inversa con lo que se aplicará a toda la imagen la comparación de rojo = rojo menos a las letras, quedando éstas a 0
+(negro)'''
+img_foreground = cv2.bitwise_and(img_rgb, img_rgb, mask=img_mask_inv)
+plt.imshow(img_foreground)
+plt.show()
+
+# **** Se obtiene el resultado
+'''Ahora sumando las dos imagenes que acabamos de crear obtenemos el resultado del fondo rojo + las letras de colores'''
+result = cv2.add(img_background, img_foreground)
+plt.imshow(result)
+cv2.imwrite("logo_final.png", result[:, :, ::-1])
+plt.show()
+
+############
 
 # Cargar nuestra imagen en escala de grises
 image = cv2.imread('./images/scan.jpg',0)
@@ -118,7 +222,6 @@ imshow("Guassian Otsu's Thresholding", th3)
 # https://scikit-image.org/docs/stable/auto_examples/applications/plot_thresholding.html
 
 from skimage.filters import threshold_local
-
 image = cv2.imread('./images/scan.jpg')
 
 # Obtenemos el componente Valor del espacio de color HSV, lo necesita esta función

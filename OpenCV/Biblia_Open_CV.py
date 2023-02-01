@@ -1,10 +1,8 @@
-########################################################################
-# 01 Primeros pasos carga visualización ahorro y dimensiones RR ######
-########################################################################
-
 #!/usr/bin/env python
 # coding: utf-8
-
+###########################################################################
+# 01 Primeros pasos carga visualización guardado dimensiones grises  ######
+###########################################################################
 '''
 primera lección de OpenCV. Aquí aprenderemos a:
 1. Importar el modelo OpenCV en Python
@@ -16,23 +14,41 @@ primera lección de OpenCV. Aquí aprenderemos a:
 
 # Así es como importamos OpenCV, no podemos usar las funciones de OpenCV sin antes hacer esto
 import cv2
-
+from matplotlib import pyplot as plt
 
 # Veamos qué versión estamos ejecutando
 print(cv2.__version__)  # 4.7.0
 
 
-# ### **Descargando imagenes**
-''' comandos ipynb
-# Download and unzip our images
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')'''
-
-
 # ### **Cargamos las imagenes**
 # Cargue una imagen usando 'imread' especificando la ruta a la imagen
-image = cv2.imread('./images/castara.jpeg')
+'''
+OpenCV permite leer diferentes tipos de imágenes (JPG, PNG, etc). Puede cargar imágenes en escala de grises, imágenes 
+en color o también puede cargar imágenes con canal alfa. Utiliza la función cv2.imread() que tiene la siguiente 
+sintaxis:
+- retval = cv2.imread( nombre de archivo[, banderas] )
+- retval: Es la imagen si se carga correctamente. De lo contrario, es None. Esto puede suceder si el nombre del 
+  archivo es incorrecto o si el archivo está dañado.
 
+La función tiene 1 argumento de entrada obligatorio y un indicador opcional:
+
+- nombre de archivo: puede ser una ruta absoluta o relativa. Este es un argumento obligatorio.
+- Flags: estas banderas se utilizan para leer una imagen en un formato particular (por ejemplo, 
+            escala de grises/color/con canal alfa). Este es un argumento opcional con un valor predeterminado de cv2.
+            IMREAD_COLOR o 1 que carga la imagen como una imagen en color.
+Flags disponibles:
+
+- cv2.IMREAD_GRAYSCALE o 0: Carga la imagen en modo escala de grises
+- cv2.IMREAD_COLOR o 1: Carga una imagen a color. Se descuidará cualquier transparencia de la imagen. Es la bandera 
+  por defecto.
+- cv2.IMREAD_UNCHANGED o -1: Carga la imagen como tal, incluido el canal alfa.
+
+Documentación OpenCV
+**Imread:**https://docs.opencv.org/4.5.1/d4/da8/group__imgcodecs.html#ga288b8b3da0892bd651fce07b3bbd3a56
+ImreadModes: https://docs.opencv.org/4.5.1/d8/d6a/group__imgcodecs__flags.html#ga61d9b0126a3e57d9277ac48327799c80
+'''
+image = cv2.imread('./images/castara.jpeg')  # leer imagen
+img_NZ_bgr = cv2.imread("images/New_Zealand_Lake.jpg", cv2.IMREAD_COLOR)
 
 # ### **Mostramos las imagenes**
 from matplotlib import pyplot as plt
@@ -46,17 +62,58 @@ plt.show()
 
 
 # Vamos a crear una función simple para hacer que mostrar nuestras imágenes sea más simple y fácil.
-def imshow(title="", image = None):
-    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))  # cambio de color
-    plt.title(title)  # le damos un título a la imagen
-    plt.show()  # mostramos la imagen
+def imshow(title="Image", image=None, size=10):
+    w, h = image.shape[0], image.shape[1]  # desempaquetamos la relación de aspecto mediante el ancho y el alto
+    aspect_ratio = w / h  # calculamos la relación de aspecto
+    # para asegurar que se cumpla la relación de aspecto, multiplicamos el tamaño por la relación calculada como 1º
+    # parametro y le pasamos el tamaño a mostrar segundo para poder cambiar el tamaño de la imagen de salida
+    plt.figure(figsize=(size * aspect_ratio, size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
 
 
 # Vamos a probarlo
 imshow("Displaying Our First Image", image)
 
 
+# ***** mostrar la imagen con matploit o con opencv
+
+window1 = cv2.namedWindow("w1")  # creamos una ventana
+cv2.imshow('image', img_NZ_bgr, )  # llamamos al show de OpenCV, OJO como es el de Open cv se guarda y muestra en BGR
+cv2.waitKey(0)  # pulsar una tecla para cerrar la imagen OpenCV si 0, si ponemos numeros seran los segundos de espera
+
+# cv2.waitKey(8000)   # 8 segundos
+
+# keypress = cv2.waitKey(0)  # creamos una variable que contenga la primera tecla introducida
+# if keypress == ord('q'):   # si la tecla ( es en ascii) coincide con el ascii de q
+#     Alive = False
+
+cv2.destroyWindow(window1)  # destruimos la ventana creada
+
+
+
 # ### **Salvamos la imagen**
+# ***** Guardar imagen cv2.imwrite()
+'''
+Guardar la imagen es tan trivial como leer una imagen en OpenCV. Usamos la función cv2.imwrite() con dos argumentos. El 
+primero es el nombre del archivo, el segundo argumento es el objeto de la imagen.
+
+La función imwrite guarda la imagen en el archivo especificado. El formato de imagen se elige en función de la 
+extensión del nombre de archivo (consulte cv::imread para ver la lista de extensiones). En general, solo las imágenes 
+de 8 bits de un solo canal o de 3 canales (con orden de canales 'BGR') se pueden guardar con esta función.
+
+Sintaxis de la función
+cv2.imwrite (nombre de archivo, img [, parámetros])
+La función tiene 2 argumentos requeridos:
+
+- nombre de archivo: puede ser una ruta absoluta o relativa.
+- img: Imagen o Imágenes a guardar.
+Documentación OpenCV
+Imwrite: https://docs.opencv.org/4.5.1/d4/da8/group__imgcodecs.html#gabbc7ef1aa2edfaa87772f1202d67e0ce 
+**ImwriteFlags:**https://docs.opencv.org/4.5.1/d8/d6a/group__imgcodecs__flags.html#ga292d81be8d76901bff7988d18d2b42ac
+'''
+
 # Simplemente use 'imwrite' especificando el nombre del archivo y la imagen que se guardará
 cv2.imwrite('output.jpg', image)
 
@@ -67,12 +124,6 @@ cv2.imwrite('output.png', image)
 # ### **mostramos las dimensiones de la imagen**
 # Recuerda las imágenes son arrays::
 # ![](https://raw.githubusercontent.com/rajeevratan84/ModernComputerVision/main/array.png?token=ADLZD2HNEL33JAKTYRM3B5C7WMIV4)
-# Necesitamos usar numpy para realizar esta operación. No te preocupes, numpy se convertirá en uno de tus mejores amigos
-# si estás aprendiendo ciencia de datos y visión artificial.
-
-# Import numpy, librería numérica de arrays
-import numpy as np
-
 print(image.shape)  # (1280, 960, 3), es una estructura tridimensional, de ancho, alto y color
 
 # # Para acceder a una dimensión, simplemente indícela usando 0, 1 o 2.
@@ -86,52 +137,50 @@ print('Height of Image: {} pixels'.format(int(image.shape[0])))  # Height of Ima
 print('Width of Image: {} pixels'.format(int(image.shape[1])))  # Width of Image: 960 pixels
 print('Depth of Image: {} colors components'.format(int(image.shape[2])))  # Depth of Image: 3 colors components
 
-# !/usr/bin/env python
-# coding: utf-8
-######################################
-# 02 Imágenes en escalada grises ####
-######################################
-'''# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
-**Imágenes en escala de grises**
-En esta lección aprenderemos a:
-1. Convierte una imagen en color a escala de grises
-2. Ver el cambio de dimensiones entre las imágenes en escala de grises y en color
 
-# ### **Descargando imágenes**
-Si usa Google Colab, tendremos que **cargar nuestra imagen**.
-Colab es un entorno de Jupyther Notebook que se ejecuta en la **nube** usando los servidores de Google. Como tal,
-cualquier archivo que deseemos utilizar debe cargarse en sus servidores.'''
+# leer la imagen en escala de grises e introducirlo en la variable img
+img = cv2.imread('images/checkerboard_fuzzy_18x18.jpg', 0)  # cargamos la imagen con imread, 0 en escala de grises
+# Lo que se carga en mi memoria es una matriz 2D de Numpy que representa la imagen.
 
+plt.imshow(img, cmap='gray') # para que se muestren los colores correctamente
+plt.show()
+
+print(img)  # pintarlo en consola
+'''
+[[  0   0  15  20   1 134 233 253 253 253 255 229 130   1  29   2   0]
+ [  0   1   5  18   0 137 232 255 254 247 255 228 129   0  24   2   0]
+ [  7   5   2  28   2 139 230 254 255 249 255 226 128   0  27   3   2]
+ [ 25  27  28  38   0 129 236 255 253 249 251 227 129   0  36  27  27]
+ [  2   0   0   4   2 130 239 254 254 254 255 230 126   0   4   2   0]
+ [132 129 131 124 121 163 211 226 227 225 226 203 164 125 125 129 131]
+ [234 227 230 229 232 205 151 115 125 124 117 156 205 232 229 225 228]
+ [254 255 255 251 255 222 102   1   0   0   0 120 225 255 254 255 255]
+ [254 255 254 255 253 225 104   0  50  46   0 120 233 254 247 253 251]
+ [252 250 250 253 254 223 105   2  45  50   0 127 223 255 251 255 251]
+ [254 255 255 252 255 226 104   0   1   1   0 120 229 255 255 254 255]
+ [233 235 231 233 234 207 142 106 108 102 108 146 207 235 237 232 231]
+ [132 132 131 132 130 175 207 223 224 224 224 210 165 134 130 136 134]
+ [  1   1   3   0   0 129 238 255 254 252 255 233 126   0   0   0   0]
+ [ 20  19  30  40   5 130 236 253 252 249 255 224 129   0  39  23  21]
+ [ 12   6   7  27   0 131 234 255 254 250 254 230 123   1  28   5  10]
+ [  0   0   9  22   1 133 233 255 253 253 254 230 129   1  26   2   0]
+ [  0   0   9  22   1 132 233 255 253 253 254 230 129   1  26   2   0]]
+
+Son 18 filas y 18 columnas, y cada uno de los valores representa las intensidades de píxel para cada uno de esos píxeles
+Y observe que están en el rango de 0-255 porque esta imagen está siendo representada por un entero  de8-bit unsigned 
+integer (0 a 255).
+'''
+
+###########################
+# 02 Espacios de color ####
+###########################
 import cv2
 from matplotlib import pyplot as plt
-
+'''
+from IPython.display import Image  # nos permitirá mostrar y renderizar imágenes directamente en el cuaderno.
+Image("images/coca-cola-logo.png")  # mostrar el logo de coca-cola (en notebook) solo .'''
 
 # Definir nuestra función imshow
-def imshow(title="Image", image=None, size=10):
-    w, h = image.shape[0], image.shape[1]  # desempaquetamos la relación de aspecto mediante el ancho y el alto
-    aspect_ratio = w / h  # calculamos la relación de aspecto
-    '''# para asegurar que se cumpla la relación de aspecto, multiplicamos el tamaño por la relación calculada como 1º 
-    parametro y le pasamos el tamaño a mostrar segundo para poder cambiar el tamaño de la imagen de salida'''
-    plt.figure(figsize=(size * aspect_ratio, size))
-    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    plt.title(title)
-    plt.show()
-
-
-'''# Download and unzip our images (colab)
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')'''
-
-# Load our input image
-image = cv2.imread('./images/castara.jpeg')
-imshow("Castara, Tobago", image)
-
-# In[4]:
-
-
-image.shape[:2]  # (1200, 1920) (height, width)
-
-
 def imshow(title="", image=None, size=10):
     # The line below is changed from w, h to h, w
     h, w = image.shape[0], image.shape[1]
@@ -142,83 +191,158 @@ def imshow(title="", image=None, size=10):
     plt.show()
 
 
-imshow("Castara, Tobago", image)
+img_NZ_bgr = cv2.imread("images/New_Zealand_Lake.jpg", cv2.IMREAD_COLOR)
 
+# ++++ ejemplo imagen Cocacola de grises +++++
+# Read and display Coca-Cola logo.
+coke_img = cv2.imread("images/coca-cola-logo.png", 1)  # leer imagen. opción formato color
+print("Image size is ", coke_img.shape)  # Tamaño de la imagen, Image size is  (700, 700, 3) se ve que tiene 3 canales
+print("Data type of image is ", coke_img.dtype)   # Mostrar el tipo de dato de la imagen, Data type of image is  uint8
+plt.imshow(coke_img)
+plt.show()
+
+'''
+El color que se muestra por defecto es diferente de la imagen real. Esto se debe a que 
+matplotlib espera la imagen en formato RGB mientras que OpenCV almacena imágenes en formato BGR. Por lo tanto, para una 
+visualización correcta, necesitamos invertir los canales de la imagen
+
+Lo de [::-1] es un "truco" frecuentemente usado en python para obtener una lista o una cadena "del revés". 
+Se basa en el operador slice (rodaja) cuya sintaxis general es:
+- iterable[inicio:fin:paso]
+que permite extraer una serie de elementos del iterable, comenzando por el numerado como inicio y terminando por el 
+numerado como fin-1, aumentando de paso en paso.
+
+Si omites inicio se empezará en el primer elemento del iterable, si omites fin se terminará en el último elemento del 
+iterable. Si el paso es negativo, el iterable se recorre "hacia atrás", y en ese caso los valores por defecto cuando se 
+omite inicio y fin se invierten.
+
+Así pues iterable[::-1] devuelve los elementos del iterable, comenzando por el último y terminando por el primero, 
+en orden inverso a como estaban.'''
+
+# No se va a ver bien a menos que cambiemos el orden del canal.
+coke_img_channels_reversed = coke_img[:, :, ::-1]  # Invierte el orden de ese último miembro de la matriz (700, 700, 3)
+plt.imshow(coke_img_channels_reversed)
+plt.show()
+
+
+# ***** Conversión a diferentes espacios de color
+# OpenCV almacena los canales de color en un orden diferente al de la mayoría de las otras aplicaciones (BGR vs RGB).
+'''
+- cv2.cvtColor() Convierte una imagen de un espacio de color a otro. La función convierte una imagen de entrada de un 
+                espacio de color a otro. En caso de una transformación del espacio de color RGB, el orden de los canales 
+                debe especificarse explícitamente (RGB o BGR). Tenga en cuenta que el formato de color predeterminado 
+                en OpenCV a menudo se denomina RGB, pero en realidad es BGR (los bytes están invertidos). Entonces, 
+                el primer byte en una imagen de color estándar (24 bits) será un componente azul de 8 bits, el segundo 
+                byte será verde y el tercer byte será rojo. Los bytes cuarto, quinto y sexto serían entonces el segundo 
+                píxel (azul, luego verde, luego rojo), y así sucesivamente.
+
+Sintaxis de la función
+dst = cv2.cvtColor(origen, código)
+dst: es la imagen de salida del mismo tamaño y profundidad que src.
+
+La función tiene 2 argumentos requeridos:
+- imagen de entrada src: 8 bits sin firmar, 16 bits sin firmar ( CV_16UC... ) o punto flotante de precisión simple.
+- código: código de conversión de espacio de color (consulte ColorConversionCodes).
+
+Documentación OpenCV
+cv2.cvtColor: https://docs.opencv.org/3.4/d8/d01/group__imgproc__color__conversions.html#ga397ae87e1288a81d2363b61574eb8cab 
+ColorConversionCodes: https://docs.opencv.org/4.5.1/d8/d01/group__imgproc__color__conversions.html#ga4e0972be5de079fed4e3a10e24ef5ef0'''
+
+# Cambiando BGR a RGB
+img_NZ_rgb = cv2.cvtColor(img_NZ_bgr, cv2.COLOR_BGR2RGB)  # estamos pasando la imagen y un flag que indica la conversión
+plt.imshow(img_NZ_rgb)  # con el cambio Simplemente estamos mostrando la imagen original.
+plt.show()
+
+
+image = cv2.imread('./images/castara.jpeg')  # leer imagen
+imshow("Castara, Tobago", image)
 # Usamos cvtColor, para convertir a escala de grises
-# Toma 2 argumentos, el primero es la imagen de entrada
-# El segundo es el código de conversión del espacio de color
 gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # estamos convirtiendo la imagen a escala de grises
 imshow("Converted to Grayscale", gray_image)
+
 
 # ### **Dimensiones de la imagen en escala de grises**
 # Recuerde que las imágenes en color RGB tienen 3 dimensiones, una para cada color primario. La escala de grises solo
 # tiene 1, que es la intensidad del gris. 0 es negro y 255 blanco lo demás la escala de gris
 # ![](https://raw.githubusercontent.com/rajeevratan84/ModernComputerVision/main/gray.png)
-
 print(image.shape)  # (1280, 960, 3)
 print(gray_image.shape)  # (1280, 960)
 
-
-#!/usr/bin/env python
-# coding: utf-8
-
-###########################
-# 03 Espacios de color ####
-###########################
-'''# # **Color Spaces**
-In this lesson we'll learn to:
-1. View the individual channels of an RGB Image
-2. Manipulate a color space
-3. Introduce HSV Color Spaces
-'''
 
 # Nuestra configuración, importar bibliotecas, crear nuestra función Imshow y descargar nuestras imágenes
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+from IPython.display import Image  # nos permitirá mostrar y renderizar imágenes directamente en el cuaderno.
 
-# Definir nuestra función imshow
-def imshow(title = "Image", image = None, size = 10):
-    w, h = image.shape[0], image.shape[1]
-    aspect_ratio = w/h
-    plt.figure(figsize=(size * aspect_ratio,size))
-    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    plt.title(title)
-    plt.show()
 
-'''# Descarga y descomprime nuestras imágenes
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')'''
+# ***** Split y merge imágenes usando OpenCV
+'''División y fusión de canales de color
+- cv2.split() Divide una matriz multicanal en varias matrices de un solo canal.
+- cv2.merge() Combina varias matrices para crear una única matriz multicanal. Todas las matrices de entrada deben tener 
+              el mismo tamaño.
+Documentación de OpenCV
 
+https://docs.opencv.org/4.5.1/d2/de8/group__core__array.html#ga0547c7fed86152d7e9d0096029c8518a
+
+A continuación vamos a cargar una imagen y posteriormente voy a llamar a la función de división abierta para tomar esa 
+imagen multicanal y dividirla en sus componentes. B, G y R. Y así, cada una de estas variables representa una matriz 
+numpy 2D que contiene las intensidades de píxeles para esos canales de colores.
+'''
+# Split de la imagen en los componentes B, G, R
 
 # Carga nuestra imagen de entrada
 image = cv2.imread('./images/castara.jpeg')
+img_NZ_bgr = cv2.imread("images/New_Zealand_Lake.jpg", cv2.IMREAD_COLOR)
+b, g, r = cv2.split(img_NZ_bgr)  # slpit + desempaquetado
 
+'''Cada espacio de color que esté encendido se verá como una escala de grises ya que carece de los otros canales de 
+color, esto es porque tiene sólo una dimensión, son sólo las intensidades en grado de componente de color azul
+'''
+# Ahora, simplemente usaremos Imshow para mostrar cada uno de esas representaciones como un mapa en escala de grises
+plt.figure(figsize=[20, 5])
+plt.subplot(141); plt.imshow(r, cmap='gray');plt.title("Red Channel");
+plt.subplot(142); plt.imshow(g, cmap='gray');plt.title("Green Channel");
+plt.subplot(143); plt.imshow(b, cmap='gray');plt.title("Blue Channel");
+
+'''
+Y luego este último fragmento de código toma esos canales individuales y usa la función de fusión para fusionar ellos de
+nuevo en lo que debería ser la imagen original. Y llamaremos a esa imagen fusionada aquí, y también la mostraremos.
+El lago es una especie de azul turquesa, por así decirlo. Seguro que tiene algo de verde y azul, y 
+probablemente muy poco de rojo. Entonces, si ahora regresa a estos canales, puede ver que el Canal Rojo para la parte 
+del lago es bajo, lo que significa que no hay mucho componente rojo en ese color. Por eso es más oscuro. Está más cerca
+de cero. Y fíjate en el verde. Los canales azules tienen una intensidad bastante alta para sus respectivos colores, 
+lo que indica que el color de esa agua tiene un poco de rojo, pero un poco de verde y definitivamente bastante azul.'''
+# Merge de cada canal en una imagen BGR
+imgMerged = cv2.merge((b, g, r))
+# mostramos la imagen mergeada (Invertimos el orden de ese último miembro de la matriz)
+plt.subplot(144); plt.imshow(imgMerged[:, :, ::-1]); plt.title("Merged Output");
+plt.show()
+
+
+# Vamos a mostrar otro ejemplo y usar con numpy
+# con la otra imagen
+image = cv2.imread('./images/castara.jpeg')
 # Use cv2.split para obtener cada espacio de color por separado
 # separa los tuneles en los componenetes de arbol azúl, verde y rojo, conviertiéndose en imágenes bidimensionales
 B, G, R = cv2.split(image)
 print(B.shape)  # (1280, 960)
 print(G.shape)  # (1280, 960)
 print(R.shape)  # (1280, 960)
-
-'''Cada espacio de color que esté encendido se verá como una escala de grises ya que carece de los otros canales de 
-color, esto es porque tiene sólo una dimensión, son sólo las intensidades en grado de componente de color azul
-'''
 imshow("Blue Channel Only", B)
 
+# Necesitamos usar numpy para realizar esta operación, librería numérica de arrays
 import numpy as np
 
 '''Vamos a crear el arbol de la imagen de la dimensión del árbol vamos a hacer todos los otros componentes de color
 a cero menos el que queremos visualizar, mediante la siguiente matriz'''
 # Vamos a crear una matriz de ceros con dimensiones de la imagen h x w
 zeros = np.zeros(image.shape[:2], dtype = "uint8")
-
 imshow("Red", cv2.merge([zeros, zeros, R]))
 imshow("Green", cv2.merge([zeros, G, zeros]))
 imshow("Blue", cv2.merge([B, zeros, zeros]))
 
-#####
-# por otro lado, recargamos la imagen Original
+### por otro lado, recargamos la imagen Original
 image = cv2.imread('./images/castara.jpeg')
 
 # La función 'dividir' de OpenCV divide la imagen en cada índice de color
@@ -228,17 +352,23 @@ B, G, R = cv2.split(image)
 merged = cv2.merge([B, G, R])
 imshow("Merged", merged)
 
-
 # Ampliemos el color azul, se ve extraño
 merged = cv2.merge([B+100, G, R])
 imshow("Blue Boost", merged)
 
 
 # ## **The HSV Color Space**
-'''#  en vez de usar una combinación de los colores RGB, sua un mapa de color llamado tono (HUE) del azul al amarillo con
-la intensidad, que es el brillo pudiendo ver hacia abajo los colores más oscuros, y la saturación, que te dice los
-conflictos alimentados en apelación, volíendose más rico y profundo a medida que avanza.
-básicamente usando este esquema hay una fomra diferente de representar los colores de diferentes espacios de color'''
+'''En vez de usar una combinación de los colores RGB, usa un mapa de color llamado HUE
+
+básicamente usando este esquema hay una forma diferente de representar los colores de diferentes espacios de color
+- H representa el color de la saturación de la imagen.
+- S representa la intensidad del color y 
+- V representa el valor
+
+Es decir, puede pensar en la saturación como un rojo puro versus un rojo opaco, y puede pensar en el valor S ( intensidad)
+como cuán blanco u oscuro es el color, independientemente del color en sí. Y luego Hugh se parece más a la 
+representación del color real, v como intensidad de brillo
+.'''
 # ![](https://upload.wikimedia.org/wikipedia/commons/f/f2/HSV_color_solid_cone.png)
 # - Matiz HUE: 0 - 179
 # - Saturación: 0 - 255
@@ -253,10 +383,8 @@ imshow('HSV', hsv_image)
 
 # #### Esto se ve extraño... ¿por qué?
 # Porque nuestra función de trazado fue diseñada solo para imágenes RGB, no para HSV
-
 plt.imshow(cv2.cvtColor(hsv_image, cv2.COLOR_HSV2RGB))
 plt.show()
-
 
 # ### **Veamos cada tipo de canal en la representación del espacio de color HSV**
 # Volviendo a ver la representación RGB mediante el uso de indexación
@@ -265,16 +393,9 @@ imshow("Hue", hsv_image[:, :, 0])  #
 imshow("Saturation", hsv_image[:, :, 1])  # cuanto mas brillante en la saturación
 imshow("Value", hsv_image[:, :, 2])  # intensidad de brillo
 
-#!/usr/bin/env python
-# coding: utf-8
-
 ###############################
-# 04 Dibujando en imágenes ####
+# 03 Dibujando en imágenes ####
 ###############################
-
-# ## **Dibujar imágenes y formas usando OpenCV**
-# Primero, importemos OpenCV y numpy y definamos nuestra función imshow
-
 
 # Nuestra configuración, importar bibliotecas, crear nuestra función Imshow y descargar nuestras imágenes
 import cv2
@@ -307,18 +428,64 @@ imshow("Black Canvas - Grayscale", image_gray)
 
 
 # ### **Dibujemos una línea sobre nuestro cuadrado negro**
-# cv2.line(imagen, coordenadas iniciales, coordenadas finales, color, espesor)
 
+'''
+Comencemos dibujando una línea en una imagen. Usaremos la función cv2.line para esto.
+Sintaxis
+img = cv2.line(imagen, coordenadas iniciales, coordenadas finales, color, grosor, tipo linea)
+img: La imagen de salida que ha sido anotada.
+
+La función tiene 4 argumentos requeridos:
+- imagen: Imagen sobre la que dibujaremos una línea
+- coordenadas_iniciales: primer punto (ubicación x, y) del segmento de línea
+- coordenadas_finales: Segundo punto del segmento de recta
+- color: Color de la línea que se dibujará
+
+Otros argumentos opcionales que es importante que sepamos incluyen:
+
+- grosor: Entero que especifica el grosor de la línea. El valor predeterminado es 1.
+- lineType: Tipo de línea. El valor predeterminado es 8, que representa una línea conectada a 8. Por lo general, se 
+ cv2.LINE_AA (línea suavizada o suavizada) para el tipo de línea.
+
+Documentación de OpenCV¶
+https://docs.opencv.org/4.5.1/d6/d6e/group__imgproc__draw.html#ga7078a9fae8c7e7d13d24dac2520ae4a2
+'''
 # Tenga en cuenta que esta es una operación en el lugar, lo que significa que cambia la imagen de entrada
 # A diferencia de muchas otras funciones de OpenCV que devuelven una nueva imagen sin afectar la entrada
 # Recuerda que nuestra imagen era el lienzo negro
-cv2.line(image, (0,0), (511,511), (255,127,0), 5)
+imageLine = image.copy()  # COPIAR UNA IMAGEN
 
-imshow("Black Canvas With Diagonal Line", image)
+# La línea comienza en (200,100) y termina en (400,100)
+# El color de la línea es AMARILLO (Recordemos que OpenCV usa formato BGR)
+# El grosor de la línea es 5px
+# El tipo de línea es cv2.LINE_AA'''
+cv2.line(imageLine, (200, 100), (400, 100), (0, 255, 255), thickness=5, lineType=cv2.LINE_AA);
+cv2.line(imageLine, (0,0), (511,511), (255,127,0), 5)
+
+imshow("Black Canvas With Diagonal Line", imageLine)
 
 
-# ### **Drawing Rectangles**
-# cv2.rectangle(imagen, vértice inicial (sup izq), vértice opuesto (inf der), color, espesor)
+# ******  Dibujar un rectángulo
+''''
+Usaremos la función cv2.rectangle para dibujar un rectángulo en una imagen. 
+
+sintaxis 
+img = cv2.rectangle(img, pt1, pt2, color[, grosor[, lineType[, shift]]])
+cv2.rectangle(imagen, vértice inicial (sup izq), vértice opuesto (inf der), color, espesor)
+
+La función tiene 4 argumentos requeridos:
+- img: Imagen sobre la que se va a dibujar el rectángulo.
+- pt1: Vértice del rectángulo. Usualmente usamos el vértice superior izquierdo aquí.
+- pt2: Vértice del rectángulo opuesto a pt1. Usualmente usamos el vértice inferior derecho aquí.
+- color: color del rectángulo
+
+A continuación, echemos un vistazo a los argumentos (opcionales) que vamos a utilizar bastante.
+- grosor: Grosor del contorno del círculo (si es positivo). Si se proporciona un valor negativo para este argumento, 
+dará como resultado un rectángulo relleno.
+- lineType: Tipo del límite del círculo. Esto es exactamente lo mismo que el argumento lineType en cv2.line
+Enlaces de documentación de OpenCV
+**rectángulo:**https://docs.opencv.org/4.5.1/d6/d6e/group__imgproc__draw.html#ga07d2f74cadcf8e305e810ce8eed13bc9
+'''
 # Vuelva a crear nuestro lienzo negro porque ahora tiene una línea
 image = np.zeros((512,512,3), np.uint8)
 
@@ -328,6 +495,23 @@ imshow("Black Canvas With Pink Rectangle", image)
 
 
 # ### **Dibujemos algunos círculos**
+'''círculo en una imagen. Usaremos la función cv2.circle para esto.
+sintaxis funcional
+img = cv2.circle(img, centro, radio, color[, grosor[, tipo de línea[, desplazamiento]]])
+img: La imagen de salida que ha sido anotada.
+La función tiene 4 argumentos requeridos:
+- img: Imagen sobre la que dibujaremos una línea
+- centro: Centro del círculo
+- radio: Radio del círculo
+- color: Color del círculo que se dibujará
+
+A continuación, echemos un vistazo a los argumentos (opcionales) que vamos a utilizar bastante.
+- grosor: Grosor del contorno del círculo (si es positivo). Si se proporciona un valor negativo para este argumento, 
+dará como resultado un círculo lleno.
+- lineType: Tipo del límite del círculo. Esto es exactamente lo mismo que el argumento lineType en cv2.line
+Documentación de OpenCV¶
+círculo: https://docs.opencv.org/4.5.1/d6/d6e/group__imgproc__draw.html#gaf10604b069374903dbd0f0488cb43670
+'''
 # cv2.circle(imagen, centro, radio, color, relleno)
 # de nuevo la imagen negra ...
 image = np.zeros((512,512,3), np.uint8)
@@ -336,7 +520,7 @@ cv2.circle(image, (350, 350), 100, (15,150,50), -1)
 imshow("Black Canvas With Green Circle", image)
 
 
-# ### **Polygons**
+# ### **Polígonos**
 # ```cv2.polylines(imagen, puntos, ¿Cerrado?, color, grosor)```
 # si Cerrado = Verdadero, unimos el primer y último punto.
 # De nuevo reseteamos la imagen negra ...
@@ -345,14 +529,13 @@ image = np.zeros((512, 512, 3), np.uint8)
 # Definamos cuatro puntos mediante un array, una matriz con subpuntos dentro
 pts = np.array([[10,50], [400,50], [90,200], [50,500]], np.int32)
 pts.shape   # (4,2)
-# **Nota** cv2.polylines requiere que nuestros datos tengan la siguiente forma:
-# Ahora remodelemos nuestros puntos en la forma requerida por las polilíneas ( en realidad solo cambia el formato)
-
 print(pts)
 '''[[ 10  50]
  [400  50]
  [ 90 200]
  [ 50 500]]'''
+
+# **Nota** cv2.polylines requiere que nuestros datos tengan la siguiente forma, por lo que hay que remodelarlos:
 # estás agregando un 1, en una dimensión adicional en medio por como funciona polylines internamente, como decodifica
 # los puntos
 pts = pts.reshape((-1, 1, 2))
@@ -367,7 +550,26 @@ cv2.polylines(image, [pts], True, (0,0,255), 3)
 imshow("Black Canvas with Red Polygon", image)
 
 # ### **Y ahora para agregar texto con cv2.putText**
+'''
+Para escribir texto en una imagen usando la función cv2.putText.
+img = cv2.putText(img, text, org, fontFace, fontScale, color[, thick[, lineType[, bottomLeftOrigin]]])
 # cv2.putText(imagen, 'Texto para mostrar', punto de inicio inferior izquierdo, Fuente, Tamaño de fuente, Color, Grosor)
+
+La función tiene 6 argumentos requeridos:
+- img: Imagen sobre la que se ha de escribir el texto.
+- text: Cadena de texto a escribir.
+- org: esquina inferior izquierda de la cadena de texto en la imagen.
+- fontFace: tipo de fuente
+- fontScale: factor de escala de fuente que se multiplica por el tamaño base específico de la fuente.
+- color: color de fuente
+
+Otros argumentos opcionales que es importante que sepamos incluyen:
+- grosor: número entero que especifica el grosor de línea del texto. El valor predeterminado es 1.
+- lineType: Tipo de línea. El valor predeterminado es 8, que representa una línea conectada a 8. Por lo general, se usa 
+            cv2.LINE_AA (línea suavizada o suavizada) para el tipo de línea.
+
+Documentación OpenCV
+**poner texto:**https://docs.opencv.org/4.5.1/d6/d6e/group__imgproc__draw.html#ga5126f47f883d730f633d74f07456c576'''
 
 # **Fuentes disponibles**
 # - FONT_HERSHEY_SIMPLEX, FONT_HERSHEY_PLAIN
@@ -377,23 +579,13 @@ imshow("Black Canvas with Red Polygon", image)
 # - FONT_HERSHEY_SCRIPT_COMPLEX
 
 image = np.zeros((1000,1000,3), np.uint8)
-ourString =  'Hello World!'
+ourString = 'Hello World!'
 cv2.putText(image, ourString, (155,290), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 3, (40,200,0), 4)
 imshow("Messing with some text", image)
 
-#!/usr/bin/env python
-# coding: utf-8
-
 #########################################################
-#  **Transformaciones - Traslaciones y Rotaciones**######
+#  04 Transformaciones - Traslaciones y Rotaciones**######
 #########################################################
-
-# En esta lección aprenderemos a:
-# 1. Realizar traducciones de imágenes
-# 2. Rotaciones con getRotationMatrix2D
-# 3. Rotaciones con transposición
-# 4. Voltear imágenes
-
 # Nuestra configuración, importar bibliotecas, crear nuestra función Imshow y descargar nuestras imágenes
 import cv2
 import numpy as np
@@ -408,10 +600,7 @@ def imshow(title = "Image", image = None, size = 10):
     plt.title(title)
     plt.show()
 
-'''# Descarga y descomprime nuestras imágenes
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')
-'''
+
 
 # ### **translaciones**
 # Esta es una transformación afín que simplemente cambia la posición de una imagen. (izquierda o derecha).
@@ -454,7 +643,7 @@ imshow("Translated", img_translation)
 
 # ### **Rotaciones**
 # toma el punto de rotación x e y ( punto central o donde esté un pivote) y 'gira' la imagen (como un editor de fotos)
-# por el ángulo de rotación elegido ( antihorario)  y escala ( 1 significa mantener)
+# por el ángulo de rotación elegido antihorario) y escala ( 1 significa mantener)
 # cv2.getRotationMatrix2D(rotación_centro_x, rotación_centro_y, ángulo de rotación, escala)
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/rotation.png)
 
@@ -462,7 +651,7 @@ imshow("Translated", img_translation)
 image = cv2.imread('images/Volleyball.jpeg')
 height, width = image.shape[:2]
 
-# Divide por dos para rotar la imagen alrededor de su centro, rota la imagen sino que crea la matriz que necesitamos
+# Divide por dos para rotar la imagen alrededor de su centro, no rota la imagen, sino que crea la matriz que necesitamos
 rotation_matrix = cv2.getRotationMatrix2D((width/2, height/2), 90, 1)  # obtenemos la matriz 2D de rotación
 
 # Esa matriz de rotación es lo que usamos en la translación
@@ -471,12 +660,15 @@ rotated_image = cv2.warpAffine(image, rotation_matrix, (width, height))  # es la
 imshow("Rotated 90 degrees with scale = 1", rotated_image)
 
 # Otro ejemplo cambiando la escala
+
 # Divide por dos para rotar la imagen alrededor de su centro
 rotation_matrix = cv2.getRotationMatrix2D((width/2, height/2), 90, 0.5)
 # ese 0.5 reduce la escala de la imagen la hace más pequeña
+
 print(rotation_matrix)
 '''[[ 3.061617e-17  5.000000e-01  4.600000e+02]
  [-5.000000e-01  3.061617e-17  6.800000e+02]]'''
+
 # Ingrese nuestra imagen, la matriz de rotación y nuestro ancho y alto final deseado
 rotated_image = cv2.warpAffine(image, rotation_matrix, (width, height))
 imshow("Rotated 90 degrees with scale = 0.5", rotated_image)
@@ -496,51 +688,45 @@ rotated_image = cv2.transpose(rotated_image)
 
 imshow("Rotated using Transpose", rotated_image)
 
+# ****** Voltear imágenes¶
+''' Puedes voltearlo horizontalmente, verticalmente o en ambas direcciones
+La función flip voltea la matriz en una de tres formas diferentes (los índices de fila y columna están basados en 0):
 
-# Vayamos ahora a un giro horizontal 90º, un 'volteo'
-flipped = cv2.flip(image, 1)
-imshow("Horizontal Flip", flipped)
+Sintaxis de la función
+dst = cv.flip( src, flipCode )
+* dst: matriz de salida del mismo tamaño y tipo que src.
 
+La función tiene 2 argumentos requeridos:
+- src: imagen de entrada
+- flipCode: un flag para especificar cómo voltear la matriz; 
+    - 0 significa girar alrededor del eje x, o voltearlo verticalmente ( boca abajo)
+    - un valor positivo (por ejemplo, 1) significa girar alrededor del eje y, o voltearlo horizontalmente  (espejo)
+    - Un valor negativo (por ejemplo, -1) significa girar alrededor de ambos ejes.
+Documentación OpenCV
+flip: https://docs.opencv.org/4.5.0/d2/de8/group__core__array.html#gaca7be533e3dac7feb70fc60635adf441
+'''
+img_NZ_rgb_flipped_horz = cv2.flip(image, 1)  # un giro horizontal 90º, un 'volteo'
+img_NZ_rgb_flipped_vert = cv2.flip(image, 0)
+img_NZ_rgb_flipped_both = cv2.flip(image, -1)
 
-#!/usr/bin/env python
-# coding: utf-8
+# mostramos las imágenes
+plt.figure(figsize=[18, 5])
+plt.subplot(141);plt.imshow(cv2.cvtColor(img_NZ_rgb_flipped_horz, cv2.COLOR_BGR2RGB));plt.title("Horizontal Flip");
+plt.subplot(142);plt.imshow(cv2.cvtColor(img_NZ_rgb_flipped_vert, cv2.COLOR_BGR2RGB));plt.title("Vertical Flip");
+plt.subplot(143);plt.imshow(cv2.cvtColor(img_NZ_rgb_flipped_both, cv2.COLOR_BGR2RGB));plt.title("Both Flipped");
+plt.subplot(144);plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB));plt.title("Original");
+plt.show()
+
 
 ###################################################################
-# # 06 Escalado, cambio de tamaño, interpolaciones y recorte** ####
+# # 05 Escalado, cambio de tamaño, interpolaciones y recorte** ####
 ###################################################################
-# **En esta lección aprenderemos:**
-# 1. Cómo redimensionar y escalar imágenes
-# 2. Pirámides de imágenes
-# 3. Recortar
-
-# ### **Cambio de tamaño**
-#
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/Resizing.png)
-#
-# Cambiar el tamaño es una función simple que ejecutamos usando la función cv2.resize, sus argumentos son:
-
-# cv2.resize(imagen, dsize(tamaño de la imagen de salida), escala x, escala y, interpolación)
-# - si dsize es Ninguno, la imagen de salida se calcula en función de la escala usando la escala x e y
-
-# la interpolación es básicamente un algoritmo para encontrar un valor entre dos puntos. si tuviéramos unos puntos por
-# una ruta de gps la interpolación adivinará puntos intermedios entre los originales del camino, aportando información
-# adicional, e suna forma de agregar más datos a los existentes para conectar los puntos existentes ( en el ejemplo)
-# si estamos agrandando una imagen, estamos tratando de adivinar los puntos que se tomarán en una nueva dimensión.
-# algorítmicamente adivina la mejor suposición
-# #### **Lista de métodos de interpolación, las diferentes fórmulas que suelen aplicarse:**
-# - cv2.INTER_AREA- Bueno para reducir o reducir el muestreo
-# - cv2.INTER_NEAREST - Más rápido
-# - cv2.INTER_LINEAR- Bueno para hacer zoom o muestreo ascendente (predeterminado)
-# - cv2.INTER_CUBIC- Mejor
-# - cv2.INTER_LANCZOS4 - El Mejor
-
-
 # Nuestra configuración, importar bibliotecas, crear nuestra función Imshow y descargar nuestras imágenes
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-# Define our imshow function
+
 def imshow(title = "Image", image = None, size = 10):
     w, h = image.shape[0], image.shape[1]
     aspect_ratio = w/h
@@ -549,34 +735,130 @@ def imshow(title = "Image", image = None, size = 10):
     plt.title(title)
     plt.show()
 
-'''# Download and unzip our images
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')
+
+# Cargamos imagen original de pruebas en escala de grises
+cb_img = cv2.imread("images/checkerboard_18x18.png", 0)
+
+# Establezca el mapa de colores en escala de grises para una representación adecuada, si no se ven colores incorrectos
+plt.imshow(cb_img, cmap='gray')
+plt.show()
+print(cb_img)
+'''
+[[  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [255 255 255 255 255 255   0   0   0   0   0   0 255 255 255 255 255 255]
+ [255 255 255 255 255 255   0   0   0   0   0   0 255 255 255 255 255 255]
+ [255 255 255 255 255 255   0   0   0   0   0   0 255 255 255 255 255 255]
+ [255 255 255 255 255 255   0   0   0   0   0   0 255 255 255 255 255 255]
+ [255 255 255 255 255 255   0   0   0   0   0   0 255 255 255 255 255 255]
+ [255 255 255 255 255 255   0   0   0   0   0   0 255 255 255 255 255 255]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]]'''
+
+# ****** Acceso a píxeles individuales
+'''
+Veamos cómo acceder a un píxel en la imagen. Para acceder a cualquier píxel en una matriz numpy, debe usar notación de 
+matriz:
+- matrix[r,c], donde r es el número de fila y c es el número de columna. la matriz está indexada en 0.
+Por ejemplo, si desea acceder al primer píxel, debe especificar matrix[0,0]. Veamos con algunos ejemplos. 
+Imprimiremos un píxel negro desde la parte superior izquierda y un píxel blanco desde la parte superior central.'''
+
+# Imprime el primer pixel del primer cuadro negro
+print(cb_img[0, 0])  # 0
+# imprima el primer píxel blanco a la derecha del primer cuadro negro
+print(cb_img[0, 6])  # 255
+
+# ****** Modificando los píxeles de las imágenes
+
+cb_img_copy = cb_img.copy()
+# cb_img_copy[2, 2] = 200
+# cb_img_copy[2, 3] = 200
+# cb_img_copy[3, 2] = 200
+# cb_img_copy[3, 3] = 200
+cb_img_copy[2:4, 2:4] = 200  # Lo mismo que lo de antes de una
+
+plt.imshow(cb_img_copy, cmap='gray')
+plt.show()
+print(cb_img_copy)
+
+'''[[  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0 200 200   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0 200 200   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [255 255 255 255 255 255   0   0   0   0   0   0 255 255 255 255 255 255]
+ [255 255 255 255 255 255   0   0   0   0   0   0 255 255 255 255 255 255]
+ [255 255 255 255 255 255   0   0   0   0   0   0 255 255 255 255 255 255]
+ [255 255 255 255 255 255   0   0   0   0   0   0 255 255 255 255 255 255]
+ [255 255 255 255 255 255   0   0   0   0   0   0 255 255 255 255 255 255]
+ [255 255 255 255 255 255   0   0   0   0   0   0 255 255 255 255 255 255]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]
+ [  0   0   0   0   0   0 255 255 255 255 255 255   0   0   0   0   0   0]]
 '''
 
-# ### **Tipos de métodos de reescalado en OpenCV**
-#
-# - **INTER_NEAREST** – una interpolación de vecino más cercano
-# - **INTER_LINEAR** – una interpolación bilineal (usada por defecto)
-# - **INTER_AREA** – remuestreo usando relación de área de píxeles. Puede ser un método preferido para la destrucción
-#                    de imágenes, ya que brinda resultados sin muaré. Pero cuando se amplía la imagen, es similar al
-#                    método INTER_NEAREST.
-# - **INTER_CUBIC**: una interpolación bicúbica sobre una vecindad de 4×4 píxeles
-# - **INTER_LANCZOS4**: una interpolación de Lanczos sobre un vecindario de 8×8 píxeles
-#
+# ### **Cambio de tamaño**
+
+# La función de cambio de tamaño cambia el tamaño de la imagen  aumentando o disminuyendo hasta el tamaño
+# especificado, usando la función cv2.resize, sus argumentos son:
+
+# cv2.resize(imagen, dsize(tamaño de la imagen de salida), escala x, escala y, interpolación)
+# La función tiene 2 argumentos requeridos:
+# - src: imagen de entrada
+# - dsize: tamaño de la imagen de salida. Si dsize es Ninguno, la imagen de salida se calcula en función de la escala
+# usando la escala x e y
+# el tipo de dst es el mismo que el de src.
+
+
+# Los argumentos opcionales que se utilizan a menudo incluyen:
+# - fx: Factor de escala a lo largo del eje horizontal; cuando es igual a 0, se calcula como (𝚍𝚘𝚞𝚋𝚕𝚎)𝚍𝚜𝚒𝚣𝚎.𝚠𝚒𝚍𝚝𝚑/𝚜𝚛𝚌.𝚌𝚘𝚕𝚜
+# - fy: Factor de escala a lo largo del eje vertical; cuando es igual a 0, se calcula como (𝚍𝚘𝚞𝚋𝚕𝚎)𝚍𝚜𝚒𝚣𝚎.𝚑𝚎𝚒𝚐𝚑𝚝/𝚜𝚛𝚌.𝚛𝚘𝚠𝚜
+
+# -Interpolación: es básicamente un algoritmo para encontrar un valor entre dos puntos. Si tuviéramos unos puntos por
+# una ruta de gps la interpolación adivinará puntos intermedios entre los originales del camino, aportando información
+# adicional, es una forma de agregar más datos a los existentes para conectar los puntos existentes ( en el ejemplo)
+# si estamos agrandando una imagen, estamos tratando de adivinar los puntos que se tomarán en una nueva dimensión.
+# Adivina algorítmicamente la mejor suposición
+
+# #### **Lista de métodos de interpolación, las diferentes fórmulas que suelen aplicarse:**
+# - cv2.INTER_LINEAR- Bueno para hacer zoom o muestreo ascendente (predeterminado), una interpolación bilineal
+# - cv2.INTER_AREA- Bueno para reducir o reducir el muestreo, remuestreo usando relación de área de píxeles. Puede ser
+#                   un método preferido para la disminución de imágenes, ya que brinda resultados sin muaré. Pero cuando
+#                   se amplía la imagen, es similar al método INTER_NEAREST.
+# - cv2.INTER_NEAREST - Más rápido, una interpolación de vecino más cercano
+# - cv2.INTER_CUBIC- Mejor, una interpolación bicúbica sobre una vecindad de 4×4 píxeles
+# - cv2.INTER_LANCZOS4 - El Mejor, una interpolación de Lanczos sobre un vecindario de 8×8 píxeles
+# Documentación OpenCV
+#  https://docs.opencv.org/4.5.0/da/d54/group__imgproc__transform.html#ga47a974309e9102f5f08231edc7e7529d
 # Vea más sobre su desempeño - https://chadrick-kwag.net/cv2-resize-interpolation-methods/
+
 
 # carga nuestra imagen de entrada
 image = cv2.imread('images/oxfordlibrary.jpeg')
 imshow("Scaling - Linear Interpolation", image)
 
 # Si no se especifica ninguna interpolación, cv.INTER_LINEAR se usa por defecto
+# método 1: Especificación del factor de escala usando fx y fy
 # Hagamos nuestra imagen 3/4 de su tamaño original
 # vamos a usar los efectos del argumento y la forma para reducir la imagen en un 75% (0.75 de ancho y alto)
 image_scaled = cv2.resize(image, None, fx=0.75, fy=0.75)
 imshow("0.75x Scaling - Linear Interpolation", image_scaled)
 
 # Dupliquemos el tamaño de nuestra imagen
+'''imagen, tamaño de salida ( al usar escala esta bien ponerlo a None factores de escala fx y tener Y. En este ejemplo, 
+sólo vamos a establecerlos en dos Así que vamos a duplicar el tamaño.'''
 img_scaled2 = cv2.resize(image, None, fx=2, fy=2, interpolation = cv2.INTER_CUBIC)
 imshow("2x Scaling - Inter Cubic", img_scaled2)
 
@@ -584,9 +866,75 @@ imshow("2x Scaling - Inter Cubic", img_scaled2)
 img_scaled3 = cv2.resize(image, None, fx=2, fy=2, interpolation = cv2.INTER_NEAREST)
 imshow("2x Scaling - Inter Nearest", img_scaled3)
 
-# Sesguemos el cambio de tamaño estableciendo dimensiones exactas
+# método 2: Especificación del tamaño exacto de la imagen de salida
+desired_width = 100
+desired_height = 200
+dim = (desired_width, desired_height)
+'''
+vamos a establecer un ancho y alto específicos para la imagen y vamos a crear este vector bidimensional indicando ambas 
+dimensiones y lo usamos como segundo argumento para la función de cambio de. la imagen se ha distorsionado ahora porque 
+no mantuvimos la relación de aspecto original.'''
+# Cambiar el tamaño de la imagen de fondo al mismo tamaño que la imagen del logotipo
+im = cv2.resize(image, dsize=dim, interpolation=cv2.INTER_AREA)
+plt.imshow(im)
+plt.show()
+
+# EJEMPLO 2
 img_scaled4 = cv2.resize(image, (900, 400), interpolation = cv2.INTER_AREA)
 imshow("Scaling - Inter Area", img_scaled4)
+
+
+# Cambiar el tamaño manteniendo la relación de aspecto
+desired_width = 100
+''' ahora vamos a comenzar especificando un ancho de 100 y luego calcularemos la altura deseada asociada manteniendo 
+la relación de aspecto. Así que aquí estamos creando esta proporción del ancho deseado al ancho original de la imagen 
+y luego usando ese factor para derivar la altura deseada aquí. cuando pasamos esa dimensión revisada a la función de 
+cambio de tamaño, obtenemos una imagen de cien píxeles de ancho y la cantidad adecuada de alto para mantener la 
+relación adecuada, que resulta ser de unos sesenta y siete píxeles.
+
+------------------------------------------------------------
+para saber el ancho y el alto  función shape() (dimensiones) 
+------------------------------------------------------------
+Las dimensiones de una imagen dada, como la altura de la imagen, el ancho de la imagen y la cantidad de canales en la 
+imagen, se denominan shape (forma) de la imagen y  se almacena en numpy.ndarray.
+La función shape() puede proporcionar la dimensión de una imagen dada y almacena cada una de las dimensiones de la 
+imagen, como la altura de la imagen, el ancho de la imagen y la cantidad de canales en la imagen en diferentes índices.
+
+La altura de la imagen se almacena en el índice 0.
+El ancho de la imagen se almacena en el índice 1.
+El número de canales en la imagen se almacena en el índice 2.
+
+Ejemplo:
+
+dimensions = input_image.shape
+height = input_image.shape[0] 
+width = input_image.shape[1] 
+number_of_channels = input_image.shape[2]
+
+- input_image: representa la imagen cuyas dimensiones se van a encontrar.
+- dimensions: representan las dimensiones de la imagen.
+- height: representa la altura de la imagen de entrada.
+- width: representa el ancho de la imagen de entrada.
+- number_of_channels: representa el número de canales en la imagen.
+
+La relación de aspecto o ratio de una imagen es la proporción entre el ancho y la altura de la imagen. Se calcula
+dividiendo la anchura entre la altura, y se expresa normalmente con dos números separados por dos puntos. Por ejemplo 
+3:2, significa que por cada tres unidades a lo largo hay dos unidades a lo alto
+'''
+print(im.shape[1])
+aspect_ratio = desired_width / im.shape[1]  # calculamos el radio de aspecto
+desired_height = int(im.shape[0] * aspect_ratio)  # calculamos la nueva altura
+dim = (desired_width, desired_height)
+
+resized_cropped_region = cv2.resize(im, dsize=dim, interpolation=cv2.INTER_AREA)  # Cambiar el tamaño de img
+plt.imshow(resized_cropped_region)
+
+# Ahora, salvemos la imagen redimensionada (recortada)
+# cambiamos el orden del canal
+im = im[:, :, ::-1]
+
+# Save resized image to disk
+cv2.imwrite("images/im.png", im)
 
 
 # ## **Imagen de pirámides**
@@ -606,14 +954,17 @@ imshow('Even Smaller', even_smaller)
 
 
 # # **Recorte**
-# es una técnica muy útil especialmente con detectores de objetos o OCR donde tienes que recortar segmentos de la imagen
+''' Recortar una imagen se logra simplemente seleccionando una región específica (píxel) de la imagen.
+Es simplemente indexar una imagen existente y extraer la región que le interesa.'''
+
+# es una técnica muy útil especialmente con detectores de objetos u OCR donde tienes que recortar segmentos de la imagen
 image = cv2.imread('images/oxfordlibrary.jpeg')
 
 # Obtenga las dimensiones de nuestra imagen
 height, width = image.shape[:2]
 
 # Obtengamos las coordenadas del píxel inicial (arriba a la izquierda del rectángulo de recorte)
-# usando 0.25 para obtener la posición x,y que está 1/4 por debajo de la parte superior izquierda (0,0)
+# usando 0.25 para obtener la posición x, y que está 1/4 por debajo de la parte superior izquierda (0,0)
 
 start_row, start_col = int(height * .25), int(width * .25)
 
@@ -631,19 +982,31 @@ copy = image.copy()
 cv2.rectangle(copy, (start_col,start_row), (end_col,end_row), (0,255,255), 10)
 
 imshow("Area we are cropping", copy)
-
 imshow("Cropped Image", cropped)
+
+# Otro Ejemplo
+img_NZ_bgr = cv2.imread("images/New_Zealand_Boat.jpg", cv2.IMREAD_COLOR)  # cargamos una imagen a color
+img_NZ_rgb = img_NZ_bgr[:, :, ::-1]  # Invertimos el último color
+plt.imshow(img_NZ_rgb)  # Mostramos la imagen
+plt.show()  # para que se muestre
+# Recortar la región media de la imagen
+cropped_region = img_NZ_rgb[200:400, 300:600]
+plt.imshow(cropped_region)
+plt.show()
+
 
 #!/usr/bin/env python
 # coding: utf-8
 
 ################################################
-# 07 Operaciones aritméticas y bit a bit** #####
+# 06 Operaciones aritméticas y bit a bit** #####
 ################################################
-
-# #### **En esta lección aprenderemos:**
-# 1. Operaciones aritméticas, aquellas que nos permiten sumar o restar la intensidad o los valores de la imagen
-# 2. Operaciones bit a bit
+'''
+Las técnicas de procesamiento de imágenes aprovechan las operaciones matemáticas para lograr diferentes resultados.
+La mayoría de las veces llegamos a una versión mejorada de la imagen usando algunas operaciones básicas. Echaremos un
+vistazo a algunas de las operaciones fundamentales que se usan a menudo en las canalizaciones de visión por computadora.
+En este cuaderno cubriremos operaciones aritméticas como la suma y la multiplicación.
+'''
 
 # Nuestra configuración, importar bibliotecas, crear nuestra función Imshow y descargar nuestras imágenes
 import cv2
@@ -659,17 +1022,28 @@ def imshow(title = "Image", image = None, size = 10):
     plt.title(title)
     plt.show()
 
-'''# Download and unzip our images
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')
-'''
+
 
 # ## **Operaciones aritméticas**
 # Son operaciones sencillas que nos permiten sumar o restar directamente a la intensidad del color.
 # Calcula la operación por elemento de dos matrices. El efecto general es aumentar o disminuir el brillo.
 
+'''
+La primera operación que analizamos es la simple adición o sustracción de imágenes. Esto da como resultado aumentar o 
+disminuir el brillo de la imagen ya que eventualmente estamos aumentando o disminuyendo los valores de intensidad de 
+cada píxel en la misma cantidad. Entonces, esto resultará en un aumento/disminución global del brillo.
 
-# 0 como segundo argumento en cv2.imread carga nuestra imagen como una imagen en escala de grises
+ M = ...
+- numpy.ones(): devuelve un array del tamaño y tipo indicados inicializando sus valores con unos
+- crea una matriz del tamaño image.shape (con la dimensión de la imagen) es decir una imagen con el 
+  tamaño de la original), tipo entero grande y con todo valor 100, es decir se crea una imagen que si la imprimimos es 
+  un gris [[41 41 41 ...  5  5  5]...
+Y ahora simplemente vamos a usar las funciones de abrir, sumar y restar para sumar y restar esa matriz de la imagen 
+original, siendo todo lo que se requiere para generar una imagen más oscura que la original y una imagen que es mas 
+clara que la original
+'''
+
+# cv2.imread carga nuestra imagen como una imagen en escala de grises
 image = cv2.imread('images/liberty.jpeg', 0)  # 0 es como escala de grises
 imshow("Grayscaled Image",  image)
 print(image)
@@ -682,6 +1056,7 @@ M = np.ones(image.shape, dtype = "uint8") * 100
 print(M)
 
 # #### **Brillo creciente**
+
 # Usamos esto para agregar esta matriz M, a nuestra imagen, la función respeta los valores de 0 a 255 dejando el máximo
 # Note el aumento en el brillo
 added = cv2.add(image, M)
@@ -705,56 +1080,153 @@ subtracted = image - M  # aquí pasa lop mismo que antes pero al reves los valor
 imshow("Subtracted 2", subtracted)
 
 
-# ## **Operaciones bit a bit y enmascaramiento**
-# Para demostrar estas operaciones, creemos algunas imágenes simples
-# Si se pregunta por qué solo dos dimensiones, bueno, esta es una imagen en escala de grises,
-# Hacer un cuadrado
-
-# Hacer un cuadrado
-square = np.zeros((300, 300), np.uint8)
-cv2.rectangle(square, (50, 50), (250, 250), 255, -2)
-imshow("square", square)
-
-# Haciendo una elipse
-ellipse = np.zeros((300, 300), np.uint8)
-cv2.ellipse(ellipse, (150, 150), (150, 150), 30, 0, 180, 255, -1)
-imshow("ellipse", ellipse)
+# otro ejemplo completo
+img_bgr = cv2.imread("images/New_Zealand_Coast.jpg", cv2.IMREAD_COLOR)  # cargar imagen a color [[[188 183 174],[189....
+img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)  # cambiar el color a RGB (cv2 por defecto BGR)
+matrix = np.ones(img_rgb.shape, dtype = "uint8") * 50
+img_rgb_brighter = cv2.add(img_rgb, matrix)  # se le suma a la imagen original la matriz [[[224 233 238], [226...
+img_rgb_darker   = cv2.subtract(img_rgb, matrix)  # se le resta a la imagen original la matriz [[[124 133 138], [122...
+plt.subplot(131); plt.imshow(img_rgb_darker);  plt.title("Darker");
+plt.subplot(132); plt.imshow(img_rgb);         plt.title("Original");
+plt.subplot(133); plt.imshow(img_rgb_brighter);plt.title("Brighter");
+plt.show()
 
 
-# ### **Experimentando con algunas operaciones bit a bit como AND, OR, XOR y NOT**
-# Muestra solo donde se cruzan, es decir donde ambos tienen info distinta de 0 (0 negro, 255 blanco solo 1 si los dos 1)
-And = cv2.bitwise_and(square, ellipse)
-imshow("AND", And)
+# **** Multiplicación o Contraste
+'''
+Al igual que la suma puede resultar en un cambio de brillo, la multiplicación se puede usar para mejorar el contraste 
+de la imagen. El contraste es la diferencia en los valores de intensidad de los píxeles dentro de una imagen. 
+Multiplicar los valores de intensidad con una constante puede hacer que la diferencia sea mayor o menor (si el factor de
+multiplicación es < 1).
+'''
+matrix1 = np.ones(img_rgb.shape) * .8  # Crea una matriz del mismo tamaño inicializado todo a 0.8 [[[0.8 0.8 ...
+matrix2 = np.ones(img_rgb.shape) * 1.2  # Crea una matriz del mismo tamaño inicializado todo a 1.2 [[[1.2 1.2 ...
 
-# Muestra la información de ambos (1 si alguno de los 2 1) dónde está el cuadrado o la elipse
-bitwiseOr = cv2.bitwise_or(square, ellipse)
-imshow("bitwiseOr", bitwiseOr)
+# convertimos los puntos de la imagen a flotante y multiplicamos por la matriz, convirtiendo después a un array de uint
+# 8-bit unsigned integer (0 a 255).
+img_rgb_darker = np.uint8(cv2.multiply(np.float64(img_rgb), matrix1))    # [[[139 146 150 ...
+img_rgb_brighter = np.uint8(cv2.multiply(np.float64(img_rgb), matrix2))  # [[[208 219 255 ....
 
-# Muestra dónde existen por sí mismos (1 si solo uno de ellos 1)
-bitwiseXor = cv2.bitwise_xor(square, ellipse)
-imshow("bitwiseXor", bitwiseXor)
+# mostramos las imagenes
+plt.figure(figsize=[18,5])
+plt.subplot(131); plt.imshow(img_rgb_darker);  plt.title("Lower Contrast");
+plt.subplot(132); plt.imshow(img_rgb);         plt.title("Original");
+plt.subplot(133); plt.imshow(img_rgb_brighter);plt.title("Higher Contrast");
+plt.show()
 
-# Muestra todo lo que no es parte del cuadrado ( lo contrario)
-bitwiseNot_sq = cv2.bitwise_not(square)
-imshow("bitwiseNot_sq", bitwiseNot_sq)
+'''la imagen de alto contraste, hay un código de color extraño al mostrarlo, Y la razón de esto es porque cuando 
+multiplicamos la imagen original por esta matriz, tiene un factor de uno punto dos en ella. Potencialmente obtenemos 
+valores superiores a 255. Entonces,  la imagen original aquí, las nubes  probablemente estaban cerca de 255. Algunos de 
+ellos, al menos. Y cuando multiplicamos por uno punto dos, pasamos a cincuenta y cinco.
 
-# Observe que la última operación invierte la imagen totalmente
+Entonces, cuando intentamos convertir esos valores en un número de ocho bits sin signo en lugar de exceder 255,
+simplemente pasan a un número pequeño. provocando estos valores de intensidad cercanos a cero y siendo el motivo del
+problema.
+
+numpy.clip(): La función se utiliza para recortar (limitar) los valores en una matriz.
+Dado un intervalo, los valores fuera del intervalo se recortan a los bordes del intervalo. Por ejemplo, si se especifica
+ un intervalo de [0, 1], los valores menores que 0 se convierten en 0 y los valores mayores que 1 se convierten en 1.
+
+Para solucionarlo lo que podemos hacer es usar la función clip de numpy para recortar primero esos valores al
+rango de cero a 255 antes de convertirlos un entero de 8 bits (0-255), provocando que esta parte de la imagen se sature
+por completo, teniendo algunos valores 255 por lo que realmente no tienen información .
+'''
+matrix1 = np.ones(img_rgb.shape) * .8
+matrix2 = np.ones(img_rgb.shape) * 1.2
+
+img_rgb_lower = np.uint8(cv2.multiply(np.float64(img_rgb), matrix1))
+img_rgb_higher = np.uint8(np.clip(cv2.multiply(np.float64(img_rgb), matrix2), 0, 255))
+
+# Show the images
+plt.figure(figsize=[18,5])
+plt.subplot(131); plt.imshow(img_rgb_lower);  plt.title("Lower Contrast");
+plt.subplot(132); plt.imshow(img_rgb);         plt.title("Original");
+plt.subplot(133); plt.imshow(img_rgb_higher);plt.title("Higher Contrast");
+plt.show()
+
+# ********************************************
+# ***** 07 Operaciones bit a bit con imágenes
+# ********************************************
+# Imports
+import cv2  # pip install opencv-python es el módulo de open cv
+import numpy as np  #
+import matplotlib.pyplot as plt
+# %matplotlib inline # en cuadernos jupiter para poder mostrar directamente las imágenes del cuaderno
+from IPython.display import Image  # nos permitirá mostrar y renderizar imágenes directamente en el cuaderno.
+
+'''
+Las técnicas de procesamiento de imágenes aprovechan diferentes operaciones lógicas para lograr diferentes resultados. 
+La mayoría de las veces llegamos a una versión mejorada de la imagen usando algunas operaciones lógicas básicas como 
+las operaciones AND y OR.
+
+Sintaxis:
+ cv2.bitwise_and(). Otros incluyen: cv2.bitwise_or(), cv2.bitwise_xor(), cv2.bitwise_not()
+
+dst = cv2.bitwise_and( src1, src2[, dst[, máscara]] )
+- dst: matriz de salida que tiene el mismo tamaño y tipo que las matrices de entrada.
+
+La función tiene 2 argumentos requeridos:
+- src1: primera matriz de entrada o un escalar.
+- src2: segunda matriz de entrada o un escalar.
+Un argumento opcional importante es:
+- máscara: máscara de operación opcional, matriz de un solo canal de 8 bits, que especifica los elementos de la matriz 
+de salida que se cambiarán, es decir, a que parte de estas dos imágenes se aplica la lógica de la operación.
+
+Documentación OpenCV
+https://docs.opencv.org/4.5.1/d0/d86/tutorial_py_image_arithmetics.html 
+https://docs.opencv.org/4.5.0/d2/de8/group__core__array.html#ga60b4d04b251ba5eb1392c34425497e14
+'''
+# leemos dos imagenes un rectángulo y un circulo.
+img_rec = cv2.imread("images/rectangle.jpg", cv2.IMREAD_GRAYSCALE)
+img_cir = cv2.imread("images/circle.jpg", cv2.IMREAD_GRAYSCALE)
+
+plt.figure(figsize=[20, 5])
+plt.subplot(121);plt.imshow(img_rec, cmap='gray')
+plt.subplot(122);plt.imshow(img_cir, cmap='gray')
+plt.show()
+print(img_rec.shape)  # (200, 499)
 
 
-#!/usr/bin/env python
-# coding: utf-8
+# **** Operación not
+''' En el operador NOT, cuando una entrada es verdadera o 1, su salida es falso o  0, y viceversa. En OpenCV se realiza 
+el mismo procedimiento, con la diferencia que en vez de 1 se emplea 255, como he dicho antes, para poder visualizar el 
+resultado o salida en colores blanco y negro'''
+result = cv2.bitwise_not(img_rec)
+plt.imshow(result, cmap='gray')
+plt.show()
+
+# **** Operación and
+'''
+Estamos pasando la imagen del rectángulo en la imagen del círculo.Y luego estamos indicando que la máscara es ninguna.
+Así que simplemente vamos a hacer una comparación bit a bit entre estas dos imágenes y el valor devuelto de esa 
+comparación será 255 (blanco) si los píxeles correspondientes en ambas imágenes son blancos.
+
+Entonces, en este caso, el resultado será solo este lado izquierdo de este semicírculo, ya que ese es el único región en
+ambas imágenes donde los píxeles son blancos.'''
+result = cv2.bitwise_and(img_rec, img_cir, mask = None)
+plt.imshow(result, cmap='gray')
+plt.show()
+
+# **** Operación or
+'''Ahora el valor de retorno de la operación será blanco si el píxel correspondiente de cualquier punto de la imagen es 
+blanco ( 255). EN este ejemplo, obtenemos todo el lado izquierdo del rectángulo, que es blanco y luego el lado derecho
+lado de la mano del círculo.'''
+result = cv2.bitwise_or(img_rec, img_cir, mask = None)
+plt.imshow(result, cmap='gray')
+plt.show()
+
+# **** Operación xor
+''' Solo devolverá un valor de blanco si el píxel correspondiente es blanco (255) en una imagen, pero no en ambas.'''
+result = cv2.bitwise_xor(img_rec, img_cir, mask = None)
+plt.imshow(result, cmap='gray')
+plt.show()
 
 ############################################################
 # 08 Convoluciones, desenfoque y nitidez de imágenes** #####
 ############################################################
-# ####**En esta lección aprenderemos:**
-# 1. Operaciones de convolución: una convolución es una operación matemática realizada en dos funciones que producen
-#    una función escalonada que generalmente es una versión modificada de una de las funciones originales. No es más que
-#    una multiplicación de funciones (primer elemento X resto y la suma de los resultados)
-# 2. Desenfoque
-# 3. Eliminación de ruido
-# 4. Afilado
-
+#  Operaciones de convolución: una convolución es una operación matemática realizada en dos funciones que producen
+#  una función escalonada que generalmente es una versión modificada de una de las funciones originales. No es más que
+#  una multiplicación de funciones (primer elemento X resto y la suma de los resultados)
 
 # Nuestra configuración, importar bibliotecas, crear nuestra función Imshow y descargar nuestras imágenes
 import cv2
@@ -769,11 +1241,6 @@ def imshow(title = "Image", image = None, size = 10):
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     plt.title(title)
     plt.show()
-
-'''# Download and unzip our images
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')'''
-
 
 # ### **Desenfoque usando circunvoluciones ( la inversa de la convolución) **
 
@@ -813,6 +1280,24 @@ import numpy as np
 
 image = cv2.imread('images/flowers.jpeg')
 
+'''
+método cv2.blur()
+El método se utiliza para desenfocar una imagen utilizando el filtro de cuadro normalizado. La función suaviza 
+una imagen.
+Sintaxis: cv2.blur(src, ksize[, dst[, ancla[, borderType]]])
+Parámetros:
+- src: Es la imagen de la que se desea difuminar.
+- ksize: una tupla que representa el tamaño del kernel de desenfoque, es decir  son las dimensiones del núcleo 
+        de la caja. En este ejemplo sería un kernel de caja de 13 por 13 que estaría involucrado con la imagen para 
+        dar como resultado una imagen borrosa. si el tamaño del kernel es más pequeño que el desenfoque, se reduce, 
+        si el tamaño del kernel es más grande se obtiene un desenfoque más sustancial.
+- dst: Es la imagen de salida del mismo tamaño y tipo que src.
+- ancla: es una variable de tipo entero que representa el punto de anclaje y su valor predeterminado es (-1, -1)
+         ,lo que significa que el ancla está en el centro del kernel.
+- borderType: representa qué tipo de borde se agregará. Está definido por indicadores como cv2.BORDER_CONSTANT 
+             , cv2.BORDER_REFLECT , etc.
+- Valor devuelto: Devuelve una imagen.
+        '''
 # blur(Promedio) realizado convolucionando la imagen con un filtro de cuadro normalizado.
 # Esto toma los píxeles del paŕametro y reemplaza los píxeles de la imagen con el promedio
 # El tamaño de la caja debe ser impar y positivo
@@ -868,16 +1353,16 @@ imshow('Bilateral Blurring', bilateral)
 #
 # - **src** – Entrada de imagen de 3 canales de 8 bits.
 # - **dst** – Imagen de salida con el mismo tamaño y tipo que src.
-# templateWindowSize: tamaño en píxeles del parche de plantilla que se utiliza para calcular los pesos. Debería ser
-#                     extraño. Valor recomendado 7 píxeles
-# - **searchWindowSize**: tamaño en píxeles de la ventana que se utiliza para calcular el promedio ponderado de un
-#                         píxel determinado. Debería ser extraño. Afecta el rendimiento de forma lineal: mayor tamaño
-#                         de ventana de búsqueda, mayor tiempo de eliminación de ruido. Valor recomendado 21 píxeles
 # - **h** – Parámetro que regula la intensidad del filtro para el componente de luminancia. Un valor h más grande
 #           elimina perfectamente el ruido pero también elimina los detalles de la imagen, un valor h más pequeño
 #           conserva los detalles pero también conserva algo de ruido
 # - **hColor** – Lo mismo que h pero para componentes de color. Para la mayoría de las imágenes, el valor igual a 10
 #                será suficiente para eliminar el ruido de color y no distorsionar los colores.
+# templateWindowSize: tamaño en píxeles del parche de plantilla que se utiliza para calcular los pesos. Debería ser
+#                     extraño. Valor recomendado 7 píxeles
+# - **searchWindowSize**: tamaño en píxeles de la ventana que se utiliza para calcular el promedio ponderado de un
+#                         píxel determinado. Debería ser extraño. Afecta el rendimiento de forma lineal: mayor tamaño
+#                         de ventana de búsqueda, mayor tiempo de eliminación de ruido. Valor recomendado 21 píxeles
 
 
 image = cv2.imread('images/hilton.jpeg')
@@ -904,20 +1389,13 @@ sharpened = cv2.filter2D(image, -1, kernel_sharpening)
 imshow('Sharpened Image', sharpened)
 
 
-#!/usr/bin/env python
-# coding: utf-8
+
 
 ########################################################################
 # 09 Umbralización, binarización y umbralización adaptativa ######
 ########################################################################
-# ####**En esta lección aprenderemos:**
-# 1. Imágenes binarizadas, estamos conviertiendo a binario los colores, los píxeles de una imagen a 0 o 1, mediante un
-#    algoritmo de sesión binaria.
-# 2. Métodos de Umbral
-# 3. Umbral adaptativo
-# 4. Umbral local de SkImage
-# In[1]:
 
+#Imágenes binarizadas, estamos conviertiendo a binario los colores, los píxeles de una imagen a 0 o 1, mediante un
 
 # Nuestra configuración, importar bibliotecas, crear nuestra función Imshow y descargar nuestras imágenes
 import cv2
@@ -934,20 +1412,133 @@ def imshow(title = "Image", image = None, size = 10):
     plt.show()
 
 
-# ### **Métodos de umbral**
-#  explicación de que la binarización Convirtió pasa a blanco o negro una escala de grises de una imagen en mediante un
-#  umbral todo por encima de un cierto umbral se vuelve blanco y por debajo negro mediant eun algortimo , exisitiendo la
-#  operación binaria contraria ( en vez de blanco negro y viceversa).
-#  El truncamiento es que todo lo que está por encima d eun umbral se convierte en ese valor máximo del umbral
-#  TOZERO es que todo lo que es menor que el umbral se vuelve 0 y TOZERO_INV lo contrario
+# ******* Aplicación Operaciones bit a bit: manipulación de logotipos  ##########
+
+# **** Leer imagen en primer plano
+img_bgr = cv2.imread("images/coca-cola-logo.png")
+img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+plt.imshow(img_rgb)
+plt.show()
+print(img_rgb.shape)
+logo_w = img_rgb.shape[0]  # guardamos el ancho de la imagen
+logo_h = img_rgb.shape[1]  # guardamos el alto de la imagen
+
+# **** leer la imagen de fondo
+# Leer en la imagen del fondo del tablero de color
+img_background_bgr = cv2.imread("images/checkerboard_color.png")
+img_background_rgb = cv2.cvtColor(img_background_bgr, cv2.COLOR_BGR2RGB)
+
+# Establecer el ancho deseado (logo_w) y mantener la relación de aspecto de la imagen
+aspect_ratio = logo_w / img_background_rgb.shape[1]
+dim = (logo_w, int(img_background_rgb.shape[0] * aspect_ratio))
+
+# Cambiar el tamaño de la imagen de fondo al mismo tamaño que la imagen del logotipo
+img_background_rgb = cv2.resize(img_background_rgb, dim, interpolation=cv2.INTER_AREA)
+plt.imshow(img_background_rgb)
+plt.show()
+print(img_background_rgb.shape)
+
+# **** se cra una máscara de la imagen de primer plano
+img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2GRAY)
+
+'''vamos a pasar el logotipo aquí para ver el color, convertirlo a gris. y luego use la treshold para 
+crear una máscara binaria a partir de la imagen en escala de grises.Entonces esto solo va a contener valores de cero y 
+255.
+
+Umbralización o thresholding: Consiste en modificar una imagen a una representación binaria, por medio de la 
+modificación de los valores de los pixeles estableciendo un valor umbral, es decir realizar la Binarización,  pasar a 
+blanco o negro una escala de grises de una imagen en mediante un umbral todo por encima de un  cierto umbral se vuelve 
+blanco y por debajo negro mediante un algortimo , exisitiendo la operación binaria contraria ( en vez de blanco negro y 
+viceversa). 
+El truncamiento es que todo lo que está por encima d eun umbral se convierte en ese valor máximo del umbral
+TOZERO es que todo lo que es menor que el umbral se vuelve 0 y TOZERO_INV lo contrario
 # ![](https://raw.githubusercontent.com/rajeevratan84/ModernComputerVision/main/Screenshot%202020-11-17%20at%2012.57.55%20am.png)
 # ![](https://raw.githubusercontent.com/rajeevratan84/ModernComputerVision/main/Screenshot%202020-11-17%20at%2012.58.09%20am.png)
 # https://docs.opencv.org/master/d7/d4d/tutorial_py_thresholding.html
 
+sintaxis: 
+ret,thresh = cv2.threshold(img, umbral, valorMax , tipo)
 
+Los parámetros son los siguientes:
+- img es la imagen gris que va a ser analizada
+- umbral es el valor indicado a analizar en cada píxel
+- valorMax Valor que se coloca a un píxel si sobrepasa el umbral
+- tipo se elige un tipo de umbralización: THRESH_BINARY, THRESH_BINARY_INV, THRESH_TRUNC, THRESH_TOZERO], 
+  THRESH_TOZERO_INV, THRESH_OTSU.
+
+La función devuelve:
+- thresh imagen binarizada
+- ret valor del umbral
+
+THRESH_BINARY
+Y muestra que, si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que superaron 
+el umbral se les asigna el valor máximo establecido.
+
+THRESH_BINARY_INV
+si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que superaron el umbral se les 
+asigna cero 0 y a los que no superaron el umbral se les asigna el valor máximo establecido (maxval en este ejemplo es 
+255)
+
+THRESH_TRUNC
+Estas muestran que, si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que 
+superaron el umbral se les asigna el mismo valor del umbral y a los que no superaron el umbral se les asigna los mismos
+valores que tenían originalmente.
+
+THRESH_TOZERO
+si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que superaron el umbral 
+mantienen el valor de los pixeles originalmente, y cuando no superan el umbral se les asigna cero.
+
+THRESH_TOZERO_INV
+si el píxel (src(x,y)) supera el umbral (thresh), en la imagen binarizada a los píxeles que superaron el umbral se les 
+asigna cero, y a los píxeles que no superaron el umbral se les asigna el mismo valor que originalmente tenías.
+.'''
+# Aplique un umbral global para crear una máscara binaria del logotipo
+retval, img_mask = cv2.threshold(img_gray, 127, 255, cv2.THRESH_BINARY)
+plt.imshow(img_mask, cmap="gray")
+plt.show()
+print(img_mask.shape)
+
+# **** Se invierte la máscara
+# Se cre una máscara inversa
 '''
-get_ipython().system('wget https://raw.githubusercontent.com/rajeevratan84/ModernComputerVision/main/scan.jpeg')
+Y luego vamos a realizar una operación similar aquí abajo, pero sin usar la función de umbral.
+Aunque podríamos haberlo hecho, podríamos haber usado la función de umbral aquí abajo y especificar un umbral
+máscara inversa binaria:
+retval2, img_mask2 = cv2.threshold(img_gray, 127, 255, cv2.THRESH_BINARY_INV)
+
+pero en su lugar podemos simplemente llamar a la función bitwise_not en la máscara de imagen para devolver la máscara 
+inversa
 '''
+img_mask_inv = cv2.bitwise_not(img_mask)
+plt.imshow(img_mask_inv, cmap="gray")
+plt.show()
+
+# **** Se aplica el fondo a la máscara
+'''para mostrar el fondo  "detrás" de las letras del logotipo se utiliza bitwise_and usando 
+la imagen de fondo consigo misma pero utilizando la máscara original creada pero solo la va a aplicar a la máscara, que 
+es las letras blancas en este caso, es decir vamos a hacer una comparación bit a bit entre estas dos imágenes y el valor
+devuelto de esa comparación será el de la imagen si los píxeles correspondientes en ambas imágenes son iguales solo en 
+las letras y en el resto 0 (negro), con esto obtenemos solo los colores que se muestran en el logotipo.'''
+img_background = cv2.bitwise_and(img_background_rgb, img_background_rgb, mask=img_mask)
+plt.imshow(img_background)
+plt.show()
+
+# **** Se aísla el primer plano de la imagen
+'''Aísle el primer plano (rojo de la imagen original) usando la máscara inversa consigo misma y aplicándolo a la mascara
+inversa con lo que se aplicará a toda la imagen la comparación de rojo = rojo menos a las letras, quedando éstas a 0
+(negro)'''
+img_foreground = cv2.bitwise_and(img_rgb, img_rgb, mask=img_mask_inv)
+plt.imshow(img_foreground)
+plt.show()
+
+# **** Se obtiene el resultado
+'''Ahora sumando las dos imagenes que acabamos de crear obtenemos el resultado del fondo rojo + las letras de colores'''
+result = cv2.add(img_background, img_foreground)
+plt.imshow(result)
+cv2.imwrite("logo_final.png", result[:, :, ::-1])
+plt.show()
+
+############
 
 # Cargar nuestra imagen en escala de grises
 image = cv2.imread('./images/scan.jpg',0)
@@ -1024,7 +1615,6 @@ imshow("Guassian Otsu's Thresholding", th3)
 # https://scikit-image.org/docs/stable/auto_examples/applications/plot_thresholding.html
 
 from skimage.filters import threshold_local
-
 image = cv2.imread('./images/scan.jpg')
 
 # Obtenemos el componente Valor del espacio de color HSV, lo necesita esta función
@@ -1036,25 +1626,14 @@ T = threshold_local(V, 25, offset=15, method="gaussian")
 thresh = (V > T).astype("uint8") * 255
 imshow("threshold_local", thresh)
 
-
 # ### **Por qué es importante desenfocar
 # ## **respuesta - ruido *
 # ![](https://opencv-python-tutroals.readthedocs.io/en/latest/_images/otsu.jpg)
 # https://docs.opencv.org/master/d9/d8b/tutorial_py_contours_hierarchy.html
 
-
-#!/usr/bin/env python
-# coding: utf-8
 #####################################################
-# 10 Detección de dilatación, erosión y bordes ######
+# 10 Detección de dilatación, erosion y bordes apertura cierre ######
 #####################################################
-# # **Detección de dilatación, erosión y bordes**
-# ####**En esta lección aprenderemos:**
-# - **Dilatación**: agrega píxeles a los límites de los objetos en una imagen
-# - **Erosión**: elimina píxeles en los límites de los objetos en una imagen
-# - **Apertura** - Erosión seguida de dilatación
-# - **Cierre** - Dilatación seguida de erosión
-# 5. Detección de borde astuto
 
 # Nuestra configuración, importar bibliotecas, crear nuestra función Imshow y descargar nuestras imágenes
 import cv2
@@ -1070,9 +1649,6 @@ def imshow(title = "Image", image = None, size = 10):
     plt.title(title)
     plt.show()
 
-'''# Descarga y descomprime nuestras imágenes
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')'''
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/Screenshot%202021-11-15%20at%205.19.08%20pm.png)
 
 image = cv2.imread('images/opencv_inv.png', 0)
@@ -1082,19 +1658,23 @@ imshow('Original', image)
 # funciones
 kernel = np.ones((5, 5), np.uint8)
 
-# Ahora erosionamos
+# Ahora erosionamos, quitando pixeles a los limites de los objetos
 erosion = cv2.erode(image, kernel, iterations = 1)
 imshow('Erosion', erosion)
 
-# Dilatar aqui
+# Dilatar aquí, es decir agregando píxeles a los límites de los objetos, el fondo en este caso en una imagen
 dilation = cv2.dilate(image, kernel, iterations = 1)
 imshow('Dilation', dilation)
 
-# Apertura - Bueno para eliminar el ruido
+# Apertura - Bueno para eliminar el ruido, La operación de apertura es una operación de erosión seguida de dilatación.
+# se usa para eliminar el ruido interno presente dentro de una imagen.
 opening = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
 imshow('Opening',opening)
 
-# Cierre - Bueno para eliminar el ruido
+# Cierre - Bueno para eliminar el ruido, aplica dilatación seguida de erosión.
+# Al igual que el operador Apertura, también utiliza un elemento estructurante, pero se utiliza para eliminar pequeños
+# agujeros en lugar de pertusiones.
+
 closing = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
 imshow('Closing',closing)
 
@@ -1109,14 +1689,27 @@ imshow('Closing',closing)
 # de grises de la imagen.
 
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/Screenshot%202021-11-15%20at%205.24.15%20pm.png)
-# - El primer argumento es nuestra imagen de entrada.
-# - El segundo y tercer argumento son nuestro minVal y maxVal respectivamente.
-# - El cuarto argumento (opcional) es opening_size. Es el tamaño del núcleo Sobel utilizado para encontrar gradientes
-#   de imagen. Por defecto es 3.
-#
+
 # La detección de bordes necesita un umbral para indicar qué diferencia/cambio debe contarse como borde
 
 image = cv2.imread('images/londonxmas.jpeg',0)
+'''
+Detector de bordes Canny con OpenCV
+La función Canny() en OpenCV se utiliza para detectar los bordes de una imagen
+canny = cv2.Canny(imagen, umbral_minimo, umbral_maximo)
+Donde:
+- canny: es la imagen resultante. Aparecerán los bordes detectados tras el proceso.
+- imagen: es la imagen original.
+- umbral_minimo: es el umbral mínimo en la umbralización por histéresis
+- umbral_maximo: es el umbral máximo en la umbralización por histéresis
+
+hay mas parámetros: 
+- opening_size: Tamaño de apertura del filtro Sobel. Es el tamaño del núcleo Sobel utilizado para encontrar gradientes
+                de imagen. Por defecto es 3.
+- L2Gradient: Parámetro booleano utilizado para mayor precisión en el cálculo de Edge Gradient.
+             el umbral mínimo y el máximo dependerá de cada situación.
+Docu 
+https://docs.opencv.org/4.x/da/d22/tutorial_py_canny.html'''
 
 # Canny Edge Detection utiliza valores de gradiente como umbrales
 # El primer gradiente de umbral
@@ -1153,12 +1746,9 @@ def autoCanny(image):
 auto_canny = autoCanny(image)
 imshow("auto canny", auto_canny)
 
-
-#!/usr/bin/env python
-# coding: utf-8
-#####################
-# 11 contornos ######
-#####################
+########################################################
+# 11 contornos, encontrar dibujar jerarquía modos ######
+########################################################
 # ####**En esta lección aprenderemos:**
 # 1. Usando findContours
 # 2. Dibujo de contornos
@@ -1179,13 +1769,8 @@ def imshow(title = "Image", image = None, size = 10):
     plt.title(title)
     plt.show()
 
-'''# Descarga y descomprime nuestras imágenes
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')'''
-
-
 # ## **¿Qué son los contornos?**
-# Los contornos son líneas o curvas continuas que limitan o cubren el límite total de un objeto en una imagen.
+# Los contornos son líneas o curvas continuas ¿bordes? que limitan o cubren el límite total de un objeto en una imagen.
 
 # Carguemos una imagen simple de placa de matrícula
 image = cv2.imread('images/LP.jpg')
@@ -1197,12 +1782,13 @@ imshow('Input Image', image)
 #
 # **Modos de recuperación**
 # - **RETR_LIST** - Recupera todos los contornos, pero no crea ninguna relación padre-hijo. Padres e hijos son iguales
-# bajo esta regla, y son solo contornos. es decir, todos pertenecen al mismo nivel de jerarquía.
-# - **RETR_EXTERNAL** - devuelve solo banderas externas extremas. Todos los contornos secundarios se dejan atrás.
+#                   bajo esta regla, y son solo contornos. es decir, todos pertenecen al mismo nivel de jerarquía.
+# - **RETR_EXTERNAL** - devuelve unicamente banderas EXTERNAS extremas. Todos los contornos secundarios se dejan atrás.
 # - **RETR_CCOMP** - Esta bandera recupera todos los contornos y los organiza en una jerarquía de 2 niveles. es decir,
-# los contornos externos del objeto (es decir, su límite) se colocan en la jerarquía-1. Y los contornos de los agujeros
-# dentro del objeto (si los hay) se colocan en la jerarquía-2. Si hay algún objeto dentro de él, su contorno se coloca
-# nuevamente en la jerarquía-1 solamente. Y su agujero en la jerarquía-2 y así sucesivamente.
+#                    los contornos externos del objeto (es decir, su límite) se colocan en la jerarquía-1. Y los
+#                    contornos de los agujeros dentro del objeto (si los hay) se colocan en la jerarquía-2. Si hay algún
+#                    objeto dentro de él, su contorno se coloca
+#                    nuevamente en la jerarquía-1 solamente. Y su agujero en la jerarquía-2 y así sucesivamente.
 # - **RETR_TREE** - Recupera todos los contornos y crea una lista de jerarquía familiar completa.
 #
 # **Opciones de método de aproximación**
@@ -1215,7 +1801,7 @@ image = cv2.imread('images/LP.jpg')
 # Convertir a escala de grises
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-# aplicamos el un umbral para modificar una imagen a una representación binaria ( visto en 09 y en 07 info bit)
+# aplicamos el umbral para modificar una imagen a una representación binaria ( visto en 09 y en 07 info bit)
 # se realiza porque las funciones de contorno funcionan mejor con el umbral de las imágenes y los binarios
 _, th2 = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 imshow('After thresholding', th2)
@@ -1263,7 +1849,7 @@ imshow('Contours overlaid on original image', image) # no encuentra
 print("Number of Contours found = " + str(len(contours)))  # Number of Contours found = 1
 
 
-# # **NOTA: Para que findContours funcione, el fondo debe ser negro y de primer plano (es decir, el texto o los objetos)**
+# # **NOTA: Para que findContours funcione, el fondo debe ser negro y de primer plano (es decir, el texto o los objetos)
 # #### De lo contrario, deberá invertir la imagen utilizando **cv2..bitwise_not(input_image)**
 # #### **Podemos usar Canny Edges en lugar de Thresholding**
 
@@ -1289,8 +1875,8 @@ print("Number of Contours found = " + str(len(contours)))
 
 ## ## **Recuerda estos pasos para contornear**
 # 1. Escala de grises
-# 2. Detección de umbral o Canny Edge para binarizar la imagen
 # **Nota:** Se recomienda desenfocar antes del Paso 2 para eliminar contornos ruidosos
+# 2. Detección de umbral o Canny Edge (bordes) para binarizar la imagen
 
 
 
@@ -1472,9 +2058,6 @@ print("Number of Contours found = " + str(len(contours)))
 for c in contours:
   print(len(c))
 
-# !/usr/bin/env python
-# coding: utf-8
-
 ###############################################################################
 # 12 Momentos, Clasificación, Aproximación y Correspondencia de Contorno ######
 ###############################################################################
@@ -1499,11 +2082,6 @@ def imshow(title="Image", image=None, size=16):
     plt.title(title)
     plt.show()
 
-
-'''# Descarga y descomprime nuestras imágenes
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')
-'''
 
 # ### **Encontrar contornos como de costumbre** ( visto en 11)
 
@@ -1540,9 +2118,8 @@ import numpy as np
 # Función que usaremos para mostrar el área del contorno
 
 def get_contour_areas(contours):
-    """devuelve las áreas de todos los contornos como una lista
-    Entonces, estamos recorriendo los contornos que antes hemos sacado y estamos obteniendo el área de cada contorno
-    y añadiendolo a una lista"""
+    """devuelve las áreas de todos los contornos como una lista, estamos recorriendo los contornos que antes hemos
+    sacado, obteniendo el área de cada contorno y añadiendolo a una lista"""
     all_areas = []
     for cnt in contours:
         area = cv2.contourArea(cnt)
@@ -1576,18 +2153,16 @@ for (i, c) in enumerate(sorted_contours):
     cv2.drawContours(image, [c], -1, (255, 0, 0), 3)
 
 # lo que hemos realizado es clasificar de forma numerica por el tamaño del área de las figuras de la imagen
-# ( son 2cuadrados,1 circulo, 1 triangulo) que hemos calculado a raíz de los contornos, es decir, hemos dibujado
+# ( son 2 cuadrados,1 círculo, 1 triángulo) que hemos calculado a raíz de los contornos, es decir, hemos dibujado
 # el controno y un número que clasifica de más grande a pequeño las áreas de las figuras del ejemplo
 imshow('Contours by area', image)
 
 
 # #### **Definir algunas funciones que usaremos**
-
-
 # Funciones que usaremos para ordenar por posición
 def x_cord_contour(contours):
     """Devuelve la coorednada X para el centroide del controno ( una función Usando los momentos para sacar
-    la coordenada x  )"""
+    la coordenada x )"""
     if cv2.contourArea(contours) > 10:  # rechaza los contornos más pequeños
         M = cv2.moments(contours)
         return (int(M['m10'] / M['m00']))
@@ -1635,8 +2210,9 @@ imshow('Sorting Left to Right', orginal_image)
 # Entonces, esta es una función que puede tomar un contorno y aproximarlo
 # - **contorno** – es el contorno individual que deseamos aproximar
 # - **Precisión de la aproximación**: un parámetro importante determina la precisión de la aproximación. Los valores
-# pequeños dan aproximaciones precisas, los valores grandes dan una aproximación más genérica
-# una buena good regla empírica od es menos del 5% del perímetro del contorno
+#                                     pequeños dan aproximaciones precisas, los valores grandes dan una aproximación
+#                                     más genérica una buena regla empírica od es menos del 5% del perímetro del
+#                                     contorno
 # # - **Cerrado**: un valor booleano que indica si el contorno aproximado debe estar abierto o cerrado
 
 import numpy as np
@@ -1672,12 +2248,13 @@ imshow('Bounding Rectangles', orig_image)
 # ******
 # Iterar a través de cada contorno y calcular el contorno aproximado
 # una forma de limpiar sus contornos y aproximarlos, como en la imagen que es un dibujo a mano irregular y lo mejora
+
 for c in contours:  # toma un contorno de una imagen
     # Calcule la precisión como un porcentaje del perímetro del contorno
     #  Toma una precisión y precisión como un porcentaje del parámetro de contorno.
     # Así que quitas el 3 por ciento aquí del parámetro cuántico
     accuracy = 0.03 * cv2.arcLength(c, True)
-    # ahora calcula  calcular el contorno aproximado con ese porcentaje de precisión
+    # ahora calcular el contorno aproximado con ese porcentaje de precisión
     approx = cv2.approxPolyDP(c, accuracy, True)
     # lo dibujas
     cv2.drawContours(copy, [approx], 0, (0, 255, 0), 2)
@@ -1780,18 +2357,9 @@ for c in contours:
 cv2.drawContours(target, [closest_contour], -1, (0, 255, 0), 3)
 imshow('Output', target)
 
-# !/usr/bin/env python
-# coding: utf-8
-
 ###################################################
 # 13 Detección de líneas, círculos y manchas ######
 ###################################################
-
-# ####**En esta lección aprenderemos:**
-# 1. Líneas de vida ( metodo par alíneas finas en imágenes )
-# 2. Líneas de Hough probabilísticas
-# 3. Círculos de Hough
-# 4. Detección de manchas
 
 # Nuestra configuración, importar bibliotecas, crear nuestra función Imshow y descargar nuestras imágenes
 import cv2
@@ -1809,10 +2377,6 @@ def imshow(title="Image", image=None, size=10):
     plt.show()
 
 
-'''# Descarga y descomprime nuestras imágenes
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')
-'''
 # ## **Detección de línea: uso de líneas Hough**
 #
 # La transformada de Hough toma un mapa de bordes binarios como entrada e intenta ubicar los bordes colocados como
@@ -1873,7 +2437,8 @@ imshow('Hough Lines', image)
 # ## **Líneas de Hough probabilísticas** # el anterior funciona muy bien, pero puede ser costoso
 # Una transformada de Hough se considera probabilística si utiliza un muestreo aleatorio de los puntos de borde.
 # Estos algoritmos se pueden dividir en función de cómo asignan el espacio de la imagen al espacio de los parámetros.
-# cv2.HoughLinesP(imagen binarizada, precisión 𝜌, precisión 𝜃, umbral, longitud mínima de línea, espacio máximo entre líneas)
+# cv2.HoughLinesP(imagen binarizada, precisión 𝜌, precisión 𝜃, umbral, longitud mínima de línea, espacio máximo entre
+#                 líneas)
 
 
 # Escala de grises y Canny Edges extraídos
@@ -1894,7 +2459,6 @@ for x in range(0, len(lines)):
 imshow('Probabilistic Hough Lines', image)  # este no funciona tan bien como el otro
 
 # ## **Detección de círculos - Hough Cirlces**
-#
 # **cv2.HoughCircles**(imagen, método, dp, MinDist, param1, param2, minRadius, MaxRadius)
 # - Método: actualmente solo está disponible cv2.HOUGH_GRADIENT
 # - dp - Relación inversa de la resolución del acumulador a la resolución de la imagen. Por ejemplo, si dp=1, el
@@ -1908,8 +2472,6 @@ imshow('Probabilistic Hough Lines', image)  # este no funciona tan bien como el 
 # - minRadius - limita el círculo más pequeño a este tamaño (a través del radio)
 # - MaxRadius - establece de manera similar el límite para los círculos más grandes
 
-
-'''get_ipython().system('wget https://raw.githubusercontent.com/rajeevratan84/ModernComputerVision/main/Circles_Packed_In_Square_11.jpeg')'''
 
 image = cv2.imread('images/Circles_Packed_In_Square_11.jpeg')
 imshow('Circles', image)
@@ -1969,9 +2531,6 @@ blobs = cv2.drawKeypoints(image, keypoints, blank, (0, 255, 0), cv2.DRAW_MATCHES
 # Mostrar puntos clave
 imshow("Blobs", blobs)
 
-# !/usr/bin/env python
-# coding: utf-8
-
 ########################################################
 # 14 Contar círculos, elipses y encontrar a Waldo*######
 ########################################################
@@ -1996,11 +2555,6 @@ def imshow(title="Image", image=None, size=12):
     plt.title(title)
     plt.show()
 
-
-'''# Download and unzip our images
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')
-'''
 
 # ## **Contar manchas circulares**
 # la siguiente imagen ayuda mucho a enterder los parametros!
@@ -2115,8 +2669,6 @@ cv2.rectangle(image, top_left, bottom_right, (0, 0, 255), 5)
 
 imshow('Where is Waldo?', image)
 
-# !/usr/bin/env python
-# coding: utf-8
 ########################################################################
 # 15 Encontrar esquinas ######
 ########################################################################
@@ -2139,10 +2691,6 @@ def imshow(title="Image", image=None, size=10):
     plt.show()
 
 
-'''# Download and unzip our images
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')
-'''
 
 # ## **¿Qué es una esquina?**
 
@@ -2210,13 +2758,730 @@ for corner in corners:
 
 imshow("Corners Found", img)
 
-########################################################################
-# Detección de caras y ojos con clasificadores en cascada Haar ######
-########################################################################
-# ####**En esta lección aprenderemos:**
-# 1. A utilizar un clasificador en cascada de Haar para detectar caras
-# 2. utilizar un clasificador Haarcascade para detectar ojos.
-# 3. Usar un clasificador Haarcascade para detectar caras y ojos desde su webcam en Colab.
+# ******************************************
+# ***** 16 Usando la camara en OpenCV
+# ******************************************
+import cv2
+import sys
+
+# especificamos un índice de dispositivo de cámara predeterminado de cero.
+s = 0
+print(sys.argv)  # contiene los argumentos de la librería sys, por ejemplo 0 es la ruta
+# ['C:\\Users\\jgomcano\\PycharmProjects\\guiapython\\OpenCV\\Usando la camara en openCV\\16 Usando_camara_OpenCV.py']
+# y simplemente estamos verificando si hubo una especificación de línea de comando para anular ese valor predeterminado.
+if len(sys.argv) > 1:
+    s = sys.argv[1]
+print(s)  # 0
+source = cv2.VideoCapture(s)  # llamamos a la clase de captura de video para crear un objeto de captura de video,
+#  Con el índice 0 accederá a la cámara predeterminada en su sistema, si no hay que indicarlo
+win_name = 'Vista de camara'
+# estamos creando una ventana con nombre, que eventualmente vamos a enviar la salida transmitida
+cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
+
+'''ciclo while nos permitirá transmitir continuamente video desde la cámara y enviarlo a la salida a menos que el 
+usuario pulse la tecla de escape.'''
+while cv2.waitKey(1) != 27:  # Escape
+    '''usa esa fuente de objeto de captura de vídeo  de captura de video para llamar al método read, que  devolverá un 
+    solo cuadro de la transmisión de video, así como una variable lógica has_frame.
+    Entonces, si hay algún tipo de problema con la lectura de la transmisión de video o el acceso a la cámara, entonces 
+    has_frame sería falso y saldríamos del bucle.
+    De lo contrario, continuaríamos y llamaríamos a la función de visualización de mensajes instantáneos y abriríamos
+     kbps para enviar el video (frame) a la ventana de salida'''
+    has_frame, frame = source.read()
+    if not has_frame:
+        break
+    cv2.imshow(win_name, frame)
+
+source.release()
+cv2.destroyWindow(win_name)
+
+### generar un boceto
+
+# Nuestra función generadora de bocetos
+def sketch(image):
+    # Convierte la imagen a escala de grises
+    img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Limpia la imagen usando Guassian Blur
+    img_gray_blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
+
+    # Extraer bordes
+    canny_edges = cv2.Canny(img_gray_blur, 10, 70)
+
+    # Invertir y binarizar la imagen
+    ret, mask = cv2.threshold(canny_edges, 70, 255, cv2.THRESH_BINARY_INV)
+    return mask
+
+
+# Inicializar webcam, cap es el objeto proporcionado por VideoCapture
+cap = cv2.VideoCapture(0)
+
+while True:
+    # Contiene un booleano indicando si tuvo éxito (ret)
+    # También contiene las imágenes recogidas de la webcam (frame)
+    ret, frame = cap.read()
+    # Pasamos nuestro frame a nuestra función sketch directamente dentro de cv2.imshow()
+    cv2.imshow('Nuestro dibujante en vivo', sketch(frame))
+    if cv2.waitKey(1) == 13:  # 13 es la tecla Enter
+        break
+
+# Libera la cámara y cierra las ventanas
+cap.release()
+cv2.destroyAllWindows()
+
+
+# ************************************************
+# ***** 17 uso camara Filtrado de imagen en OpenCV
+# ************************************************
+import cv2
+import sys
+import numpy
+
+PREVIEW  = 0   # Vista previa
+BLUR     = 1   # filtro de desenfoque
+FEATURES = 2   # Detector de características de corner
+CANNY    = 3   # Detector de borde astuto
+
+# Estamos definiendo un pequeño diccionario de configuración de parámetros para el detector de características de corner
+feature_params = dict( maxCorners = 500,
+                       qualityLevel = 0.2,
+                       minDistance = 15,
+                       blockSize = 9)
+
+'''Estamos configurando el índice del dispositivo para la cámara, creando una ventana de salida para los 
+resultados transmitidos y luego crea un objeto de captura de video  para que podamos procesar la transmisión de 
+video en el bucle '''
+s = 0
+if len(sys.argv) > 1:
+    s = sys.argv[1]
+
+image_filter = PREVIEW
+alive = True
+
+win_name = 'Camera Filters'
+cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
+result = None
+
+source = cv2.VideoCapture(s)
+
+while alive:
+    has_frame, frame = source.read()  # leemos el frame de vídeo
+    if not has_frame:
+        break
+
+    frame = cv2.flip(frame, 1)  # mediante flip giramos el video horizontalmente
+
+    if image_filter == PREVIEW:  # según la configuración de ejecución del script
+        result = frame  # solo cogemos el frame y lo mostramos
+    elif image_filter == CANNY:
+        '''
+        Detector de bordes Canny con OpenCV
+        La función Canny() en OpenCV se utiliza para detectar los bordes de una imagen
+        canny = cv2.Canny(imagen, umbral_minimo, umbral_maximo)
+        Donde:
+        - canny: es la imagen resultante. Aparecerán los bordes detectados tras el proceso.
+        - imagen: es la imagen original.
+        - umbral_minimo: es el umbral mínimo en la umbralización por histéresis
+        - umbral_maximo: es el umbral máximo en la umbralización por histéresis
+        hay mas parámetros: 
+        - opening_size: Tamaño de apertura del filtro Sobel.
+        - L2Gradient: Parámetro booleano utilizado para mayor precisión en el cálculo de Edge Gradient.
+        el umbral mínimo y el máximo dependerá de cada situación.
+        Docu 
+        https://docs.opencv.org/4.x/da/d22/tutorial_py_canny.html'''
+        result = cv2.Canny(frame, 80, 150)
+    elif image_filter == BLUR:
+        '''
+        método cv2.blur()
+        El método se utiliza para desenfocar una imagen utilizando el filtro de cuadro normalizado. La función suaviza 
+        una imagen.
+        Sintaxis: cv2.blur(src, ksize[, dst[, ancla[, borderType]]])
+        Parámetros:
+        - src: Es la imagen de la que se desea difuminar.
+        - ksize: una tupla que representa el tamaño del kernel de desenfoque, es decir  son las dimensiones del núcleo 
+            de la caja. En este ejemplo sería un kernel de caja de 13 por 13 que estaría involucrado con la imagen para 
+            dar como resultado una imagen borrosa. si el tamaño del kernel es más pequeño que el desenfoque, se reduce, 
+            si el tamaño del kernel es más grande se obtiene un desenfoque más sustancial.
+        - dst: Es la imagen de salida del mismo tamaño y tipo que src.
+        - ancla: es una variable de tipo entero que representa el punto de anclaje y su valor predeterminado es (-1, -1)
+          ,lo que significa que el ancla está en el centro del kernel.
+        - borderType: representa qué tipo de borde se agregará. Está definido por indicadores como cv2.BORDER_CONSTANT 
+          , cv2.BORDER_REFLECT , etc.
+        - Valor devuelto: Devuelve una imagen.
+        '''
+        result = cv2.blur(frame, (13, 13))
+    elif image_filter == FEATURES:
+        result = frame
+        frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # convertimos la imagen a escala de grises
+        '''La función goodFeaturesToTrack encuentra N esquinas más fuertes 
+         cv2.goodFeaturesToTrack(image, maxCorners, qualityLevel, minDistance, [,mask[,blockSize[,useHarrisDetector[,k]]]])
+
+        - imagen: entrada de imagen de un solo canal de 8 bits o punto flotante de 32 bits
+        - maxCorners - Número máximo de esquinas a devolver. Si hay más esquinas de las que se encuentran, se devuelve 
+          la más fuerte de ellas. si <= 0 implica que no se establece ningún límite en el máximo y se devuelven todas 
+          las esquinas detectadas.
+        - qualityLevel - Parámetro que caracteriza la calidad mínima aceptada de las esquinas de la imagen. Consulte el 
+          párrafo anterior para obtener una explicación.
+        - minDistance - Distancia euclidiana mínima posible entre las esquinas devueltas
+        - máscara - Región de interés opcional. Si la imagen no está vacía, especifica la región en la que se detectan 
+          las esquinas.
+        - blockSize - Tamaño de un bloque promedio para calcular una matriz de covariación derivada sobre cada 
+          vecindario de píxeles
+        - useHarrisDetector - ya sea para usar Shi-Tomasi o Harris Corner
+        -k - Parámetro libre del detector de Harris
+        Documentación: 
+        https://theailearner.com/tag/cv2-goodfeaturestotrack/
+        https://docs.opencv.org/3.4/d4/d8c/tutorial_py_shi_tomasi.html'''
+        corners = cv2.goodFeaturesToTrack(frame_gray, **feature_params)
+        if corners is not None:  # Devuelve una lista de esquinas encontradas en la imagen
+            ''' Y si detectamos una o más esquinas, simplemente anotaremos el resultado con pequeños
+             círculos verdes para indicar las ubicaciones de esas características ojo con los parámetros
+             al ser capturados las  posiciones x,y PASARLO a entero'''
+            for x, y in numpy.float32(corners).reshape(-1, 2):
+                cv2.circle(result, (int(x), int(y)), 10, (0, 255, 0), 1)
+
+    cv2.imshow(win_name, result)  # Enviamos el resultado a la salida
+
+    # para poder cambiar el tratamiento de la imagen dependiendo de la tecla introducida
+    key = cv2.waitKey(1)
+    if key == ord('Q') or key == ord('q') or key == 27:
+        alive = False
+    elif key == ord('C') or key == ord('c'):
+        image_filter = CANNY
+    elif key == ord('B') or key == ord('b'):
+        image_filter = BLUR
+    elif key == ord('F') or key == ord('f'):
+        image_filter = FEATURES
+    elif key == ord('P') or key == ord('p'):
+        image_filter = PREVIEW
+
+source.release()
+cv2.destroyWindow(win_name)
+
+
+# ************************************************************
+# ***** 18 Caracteristicas de la imagen y alineación de la imagen
+# ************************************************************
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+'''
+Demostraremos los pasos a través de un ejemplo en el que alinearemos una foto de un formulario tomado con un teléfono 
+móvil con una plantilla del formulario. La técnica que usaremos a menudo se denomina alineación de imágenes "basada en 
+funciones" porque en esta técnica se detecta un conjunto escaso de funciones en una imagen y se compara con las 
+funciones en la otra imagen. Luego se calcula una transformación basada en estas características combinadas que deforma 
+una imagen sobre la otra.
+
+La alineación de imágenes (también conocida como registro de imágenes) es la técnica de deformar una imagen (o, a veces,
+ambas imágenes) para que las características de las dos imágenes se alineen perfectamente.
+'''
+
+# **** Paso 1: Lea la plantilla y la imagen escaneada
+# Leemos la imagen de referencia
+refFilename = "images/form.jpg"
+print("Reading reference image : ", refFilename)
+im1 = cv2.imread(refFilename, cv2.IMREAD_COLOR)
+im1 = cv2.cvtColor(im1, cv2.COLOR_BGR2RGB)
+
+# leemos la imagen que queremos alinear
+imFilename = "images/scanned-form.jpg"
+print("Reading image to align : ", imFilename)
+im2 = cv2.imread(imFilename, cv2.IMREAD_COLOR)
+im2 = cv2.cvtColor(im2, cv2.COLOR_BGR2RGB)
+
+# Mostramos las imágenes cargadas
+plt.figure(figsize=[20, 10]);
+plt.subplot(121);
+plt.axis('off');
+plt.imshow(im1);
+plt.title("Original Form")
+plt.subplot(122);
+plt.axis('off');
+plt.imshow(im2);
+plt.title("Scanned Form")
+plt.show()
+
+# ****** Paso 2: encuentra puntos clave en ambas imágenes
+'''
+objetivo  es tratar de extraer información significativa que esté contextualmente relacionada con la imagen en sí.
+Por lo general, buscamos bordes, esquinas y texturas en las imágenes, las función orb() es una forma de hacerlo, 
+vamos a crear este objeto orbe, y luego vamos a usar ese objeto para detectar y calcular puntos clave y descriptores 
+para cada una de las imágenes.
+
+Entonces, los puntos clave son características interesantes en cada imagen que generalmente se asocian con algunos 
+puntos nítidos. borde o esquina, y están descritos por un conjunto de coordenadas de píxeles que describen la ubicación
+del punto clave. El tamaño del punto clave. En otras palabras, la escala del punto clave y luego también la orientación 
+del punto clave. luego hay una lista asociada de descriptores para cada punto clave, y cada descriptor es en realidad un
+vector de alguna información que describe la región alrededor del punto clave, que actúa efectivamente como una firma 
+para ese punto clave. Es una representación vectorial de la información de píxeles alrededor del punto clave. Y la idea 
+aquí es que si estamos buscando el mismo punto clave en ambas imágenes, podemos intentar usar los descriptores para 
+emparejarlos.'''
+
+# Convertimos las imágenes a escala de grises
+im1_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
+im2_gray = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
+
+# Detecta características de ORB y calcula descriptores.
+
+MAX_NUM_FEATURES = 500
+'''El algoritmo utilizado para la detección de características de la imagen dada junto con la orientación y los 
+descriptores de la imagen se denomina algoritmo ORB y es una combinación del detector de punto clave FAST y el 
+descriptor BRIEF.
+
+- Localizador : identifica puntos en la imagen que son estables bajo transformaciones de imagen como traslación 
+  (desplazamiento), escala (aumento/disminución de tamaño) y rotación. El localizador encuentra las coordenadas x, y de 
+  dichos puntos. El localizador que utiliza el detector ORB se llama FAST .
+- Descriptor : El localizador del paso anterior solo nos dice dónde están los puntos interesantes. La segunda parte del 
+  detector de características es el descriptor que codifica la apariencia del punto para que podamos distinguir un punto
+  característico de otro. El descriptor evaluado en un punto característico es simplemente una matriz de números. 
+  Idealmente, el mismo punto físico en dos imágenes debería tener el mismo descriptor. ORB usa una versión modificada 
+  del descriptor de características llamado BRISK .
+
+sintaxis 
+ORB_object = cv.ORB_create()
+keypoints = ORB_object.detect(input_image)
+keypoints, descriptors = ORB_object.compute(input_image, keypoints)
+
+- El algoritmo ORB se puede implementar usando una función llamada función ORB().
+- La implementación del algoritmo ORB funciona creando un objeto de la función ORB().
+- Luego hacemos uso de una función llamada función ORB_object.detect() para detectar los puntos clave de una imagen dada
+- Luego hacemos uso de una función llamada función ORB_object.compute() para calcular los descriptores de una imagen 
+  determinada.
+- Luego, la imagen con los puntos clave calculados dibujados en la imagen se devuelve como salida
+https://www.educba.com/opencv-orb/
+https://learnopencv.com/image-alignment-feature-based-using-opencv-c-python/
+
+
+'''
+orb = cv2.ORB_create(MAX_NUM_FEATURES)
+
+# detectAndCompute aúna las dos explicadas anteriormente
+keypoints1, descriptors1 = orb.detectAndCompute(im1_gray, None)
+keypoints2, descriptors2 = orb.detectAndCompute(im2_gray, None)
+
+'''Estamos dibujando los puntos clave detectados en la imagen usando la función drawKeypoints()
+Sintaxis de la función drawKeypoints():
+dibujar puntos clave (imagen_de_entrada, puntos_clave, imagen_de_salida, color, bandera)
+parámetros:
+- input_image: la imagen que se convierte en escala de grises y luego los puntos clave se extraen utilizando los 
+                algoritmos SURF o SIFT se denomina imagen de entrada.
+- key_points: los puntos clave obtenidos de la imagen de entrada después de usar los algoritmos se denominan puntos 
+              clave.
+- output_image :   imagen sobre la que se dibujan los puntos clave.
+- color : el color de los puntos clave.
+- bandera: las características del dibujo están representadas por la bandera.
+https://www.geeksforgeeks.org/python-opencv-drawkeypoints-fuction/
+'''
+im1_display = cv2.drawKeypoints(im1, keypoints1, outImage=np.array([]), color=(255, 0, 0),
+                                flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+im2_display = cv2.drawKeypoints(im2, keypoints2, outImage=np.array([]), color=(255, 0, 0),
+                                flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
+'''
+Hemos calculado los puntos clave calculados en los descriptores de cada imagen. Y aquí, en estas cifras, se muestran 
+solo los puntos clave.  todos estos círculos rojos son puntos clave. El centro del círculo es la ubicación del punto 
+clave. El tamaño del círculo representa la escala del punto clave y luego la línea que conecta el centro del círculo al 
+exterior del círculo representa la orientación del punto clave. Hay algunos puntos clave en ambas imágenes que tal vez 
+sean los mismos, y esos son los que vamos a tratar de encontrar para que podamos calcular el gráfico de Hamas entre 
+estas dos representaciones de imágenes.'''
+
+plt.figure(figsize=[20, 10]);
+plt.subplot(121);
+plt.axis('off');
+plt.imshow(im1_display);
+plt.title("Original Form")
+plt.subplot(122);
+plt.axis('off');
+plt.imshow(im2_display);
+plt.title("Scanned Form")
+plt.show()
+
+# **** Paso 3: haga coincidir los puntos clave en las dos imágenes
+'''
+El primer paso en este proceso de coincidencia es crear una coincidencia u objeto llamando a DescriptorMatcher_create.
+le pasamos a esa función DESCRIPTOR_MATCHER_BRUTEFORCE_HAMMING, una medida de distancia (los descriptores de o cadena 
+binaria requieren una métrica de hamming para ese objetivo). lo que hace es  Toma el descriptor de una característica 
+en el primer conjunto y se compara con todas las demás características en el segundo conjunto utilizando algún cálculo 
+de distancia. Y se devuelve el más cercano.
+
+luego usamos esa coincidencia u objeto para llamar a la función de match, que luego intenta proporcionar una lista de 
+las mejores coincidencias asociadas con esa lista de descriptores. tenemos una estructura de datos  que contiene la 
+lista de coincidencias de los puntos clave que determinamos arriba.
+
+Y luego, una vez que obtengamos esa lista, ordenaremos la lista en función de la distancia entre los distintos, tras lo 
+que vamos a limitar al 10 por ciento superior de las coincidencias devueltas.
+
+https://opencv24-python-tutorials.readthedocs.io/en/latest/py_tutorials/py_feature2d/py_matcher/py_matcher.html
+'''
+# Coincidir las características encontradas en ambas imágenes.
+matcher = cv2.DescriptorMatcher_create(cv2.DESCRIPTOR_MATCHER_BRUTEFORCE_HAMMING)
+
+# match ()para obtener las mejores coincidencias en dos imágenes.
+matches = matcher.match(descriptors1, descriptors2, None)
+'''
+el resutlado de la línea línea 162 es una lista de objetos DMatch. Este objeto DMatch tiene los siguientes atributos:
+DMatch.distance - Distancia entre descriptores. Cuanto más bajo, mejor.
+DMatch.trainIdx - Índice del descriptor en descriptores de train
+DMatch.queryIdx - índice del descriptor en los descriptores de consulta
+DMatch.imgIdx - Índice de la imagen de train.
+'''
+# ordenar las coincidencias por resultado ascendentemente
+matches = sorted(matches, key=lambda x: x.distance, reverse=False)  # al ser una tupla sort no.
+
+# Eliminar las coincidencias menos favorables, quedándonos solo con el 10%
+numGoodMatches = int(len(matches) * 0.1)
+matches = matches[:numGoodMatches]
+
+'''
+Y vamos a usar DrewMatches para dibujar las coincidencias en este código, puedes ver que varios puntos clave en una 
+imagen coinciden los puntos clave de la otra imagen'''
+# Dibujar las mejores coincidencias aportando las dos imágenes, sus puntos y las coincidencias
+im_matches = cv2.drawMatches(im1, keypoints1, im2, keypoints2, matches, None)
+
+plt.figure(figsize=[40, 10])
+plt.imshow(im_matches);
+plt.axis('off');
+plt.title("Original Form");
+plt.show()
+
+# **** Paso 4: Encuentra la homografía
+'''
+¿Qué es la Homografía?
+Considere dos imágenes de un plano con un libro en diferentes posiciones y distancia.  Si el libro tiene un cuadro con 
+una imagen, un punto en la esquina del cuadro representa el mismo punto en las dos imágenes. En la jerga de la visión 
+artificial, llamamos a estos puntos correspondientes. Una homografía es una transformación (una matriz de 3×3) que 
+asigna los puntos de una imagen a los puntos correspondientes de la otra imagen.
+
+Si conociéramos la homografía, podríamos aplicarla a todos los píxeles de una imagen para obtener una imagen 
+deformada que esté alineada con la segunda imagen, es decir , puede aplicar la homografía a la primera imagen y el libro
+de la primera imagen se alineará con el libro de la segunda imagen. Si conocemos 4 o más puntos correspondientes en las
+dos imágenes, podemos usar la función de OpenCV findHomography para encontrar la homografía
+
+h, status = cv2.findHomography(points1, points2)
+donde, puntos1 y puntos2 son vectores/matrices de puntos correspondientes, y h es la matriz homográfica.'''
+
+# Extraer ubicación de las buenas coincidencias
+'''Crea y devuelve una referencia a un array con las dimensiones especificadas en la tupla dimensiones cuyos elementos 
+son todos ceros básicamente está creando un array de arrays con los puntos inicializados a 0, con el número de puntos 
+por la longitud que tiene el objeto matches
+'''
+points1 = np.zeros((len(matches), 2), dtype=np.float32)
+points2 = np.zeros((len(matches), 2), dtype=np.float32)
+
+'''Recorre matches desde la primera posición va introducendo el valor de los puntos de los descriptores de match de 
+entrenamiento y consulta'''
+for i, match in enumerate(matches):
+    points1[i, :] = keypoints1[match.queryIdx].pt
+    points2[i, :] = keypoints2[match.trainIdx].pt
+
+# Encuentra la homografía
+h, mask = cv2.findHomography(points2, points1, cv2.RANSAC)
+
+# ***** Paso 5: deformar la imagen
+# Usar homografía para deformar la imagen
+height, width, channels = im1.shape  # desmpaquetamos la dimensión de la imagen de referencia
+
+''' la transformación de perspectva está asociada con el cambio de punto de vista. Este tipo de transformación no
+conserva el paralelismo, la longitud y el ángulo pero conserva la colinealidad y la incidencia, lo que significa que 
+las líneas rectas permanecerán rectas despues de la transformación. 
+
+para ello seleccionamos 4 puntos de la imagen de entrada y asignamos esos 4 puntos a las ubicaciones deseadas en la 
+imagen de salida, realizando
+
+dst = cv.warpPerspective(src, M, dsize[, dst[, flags[, borderMode[, borderValue]]]] )
+# src: imagen de entrada
+# M: Matriz de transformación, en este caso usamos la homografía como esa matriz
+# dsize: tamaño de la imagen de salida (ancho, alto)
+# flags: método de interpolación a utilizar
+https://theailearner.com/tag/cv2-warpperspective/'''
+
+im2_reg = cv2.warpPerspective(im2, h, (width, height))
+# Display results
+plt.figure(figsize=[20, 10]);
+plt.subplot(121);
+plt.imshow(im1);
+plt.axis('off');
+plt.title("Original Form");
+plt.subplot(122);
+plt.imshow(im2_reg);
+plt.axis('off');
+plt.title("Scanned Form");
+plt.show()
+
+import cv2
+import sys
+
+import cv2
+import glob
+import matplotlib.pyplot as plt
+import math
+
+# *****************************************************
+# ***** 19 Unión de imágenes y creación de panoramas
+# *****************************************************
+# Caracteristicas de la imagen y alineación de la imagen
+
+# Creando panoramas usando OpenCV
+'''
+1. Encuentra puntos clave en todas las imágenes
+2. Encuentra correspondencias por pares
+3. Estimar homografías por pares
+4. Refinar homografías
+5. Puntada con mezcla
+
+podemos realizar todos estos pasos con la clase stitcher, es muy similar a los pasos que se explican en  
+Caracteristicas de la imagen y alineación de la imagen. stitcher es una clase que nos permite crear panoramas 
+simplemente pasando una lista de imágenes.
+
+las imágenes utilizadas para crear panoramas deben tomarse desde el mismo punto de vista Y también es importante tomar 
+las fotos aproximadamente al mismo tiempo para minimizar la iluminación.
+'''
+
+# Leemos las imágenes,
+'''glob incluye funciones para buscar en una ruta todos los nombres de archivos y/o directorios que coincidan con un 
+determinado patrón 
+glob.glob() devuelve una lista con las entradas que coincidan con el patrón especificado en pathname.
+glob.glob(pathname, recursive=False)
+La búsqueda se puede hacer también recursiva con el argumento recursive=True y las rutas pueden ser absolutas 
+y relativas.'''
+imagefiles = glob.glob("images/boat/*")
+imagefiles.sort()  # ordenamos la lista obtenida
+# ['boat\\boat1.jpg', 'boat\\boat2.jpg', 'boat\\boat3.jpg', 'boat\\boat4.jpg', 'boat\\boat5.jpg', 'boat\\boat6.jpg']
+
+images = []
+# recorremos la lista de imágenes y para cada imagen la leemos en color añadiendo los objeto a una lista de imágenes
+for filename in imagefiles:
+  img = cv2.imread(filename)
+  img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+  images.append(img)
+
+num_images = len(images)
+
+# mostramos las imágenes
+plt.figure(figsize=[30,10])
+num_cols = 3
+num_rows = math.ceil(num_images / num_cols)
+for i in range(0, num_images):
+  plt.subplot(num_rows, num_cols, i+1)
+  plt.axis('off')
+  plt.imshow(images[i])
+plt.show()
+
+# Stitch Images
+'''
+Creamos un objeto Stitcher desde la clase Stitcher_create(). Usamos ese objeto para llamar al método de stitch y 
+simplemente pasamos una lista de imágenes. el resultado que obtenemos es la imagen panorámica.
+El panorama de retorno incluye estas regiones negras. aquí, que son el resultado de la deformación que se requirió para 
+ unir las imágenes.'''
+stitcher = cv2.Stitcher_create()
+status, result = stitcher.stitch(images)
+if status == 0:
+  plt.figure(figsize=[30,10])
+  plt.imshow(result)
+plt.show()
+
+
+# **************************************************
+# ***** 20 Seguimiento de Objetos algoritmos opencv
+# **************************************************
+
+import zipfile
+import cv2
+import sys
+import os
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from IPython.display import HTML
+import urllib
+'''Objetivo: dada la ubicación inicial de un objeto, realizar un seguimiento de la ubicación en fotogramas posteriores.
+
+El seguimiento generalmente se refiere a estimar la ubicación de un objeto y predecir su ubicación en algún momento
+futuro en el tiempo, y en el contexto de la visión por computadora, generalmente equivale a detectar un objeto de
+interés en un video para posteriormente predecir la ubicación de ese objeto en cuadros de video subsiguientes Y logramos
+esto mediante el desarrollo de un modelo de movimiento y un modelo de apariencia, usando esa información para predecir
+su ubicación y futuros cuadros de video.
+
+También podemos usar un modelo de apariencia que codifica el aspecto del objeto y buscar la región alrededor de la
+ubicación predicha del modelo de movimiento para ajustar la ubicación del objeto. El modelo de movimiento es una
+aproximación a la ubicación del objeto en un cuadro de video futuro, y  se usa el modelo de apariencia para afinar esa
+estimación.
+
+Como un ejemplo concreto, supongamos que estamos interesados en rastrear un objeto específico como el coche de carreras
+identificado en el primer fotograma de un videoclip. Para iniciar el algoritmo de seguimiento, necesitamos especificar 
+la ubicación inicial del objeto y para hacer esto, definimos un cuadro delimitador que se muestra aquí en azul, que 
+consta de dos conjuntos de coordenadas de píxeles que definen las esquinas superior izquierda e inferior derecha del 
+cuadro delimitador. uUna vez que el algoritmo de seguimiento se inicializa con esta información, el objetivo es realizar
+un seguimiento del objeto y los cuadros de video subsiguientes al producir un cuadro delimitador en cada nuevo cuadro de
+video.
+
+En OpenCV tenemos 8 algoritmos de seguimiento disponibles:
+1. BOOSTING
+2. MIL
+3. KCF
+4. CRST
+5. TLD -> Tiende a recuperarse de las oclusiones.
+6. MEDIANFLOW -> Bueno para cámara lenta predecible
+7. GOTRUN -> Basado en aprendizaje profundo, Más preciso
+8. MOSSE -> El más rápido
+'''
+video_input_file_name = "videos/race_car.mp4"
+
+# *** Definición de funciones
+
+
+def drawRectangle(frame, bbox):  # Cuadro delimitador, dibujar
+    p1 = (int(bbox[0]), int(bbox[1]))  # punto izquierdo superior
+    p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))  # punto inferior derecho
+    cv2.rectangle(frame, p1, p2, (255, 0, 0), 2, 1)
+    # imagen, vértice sup izq, vértice inf der, color(R,G,B), grosor, tipo de línea
+
+
+def displayRectangle(frame, bbox):  # Cuadro delimitador, mostrar
+    plt.figure(figsize=(20, 10))
+    frameCopy = frame.copy()  # copiamos el fotograma
+    drawRectangle(frameCopy, bbox)  # Llamamos al de arriba para dibujar el rectángulo en el fotograma
+    frameCopy = cv2.cvtColor(frameCopy, cv2.COLOR_RGB2BGR)  # cambio de color
+    plt.imshow(frameCopy); plt.axis('off')  # mostramos el fotograma
+
+
+def drawText(frame, txt, location, color = (50,170,50)):
+    cv2.putText(frame, txt, location, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 3)  # dibujamos texto en el fotograma
+
+'''Uno de los algoritmos es el modelo GOTURN que requiere un modelo de inferencia, que se entrena teniendo como entrada
+el fotograma previo el actual, pasa por el modelo de red neuronal entrenado ( conocido como modelo de inferencia) 
+Utiliza el cuadro delimitador del cuadro anterior para recortar ambas imágenes y, por lo tanto, el objeto de interés se 
+encuentra en el centro de este cuadro anterior. Y obviamente, si el objeto se ha movido en el marco actual, entonces no 
+estará centrado en este recorte de fotograma porque estamos usando el cuadro delimitador del cuadro anterior para 
+recortar ambos fotogramas. Y luego es el trabajo del modelo de inferencia predecir cuál es el cuadro delimitador en la 
+salida y da como salida el fotograma de seguimiento actual.
+'''
+# Descargar modelo de seguimiento (solo  GOTURN)
+if not os.path.isfile('modelos/goturn/goturn.prototxt') or not os.path.isfile('modelos/goturn/goturn.caffemodel'):
+    print("Downloading GOTURN model zip file")
+    urllib.request.urlretrieve('https://www.dropbox.com/sh/77frbrkmf9ojfm6/AACgY7-wSfj-LIyYcOgUSZ0Ua?dl=1',
+                               'GOTURN.zip')
+
+    # descomprimir el fichero
+    '''
+    El método extractall() se usa para extraer paratodos los archivos presentes en el archivo zip al directorio de trabajo 
+    actual. Los archivos también se pueden extraer a una ubicación diferente sin pasar por el parámetro de ruta.
+    sintaxis: ZipFile.extractall(ruta_archivo, miembros=Ninguno, pwd=Ninguno)
+    Parámetros:
+    - file_path: ubicación donde se debe extraer el archivo comprimido, si file_path es None, el contenido del archivo zip se extraerá al directorio de trabajo actual
+    - miembros: Especifica la lista de archivos a extraer, si no se especifica, se extraerán todos los archivos del zip. los miembros deben ser un subconjunto de la lista devuelta por namelist()
+    - pwd: la contraseña utilizada para los archivos cifrados. Por defecto, pwd es Ninguno.
+    '''
+    with zipfile.ZipFile("GOTURN.zip", 'r') as zObject:
+        # Extracting all the members of the zip
+        # into a specific location.
+        zObject.extractall(
+            path=None)
+    # Delete the zip file
+    os.remove('GOTURN.zip')
+
+# **** Crear la instancia de Tracker
+# Configurar rastreador definiendo una lista de tracker ( "rastreadores") disponibles en la API
+tracker_types = ['BOOSTING', 'MIL', 'KCF', 'CSRT', 'TLD', 'MEDIANFLOW', 'GOTURN', 'MOSSE']
+
+# Cambiar el índice para cambiar el tipo de rastreador
+
+tracker_type = tracker_types[1]
+if tracker_type == 'BOOSTING':
+    tracker = cv2.legacy_TrackerBoosting.create()
+elif tracker_type == 'MIL':
+    tracker = cv2.TrackerMIL_create()
+elif tracker_type == 'KCF':
+    tracker = cv2.TrackerKCF_create()
+elif tracker_type == 'CSRT':
+    tracker = cv2.legacy_TrackerCSRT.create()
+elif tracker_type == 'TLD':
+    tracker = cv2.legacy_TrackerTLD.create()
+elif tracker_type == 'MEDIANFLOW':
+    tracker = cv2.legacy_TrackerMedianFlow.create()
+elif tracker_type == 'GOTURN':
+    tracker = cv2.TrackerGOTURN_create()
+else:
+    tracker = cv2.legacy_TrackerMOSSE.create()
+
+# ***** Leer video de entrada y configuración de salida de video
+
+# Leer video
+'''# Estamos configurando las transmisiones de video de salida de entrada, por lo que pasamos la entrada de vídeo (el 
+nombre de archivo) y creando un objeto de entrada de vídeo'''
+video = cv2.VideoCapture(video_input_file_name)
+ok, frame = video.read()  # leemos el primer fotograma del archivo
+# plt.imshow(frame[..., ::-1])
+# plt.show()
+# Salir si no se puede abrir el video
+if not video.isOpened():
+    print("Could not open video")
+    sys.exit()
+else:
+    width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))  # capturamos del fotograma el ancho
+    height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))  # capturamos del fotograma el alto
+
+video_output_file_name = 'race_car-' + tracker_type + '.mp4'  # nombre parametrizado del archivo
+'''Para escribir el vídeo, creamos un objeto de salida de vídeo que escriba los resultados del algoritmo de seguimiento 
+escogido 
+* explicado en "Escribir video en el disco"
+'''
+video_out = cv2.VideoWriter(video_output_file_name, cv2.VideoWriter_fourcc(*'avc1'), 10, (width, height))
+
+# ****** Definir cuadro delimitador
+'''Necesitábamos encontrar un cuadro delimitador alrededor del objeto que nos interesa rastrear, y lo estamos logrando 
+aquí de forma manual, Pero en la práctica, seleccionaría eso con una interfaz de usuario o tal vez usaría un algoritmo 
+de detección para detectar objetos de interés para el seguimiento '''
+bbox = (1300, 405, 160, 120)  # Dos conjuntos de pixeles, esquina sup izq y esquina inf der
+#bbox = cv2.selectROI(frame, False)
+#print(bbox)
+displayRectangle(frame,bbox)
+
+# ****** Inicializar rastreador
+'''
+Inicializamos el rastreador y para ello llamamos a tracker.init pásandole el primer fotograma y el cuadro delimitador'''
+ok = tracker.init(frame, bbox)
+
+# ***** Marco de lectura y objeto de seguimiento
+while True:
+    '''Comprobamos que existe el objeto inicializado de tracker (ok) y el fotograma, además Está leyendo el siguiente 
+    fotograma del vídeo'''
+    ok, frame = video.read()
+    if not ok:
+        break
+
+    # Start empieza el contador
+    timer = cv2.getTickCount()
+
+    '''vamos a pasar el fotograma a la función de seguimiento o actualización que nos devolverá un cuadro delimitado 
+    para el objeto detectado ( en caso de encontrarlo)'''
+    ok, bbox = tracker.update(frame)
+
+    # calcular los frames por segundo (FPS)
+    fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer);
+
+    # dibujar la caja de seguimiento si hemos detectado el objeto
+    if ok:
+        drawRectangle(frame, bbox)
+    else:
+        # si no escribiríamos el texto de fallo en el seguimiento
+        drawText(frame, "Tracking failure detected", (80, 140), (0, 0, 255))
+
+    # mostrar la información calculada (en 175)
+    drawText(frame, tracker_type + " Tracker", (80, 60))
+    drawText(frame, "FPS : " + str(int(fps)), (80, 100))
+
+    # escribir el fotograma del vídeo
+    video_out.write(frame)
+'''El bucle Recorre cada cuadro en el clip de video y llama a la función de actualización del rastreador y luego anota
+los fotogramas y los envía al flujo de vídeo de salida.'''
+
+video.release()
+video_out.release()
+
+####################################################################
+# 21 Detección de caras y ojos con clasificadores Haarcascade ######
+####################################################################
 
 
 # Nuestra configuración, importar librerías, crear nuestra función Imshow y descargar nuestras imágenes
@@ -2236,19 +3501,12 @@ def imshow(title="Image", image=None, size=10):
 
 
 # Descargar y descomprimir nuestras imágenes y clasificadores Haarcascade
-'''get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/haarcascades.zip')
-
-get_ipython().system('unzip -qq images.zip')
-get_ipython().system('unzip -qq haarcascades.zip')
-'''
 
 # ### **Primero, ¿Qué es la Detección de Objetos?**
 # ![](https://miro.medium.com/max/739/1*zlWrCk1hBBFRXa5t84lmHQ.jpeg)
 #
 # **Detección de Objetos** es la capacidad de detectar y clasificar objetos individuales en una imagen y dibujar un
 # cuadro delimitador sobre el área del objeto.
-
 
 # # **Clasificadores en cascada HAAR**
 # Desarrollados por Viola y Jones en 2001.
@@ -2258,14 +3516,14 @@ get_ipython().system('unzip -qq haarcascades.zip')
 # Los clasificadores HAAR se entrenan utilizando muchas imágenes
 # positivas (es decir, imágenes con el objeto presente) e imágenes negativas (es decir, imágenes sin el objeto
 # presente). Estos clasificadores son modelos pre entrenados.
-# Fueron los primeros detectores de texturas ópticas de trabajo real que funcionaron bastante bien y muy
+# Fueron los primeros detectores de texturas ópticas de trabajo real que funcionaron bastante bien
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/haar.png)
 
 # utiliza un concepto de ventanas correderas para básicamente deslizar estas imágenes y hace una convolución en la parte
 # superior de esta imagen y extrae esas características. Tenemos muchas características de bordes, líneas, rectángulos
 # y muchas otras. La combinación de esas características corresponde a un rostro, y esos clasificadores son entrenados
 # para identificar las diferentes secuencias.
-#
+
 # Probablemente puedo describirlo como que la secuencia de valores que corresponden a la cara de una persona, al
 # menos ...lo que sea que esté entrenado. Y para entrenar esto, básicamente sólo necesitas un montón de imágenes
 # positivas. Son imágenes donde el objeto está presente e imágenes negativas. Así es como aprende a diferenciar cuando
@@ -2273,7 +3531,8 @@ get_ipython().system('unzip -qq haarcascades.zip')
 # No va a prendiendo
 
 
-# Apuntamos la función CascadeClassifier de OpenCV a donde nuestro clasificador (formato de archivo XML) se almacena
+# Apuntamos la función CascadeClassifier de OpenCV a donde esta nuestro clasificador (formato de archivo XML)
+# y se almacena
 
 face_classifier = cv2.CascadeClassifier('Haarcascades/haarcascade_frontalface_default.xml')
 
@@ -2283,14 +3542,15 @@ gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 # Nuestro clasificador devuelve el ROI de la cara detectada como una tupla
 # Almacena la coordenada superior izquierda y la coordenada inferior derecha
-"""Así que hemos creado nuestro primer objeto clasificador aquí y ahora que tiene una función llamada CascadeClassifier.
+
+"""Así que hemos creado nuestro primer objeto clasificador aquí y ahora que tiene una función llamada detectMultiScale.
 Aquí es donde nos alimentamos en la imagen de entrada. El primer parámetro que podemos establecer scaleFactor, 
 así como un minNeighbors. Son parámetros de configuración OPCIONALES que  ajustan la sensibilidad. con ellos se puede 
-conseguir más cajas en la cara y el factor de habilidad también. Depende del tipo de imagen y el tipo de cara o el t
-amaño de las caras en la imagen. Agarra la cara y extrae en una matriz."""
+conseguir más cajas en la cara y el factor de habilidad también. Depende del tipo de imagen y el tipo de cara o el 
+tamaño de las caras en la imagen. Agarra la cara y extrae en una matriz."""
 faces = face_classifier.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
 
-# Si no se detectan caras, face_classifier devuelve una tupla vacía
+# Si no se detectan caras, detectMultiScale devuelve una tupla vacía
 if faces is ():
     print("No faces found")
 
@@ -2467,12 +3727,123 @@ while True:
 cap.release()
 cv2.destroyAllWindows()
 
-#################################################
-# 17 **Detección de vehículos y peatones** ######
-#################################################
+import cv2
+import matplotlib.pyplot as plt
+# %matplotlib inline
 
-# # **Detección de vehículos y peatones**
+# ******************************************
+# ***** 22 Escribir video en el disco
+# ******************************************
+
+
+source = 'videos/race_car.mp4'  # source = 0 for webcam
+cap = cv2.VideoCapture(source)  # llamamos a la clase de captura de video para crear un objeto de captura de video,
+
+# Comprobamos si se creó correctamente el objeto y está abierto
+if (cap.isOpened()== False):
+  print("Error opening video stream or file")
+
+# ****** Leer y mostrar un frame
+'''
+Los 3 puntos ... son una Ellipsis en Pyhton significan que puedes recibir los que sea y ya el ultimo valor (en este caso
+ el ultimo array) , es iterar dándole la vuelta empezando por el ultimo para darle la vuelta a los canales,  sería igual
+que [:,:, ::-1]
+https://realpython.com/python-ellipsis/
+'''
+ret, frame = cap.read()
+plt.imshow(frame[..., ::-1])
+plt.show()
+
+# Mostrar el video del archivo en jupyter
+# from IPython.display import HTML
+# HTML("""
+# <video width=1024 controls>
+#   <source src="race_car.mp4" type="video/mp4">
+# </video>
+# """)
+
+# **** Mostrar el video del archivo desde consola mediante ventana
 #
+# win_name = 'video'
+# # estamos creando una ventana con nombre, que eventualmente vamos a enviar la salida transmitida
+# cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
+#
+# '''ciclo while nos permitirá transmitir continuamente video desde la cámara y enviarlo a la salida a menos que el
+# usuario pulse la tecla de escape.'''
+# while cv2.waitKey(1) != 27:  # Escape
+#     '''usa esa fuente de objeto de captura de vídeo  de captura de video para llamar al método read, que  devolverá un
+#     solo cuadro de la transmisión de video, así como una variable lógica has_frame.
+#     Entonces, si hay algún tipo de problema con la lectura de la transmisión de video o el acceso a la cámara,
+#     has_frame sería falso y saldríamos del bucle.
+#     De lo contrario, continuaríamos y llamaríamos a la función de visualización de mensajes instantáneos y abriríamos
+#      kbps para enviar el video (frame) a la ventana de salida'''
+#     has_frame, frame = cap.read()
+#     if not has_frame:
+#         break
+#     cv2.imshow(win_name, frame)
+#
+# cap.release()
+# cv2.destroyWindow(win_name)
+
+
+# **** Escribir el vídeo usando OpenCV ( ojo con no haber ya recorrido el objeto de video )
+'''
+Para escribir el video, debe crear un objeto de videowriter con los parámetros correctos.
+
+Sintaxis de la función
+VideoWriter objeto = cv.VideoWriter (nombre de archivo, fourcc, fps, frameSize)
+Parámetros
+-filename: Nombre del archivo de vídeo de salida.
+-fourcc: código de códec de 4 caracteres que se utiliza para comprimir los fotogramas.
+ Por ejemplo, VideoWriter::fourcc('P','I','M','1') es un códec MPEG-1, VideoWriter::fourcc('M','J','P','G ') es un códec
+ jpeg de movimiento, etc. La lista de códigos se puede obtener en la página Video Codecs by FOURCC. El backend FFMPEG 
+ con contenedor MP4 usa de forma nativa otros valores como código fourcc: consulte ObjectType, por lo que puede recibir 
+ un mensaje de advertencia de OpenCV sobre la conversión del código fourcc.
+- fps: velocidad de fotogramas de la transmisión de video creada.
+- frameSize: Tamaño de los fotogramas de vídeo tupla (ancho,alto).
+
+*El tamaño del marco es importante porque deben ser las dimensiones de los marcos que tiene en la memoria que desea 
+ escribir en el disco
+
+
+Lo primero que vamos a hacer es usar el objeto de captura de video para llamar a este método de get(), que
+nos va a recuperar las dimensiones del cuadro de video que tenemos en memoria.'''
+# Se obtienen las resoluciones predeterminadas del cuadro, int() Convierte las resoluciones de float a entero
+frame_width = int(cap.get(3))  # en 3 guarda el ancho
+frame_height = int(cap.get(4))  # en 4 guarda el alto
+
+# Define el códec y crea el objeto VideoWriter.
+out_avi = cv2.VideoWriter('videos/race_car_out.avi', cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
+out_mp4 = cv2.VideoWriter('videos/race_car_out.mp4', cv2.VideoWriter_fourcc(*'XVID'), 10, (frame_width,frame_height))
+
+# Leer fotogramas y escribir en el archivo
+'''Leeremos los cuadros del video del auto de carreras y escribiremos lo mismo en los dos objetos que creamos en el paso
+ anterior. Deberíamos liberar los objetos después de completar la tarea.'''
+
+# leer mientras el video se completa
+while (cap.isOpened()):
+  # Va capturando frame a frame
+  ret, frame = cap.read()
+
+  if ret == True:
+
+    # Escribe cada frame en los ficheros
+    out_avi.write(frame)
+    out_mp4.write(frame)
+
+  # rompe el bucle
+  else:
+    break
+
+# Cuando todo esté listo, liberamos los objetos VideoCapture y VideoWriter
+cap.release()
+out_avi.release()
+out_mp4.release()
+
+#################################################
+# 23 **Detección de vehículos y peatones** ######
+#################################################
+# # **Detección de vehículos y peatones**
 # ####**En esta lección aprenderemos:**
 # 1. Usar un clasificador Haarcascade para detectar Peatones
 # 2. Usar nuestros clasificadores Haarcascade en vídeos
@@ -2496,14 +3867,7 @@ def imshow(title="Image", image=None, size=10):
     plt.show()
 
 
-'''# Descarga y descomprime nuestros vídeos y clasificadores Haarcascade
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/videos.zip')
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/haarcascades.zip')
-get_ipython().system('unzip -qq haarcascades.zip')
-get_ipython().system('unzip -qq videos.zip')
-'''
-
-# #### **Pruebas con un solo fotograma de nuestro vídeo**
+# #### **Pruebas con un solo FOTOGRAMA de nuestro vídeo**
 # Creamos nuestro objeto capturador de vídeo
 cap = cv2.VideoCapture('videos/walking.mp4')
 
@@ -2530,7 +3894,7 @@ if ret:
 cap.release()
 imshow("Pedestrian Detector", frame)
 
-# #### **Prueba en nuestro clip de 15 segundos**
+# #### **Prueba en nuestro VIDEO de 15 segundos**
 # **NOTA**: Tarda alrededor de 1 minuto en ejecutarse.
 # Usamos cv2.VideoWriter para guardar la salida como un archivo AVI. #
 # ```cv2.VideoWriter(video_output.avi, cv2.VideoWriter_fourcc('M','J','P','G'), FPS, (width, height))````
@@ -2576,32 +3940,23 @@ while (True):
 cap.release()
 out.release()
 
-# ## **Reproducir Video dentro de Colab**
-# Pasos
-# 1. Convertir el archivo AVI a MP4 usando FFMPEG
-# 2. Cargar los plugins HTML en IPython
-# 3. Mostrar nuestro reproductor de vídeo HTML
-
-
-# Convertir el vídeo y mostrarlo en HTML
-# IPython.get_ipython().system('ffmpeg -i /walking_output.avi walking_output.mp4 -y')
-
-
+'''# MOSTRAR VIDEO COLAB
 from IPython.display import HTML
 from base64 import b64encode
 
-mp4 = open('walking_output.mp4', 'rb').read()
+mp4 = open('walking_output.mp4' , 'rb').read()
 data_url = "data:video/mp4;base64," + b64encode(mp4).decode()
+
+
 
 HTML("""
 <video controls>
       <source src="%s" type="video/mp4">
 </video>
 """ % data_url)
+'''
 
 # #### **Detección de vehículos en una sola imagen**
-
-# In[ ]:
 # Creamos nuestro objeto de captura de vídeo
 cap = cv2.VideoCapture('videos/cars.mp4')
 
@@ -2629,9 +3984,6 @@ cap.release()
 imshow("Vehicle Detector", frame)
 
 # #### **Prueba en nuestro clip de 15 segundos**
-
-# In[ ]:
-
 
 # Crear nuestro objeto de captura de vídeo
 cap = cv2.VideoCapture('videos/cars.mp4')
@@ -2669,7 +4021,7 @@ while (True):
 cap.release()
 out.release()
 
-# Convertir el vídeo y mostrarlo en HTML
+'''# Convertir el vídeo y mostrarlo en HTML
 # no funione en ubuntu la conversión añadida salida en
 # IPython.get_ipython().system('ffmpeg -i /content/cars_output.avi cars_output.mp4 -y')
 #
@@ -2677,21 +4029,20 @@ out.release()
 from IPython.display import HTML
 from base64 import b64encode
 
-mp4 = open('cars_output.mp4', 'rb').read()
+mp4 = open('cars_output.mp4','rb').read()
 data_url = "data:video/mp4;base64," + b64encode(mp4).decode()
+
 
 # no estamos mostrando la salida pero no falla
 HTML("""
 <video controls>
       <source src="%s" type="video/mp4">
 </video>
-""" % data_url)
+""" % data_url)'''
 
-# !/usr/bin/env python
-# coding: utf-8
-#################################################
-# 18 Transformaciones de perspectiva ######
-#################################################
+###########################################
+# 24 Transformaciones de perspectiva ######
+###########################################
 # a transformación de perspectiva es una forma en que podemos traducir una señal de imágenes de imagen para convertirla
 # en una diferente.
 # ####**En esta lección aprenderemos:**
@@ -2715,11 +4066,6 @@ def imshow(title="Image", image=None, size=10):
     plt.show()
 
 
-'''# Descargar y descomprimir nuestras imágenes
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')
-'''
-
 image = cv2.imread('images/scan.jpg')
 
 # Convertir a escala de grises
@@ -2729,8 +4075,7 @@ gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 _, th2 = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 imshow('After thresholding', th2)
 
-# Use una copia de su imagen, por ejemplo edged.copy(), ya que findContours altera la imagen
-# sacmos los contornos externos ( RETR_EXTERNAL)
+# sacamos el contorno EXTERNO ( RETR_EXTERNAL)
 contours, hierarchy = cv2.findContours(th2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 # Dibuja todos los contornos, ten en cuenta que esto sobrescribe la imagen de entrada (operación inplace)
@@ -2745,14 +4090,12 @@ print("Number of Contours found = " + str(len(contours)))  # Number of Contours 
 # imagen, la razón por la que estamos ordenando por área en primer lugar sabemos que el área mas grande es el que
 # queremos, Es el control más grande, porque los otros van a ser muy pequeños.
 #
-# Son como píxeles son sólo grupos de píxeles
-
-
+# Son solo grupos de píxeles
 sorted_contours = sorted(contours, key=cv2.contourArea, reverse=True)
 
 # bucle sobre los contornos
 for cnt in sorted_contours:
-    #  Aproximación de cada contorno calculando el perímetro y multipicandole el accuracy recomendando (OCV)
+    #  Aproximación de cada contorno calculando el perímetro y multipicándole el accuracy recomendando (OCV)
     perimeter = cv2.arcLength(cnt, True)
     approx = cv2.approxPolyDP(cnt, 0.05 * perimeter, True)
 
@@ -2775,7 +4118,6 @@ Nuestros 4 puntos de esquina son:
 ### **Usamos getPerspectiveTransform y warpPerspective para crear nuestra vista de arriba abajo**
 #
 # Nota: Hemos igualado manualmente el orden de los puntos
-
 # El orden obtenido aquí es arriba a la izquierda, abajo a la izquierda, abajo a la derecha, arriba a la derecha
 
 # acabamos de convertir el tipo de datos aquí porque lo necesitamos como float32
@@ -2795,25 +4137,20 @@ dst = cv2.warpPerspective(image, M, (500, 800))
 
 imshow("Perspective", dst)
 
-# ### **Ejercicio**
-# 1. Ordenar los puntos en ```approx`` ordenando desde arriba a la izquierda en el sentido de las agujas del reloj
-# (es decir, arriba a la izquierda, arriba a la derecha, abajo a la izquierda, abajo a la derecha)
-# 2. 2. Obtener la relación de aspecto inicial del contorno y ajustar el Warp final para que salga en esa relación de
-# aspecto y orientación.
-
-# !/usr/bin/env python
-# coding: utf-8
-#################################################
-# 19 Transformaciones de perspectiva ######
-#################################################
-# ####**In this lesson we'll learn:**
+#################################################################################
+# 25 Representaciones de histogramas Kmeand clustering colores dominantes ######
+#################################################################################
 # 1. Visualizar las representaciones del histograma RGB de las imágenes
 # 2. Utilizar K-Means Clustering para obtener los colores dominantes y sus proporciones en las imágenes.
-# k-means -> agrupamiento para la causa dominante de una imagen, así que abra ese cuaderno y desplácese hacia arriba.
+
+# k-means -> agrupamiento para la causa dominante de una imagen.
+
 # Nuestra configuración, importar librerías, crear nuestra función Imshow y descargar nuestras imágenes
-# un histograma es básicamente un gráfico, un diagrama de barras o un grafico de líneas, Yy un histograma nos da
+
+# Un histograma es básicamente un gráfico, un diagrama de barras o un grafico de líneas, Y un histograma nos da
 # básicamente la distribución de algo. Entonces, en el caso de una imagen que vamos a dar, vamos a pasar por una
 # distribución de los colores.
+
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
@@ -2828,10 +4165,6 @@ def imshow(title="Image", image=None, size=8):
     plt.title(title)
     plt.show()
 
-
-'''# Descargar y descomprimir nuestras imágenes y clasificadores Haarcascade
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')'''
 
 # In[ ]:
 
@@ -2859,8 +4192,9 @@ print(image)
 print(image.ravel())
 
 plt.hist(image.ravel(), 256, [0, 256])  # imagen aplanada, cantidad de contenedores que queremos, el rango
-plt.show()  # el básico aplanado muestra el brillo de una imagen en el que el eje vertical es el número de pixeles y
-# el horizontal el rango de brillo si se ve un pico al principio significa que hay muchos pixeles oscuros y al final
+
+plt.show()  # el básico aplanado muestra el brillo de una imagen en el que el eje vertical es el número de píxeles y
+# el horizontal el rango de brillo si se ve un pico al principio significa que hay muchos píxeles oscuros y al final
 # claros
 
 # **cv2.calcHist(images, channels, mask, histSize, ranges[, hist[, accumulate]])**
@@ -2914,8 +4248,9 @@ plt.show()
 
 # ## **K-Means Clustering para obtener los colores dominantes en una imagen**
 # k-means es básicamente un algoritmo de agrupamiento que agrupa píxeles de valor similar.
+
 def centroidHistogram(clt):
-    # Crea un histrograma para los clusters basado en los píxeles de cada cluster.
+    # Crea un histograma para los clusters basado en los píxeles de cada cluster.
     # Obtener las etiquetas de cada cluster
     numLabels = np.arange(0, len(np.unique(clt.labels_)) + 1)
 
@@ -2925,7 +4260,6 @@ def centroidHistogram(clt):
     # Normalizar el histograma, para que sume uno
     hist = hist.astype("float")
     hist /= hist.sum()
-
     return hist
 
 
@@ -2952,17 +4286,19 @@ imshow("Input", image)
 # Transformamos nuestra imagen en una lista de píxeles RGB
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 print(image.shape)  # (1194, 1936, 3)
+
 # remodelamos la imagen porque necesitamos que tenga un formato específico para el CEO de la empresa
 image = image.reshape((image.shape[0] * image.shape[1], 3))
 print(image.shape)  # (2311584, 3) hemos pasado de una imagen tridimensional a una imagen bidimensional
 
 # vamos a crear 5 grupos
 number_of_clusters = 5
+
 # ejecutamos el modelo de agrupamiento K
 clt = KMeans(number_of_clusters)
 
-# Así que simplemente hacemos el ajuste de puntos de K mientras creamos un sello.
-# El objeto clt, que es una clave, significa objeto de agrupación.
+# Así que simplemente hacemos el ajuste de puntos de K mientras creamos un sello,
+# El objeto clt, que es una clave, significa objeto de agrupación, agrupa píxeles de valor similar
 clt.fit(image)
 
 hist = centroidHistogram(clt)
@@ -2998,11 +4334,8 @@ plt.axis("off")
 plt.imshow(bar)
 plt.show()
 
-
-#!/usr/bin/env python
-# coding: utf-8
 #####################################
-# 20 Comparación de imágenes** ######
+# 26 Comparación de imágenes** ######
 #####################################
 
 # 1. Comparar imágenes utilizando el error cuadrático medio (MSE)
@@ -3026,12 +4359,6 @@ def imshow(title = "Image", image = None, size = 8):
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     plt.title(title)
     plt.show()
-
-
-'''# Download and unzip our images
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-
-get_ipython().system('unzip -qq images.zip')'''
 
 
 # #### **Error cuadrático medio (MSE)**
@@ -3073,14 +4400,14 @@ def compare(image1, image2):
     print('MSE = {:.2f}'.format(mse(image1, image2)))
     #  la función de structural_similarity es una función que sesga las métricas, lo que significa que es un algoritmo
     #  complicado que nos da básicamente estas similitudes estructurales basadas en relaciones de vecindad entre
-    #  matrices para decir la diferencia. 1.0 misma imagen, caunto mas baja mas diferencias
+    #  matrices para decir la diferencia. 1.0 misma imagen, cuanto más baja más diferencias
     print('SS = {:.2f}'.format(structural_similarity(image1, image2)))
 
 
 # Cuando son iguales
 compare(fireworks1, fireworks1)
 
-
+# cuando no
 compare(fireworks1, fireworks2)
 
 compare(fireworks1, fireworks1b)
@@ -3089,11 +4416,11 @@ compare(fireworks2, fireworks1b)
 
 
 ###############################
-# 21 Filtrado de colores ######
+# 27 Filtrado de colores ######
 ###############################
 # 1. Cómo utilizar el espacio de color HSV para filtrar por color
 #
-# #### **Recordar el Espacio de Color HSV** ( visto en 03)
+# #### **Recordar el Espacio de Color HSV** ( visto en 02)
 # ![](https://answers.opencv.org/upfiles/15186766673210035.png)
 #
 # - Tono: 0 - 179
@@ -3116,24 +4443,21 @@ def imshow(title = "Image", image = None, size = 10):
     plt.title(title)
     plt.show()
 
-'''# Descargar y descomprimir nuestras imágenes y clasificadores Haarcascade
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')
-'''
 
-# Vamos aintentar quitar el camion y la tierra de la imagen dejando solo el cielo
+# Vamos a intentar quitar el camion y la tierra de la imagen dejando solo el cielo
 
 image = cv2.imread('images/truck.jpg')
 
 # Entonces, para hacer eso necesitamos definir un rango superior e inferior.
 # definir el rango de color AZUL en HSV, en la imagen de arriba se ve que el azul va del tono 90 al 135
-lower = np.array([90,0,0]) # tono , saturación , valor
+
+lower = np.array([90,0,0])  # tono , saturación , valor
 upper = np.array([135,255,255])
 
 # Convertir la imagen de RBG/BGR a HSV para poder filtrar fácilmente
 hsv_img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-# Usar inRange para capturar sólo los valores entre inferior y superior, es decir5 crear una máscara, un umbral binario
+# Usar inRange para capturar solo los valores entre inferior y superior, es decir crear una máscara, un umbral binario
 # en la imagen, el blanco sería un SI, entra en la máscara y el negro un NO
 mask = cv2.inRange(hsv_img, lower, upper)
 
@@ -3173,12 +4497,10 @@ imshow('Original', image)
 imshow('mask', mask)
 imshow('Filtered Color Only', res)
 
-
 ######################################################################################
-# 22 Algoritmo Watershed para la segmentación de imágenes basada en marcadores ######
+# 28 Algoritmo Watershed para la segmentación de imágenes basada en marcadores ######
 ######################################################################################
 # 1. Cómo utilizar el algoritmo Watershed para la segmentación de imágenes basada en marcadores
-
 
 
 # Nuestra configuración, importar librerías, crear nuestra función Imshow y descargar nuestras imágenes
@@ -3195,7 +4517,6 @@ def imshow(title = "Image", image = None, size = 10):
     plt.title(title)
     plt.show()
 
-'''get_ipython().system('wget https://docs.opencv.org/3.4/water_coins.jpg')'''
 
 # **Teoría de Algoritmos de Cuencas Hidrográficas**
 # Cualquier imagen en escala de grises puede ser vista como una superficie topográfica donde la alta intensidad denota
@@ -3218,7 +4539,7 @@ def imshow(title = "Image", image = None, size = 10):
 # y tomando los cambios de tonalidad de dicha escala, podemos, simulando el negro como el mínimo y el blanco como el
 # máximo, indundar desde sus mínimos la imagen con agua evitando la fusión del agua en zonas distinas con los tonos
 # blancos, creando así una división o segmentación en la imagen. Debido a problemas que conlleva el ruido y cambios de
-# tono en imágenes reales, se establecen marcadores antes de la "inundación" para que se realiza la segmentación de
+# tono en imágenes reales, se establecen marcadores antes de la "inundación" para que se realice la segmentación de
 # forma correcta a raíz de lo deseado de la imagen
 
 
@@ -3230,9 +4551,24 @@ def imshow(title = "Image", image = None, size = 10):
 # Ese es nuestro marcador. A continuación, aplicar el algoritmo el marcador se actualizará con las etiquetas que le
 # dimos, y los límites de los objetos tendrán un valor de -1.
 
-#
 
+# primero hacemos el gradiente morfológico para sacar el contorno de la imagen y hacemos un kernel
+'''
+Gradiente morfológico ** morphologyEx**
+El gradiente morfológico es ligeramente diferente a las otras operaciones, porque el gradiente morfológico primero 
+aplica erosión y dilatación individualmente en la imagen y luego calcula la diferencia entre la imagen erosionada y 
+dilatada. 
 
+*** La salida será un contorno de la imagen dada***
+
+Pasos:
+1. Lee la imagen
+2. Binarizar la imagen.
+3. Como se recomienda mantener el primer plano en blanco, estamos realizando la operación de inversión de OpenCV en la 
+   imagen binarizada para que el primer plano sea blanco.
+Estamos definiendo un kernel 3×3 lleno de unos
+Entonces podemos hacer uso de la función Opencv cv.morphologyEx() para realizar un degradado morfológico en la imagen.
+'''
 # Cargar imagen
 img = cv2.imread('images/water_coins.jpg')
 imshow("Original image", img)
@@ -3245,32 +4581,35 @@ ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTS
 
 imshow("Thresholded", thresh)
 
-
-## ## **Eliminar las máscaras de retoque**
-
-
 # eliminación de ruido
-kernel = np.ones((3,3), np.uint8)
-opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN,kernel, iterations = 2)
+kernel = np.ones((3,3), np.uint8)  # creamos una matriz 3x3 como kernel
 
-# área de fondo, estamos creando los marcadores sobre las monedas dilatantdo  (visto en 10, es decir agregando
-# píxeles a los límites de los objetos, el fondo en este caso en una imagen) 3 veces la imagen
+# Aplicamos el Gradiente morfológico para sacar el contorno de la imagen
+opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations = 2)
+imshow("opening", opening)
+
+
+# **** área de fondo
+#  dilatantdo (visto en 10, es decir agregando píxeles a los límites de los objetos, el fondo en este caso en una
+#  imagen) 3 veces la imagen
 sure_bg = cv2.dilate(opening, kernel, iterations=3)
+imshow("SureBG", sure_bg)
 
-# Encontrar el área de primer plano, mediante la función cv2.distanceTransform y la binarización de la imagen resultante
-dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2,5)
+# **** Encontrar el área de primer plano,
+# estamos creando los marcadores sobre las monedas
+# mediante la función cv2.distanceTransform y la binarización de la imagen resultante
+dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
 ret, sure_fg = cv2.threshold(dist_transform, 0.7 * dist_transform.max(), 255, 0)
+imshow("SureFG", sure_fg)
 
-# Encontrar región desconocida restando el fondo al primer plano
+
+# **** Encontrar región desconocida restando el fondo al primer plano
 sure_fg = np.uint8(sure_fg)
 unknown = cv2.subtract(sure_bg, sure_fg)
-
-imshow("SureFG", sure_fg)
-imshow("SureBG", sure_bg)
 imshow("unknown", unknown)
 
 
-# Etiquetado de marcadores
+# *** Etiquetado de marcadores con connectedComponents
 # connectedComponents determina la conectividad de regiones tipo blob en una imagen binaria.
 ret, markers = cv2.connectedComponents(sure_fg)
 
@@ -3278,18 +4617,18 @@ ret, markers = cv2.connectedComponents(sure_fg)
 markers = markers+1
 
 # Ahora, marca la región de unknown con cero
-markers[unknown==255] = 0
+markers[unknown == 255] = 0
 
+# Realiza La cuenca hidrográfica, que es un algoritmo clásico utilizado para la segmentación, es decir,
+# para separar diferentes objetos en una imagen, con los marcadores establecidos
 markers = cv2.watershed(img,markers)
-img[markers == -1] = [255,0,0]
+img[markers == -1] = [255,0,0]  # Color azul
 
 imshow("img", img)
 
-
-
-#############################################
-#23 Substracción de fondo y primer plano ######
-#############################################
+################################################
+# 29 Substracción de fondo y primer plano ######
+################################################
 # 1. 1. Sustracción de fondo con algoritmo de segmentación de fondo/primer plano basado en mezcla gaussiana.
 # 2. Modelo de mezcla gaussiana adaptativo mejorado para sustracción de fondo
 
@@ -3310,8 +4649,6 @@ imshow("img", img)
 # En el primer paso se calcula un modelo inicial del fondo, mientras que en el segundo se actualiza dicho modelo para
 # adaptarse a posibles cambios en la escena.
 
-
-
 # Nuestra configuración, importar librerías, crear nuestra función Imshow y descargar nuestras imágenes
 import cv2
 import numpy as np
@@ -3327,8 +4664,7 @@ def imshow(title = "Image", image = None, size = 10):
     plt.title(title)
     plt.show()
 
-'''get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/walking_short_clip.mp4')
-'''
+
 # **¿Qué es la sustracción de fondo?**
 
 # La sustracción de fondo es una técnica de visión por ordenador en la que buscamos aislar el fondo del primer plano
@@ -3340,8 +4676,7 @@ def imshow(title = "Image", image = None, size = 10):
 # Se han introducido varios algoritmos para este propósito. A continuación veremos dos algoritmos del módulo **bgsegm**.
 
 
-
-# ***Algoritmo de segmentación de fondo/primer plano basado en mezclas gaussianas.
+# *** Algoritmo de segmentación de fondo/primer plano basado en mezclas gaussianas *****
 #
 # En este trabajo, proponemos un método de sustracción de fondo (BGS) basado en los modelos de mezcla gaussiana
 # utilizando información de color y profundidad. Para combinar la información de color y profundidad, utilizamos el
@@ -3355,9 +4690,8 @@ def imshow(title = "Image", image = None, size = 10):
 # ayudará a detectar de forma robusta regiones de interés como preprocesamiento en etapas de procesamiento de imágenes
 # de alto nivel.
 #
-#
-# Enlace al artículo - https://www.researchgate.net/publication/283026260_Background_subtraction_based_on_Gaussian_mixture_models_using_color_and_depth_information
-
+# Enlace al artículo -
+# https://www.researchgate.net/publication/283026260_Background_subtraction_based_on_Gaussian_mixture_models_using_color_and_depth_information
 
 
 cap = cv2.VideoCapture('videos/walking_short_clip.mp4')
@@ -3522,11 +4856,9 @@ while (1):
 cap.release()
 out.release()
 
-# !/usr/bin/env python
-# coding: utf-8
 
 ################################################################
-# 24 Seguimiento del movimiento con Mean Shift y CAMSHIFT ######
+# 30 Seguimiento del movimiento con Mean Shift y CAMSHIFT ######
 ################################################################
 # Seguimiento: Imagina que tienes una persona en movimiento o un vehículo en movimiento en un video de CCTV y quieres
 # enfocarte en esa persona. Dibujas una caja y la mueves sobre la persona mientras él, ella, el coche, etc se mueve en
@@ -3714,9 +5046,10 @@ out.release()
 # !/usr/bin/env python
 # coding: utf-8
 
-############################################
-# 25 Object Tracking with Optical Flow######
-############################################
+
+##################################################
+# 31 Seguimiento de objetos con flujo optico######
+##################################################
 # 1. Cómo usar Optical Flow en OpenCV
 # 2. Luego usar Dense Optical Flow
 
@@ -3738,15 +5071,11 @@ def imshow(title="Image", image=None, size=10):
     plt.show()
 
 
-'''get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/walking_short_clip.mp4')
-get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/walking.avi')
-'''
-
 # ## **El algoritmo de flujo óptico Lucas-Kanade**
 #
 # El flujo óptico es el patrón de movimiento aparente de los objetos de la imagen entre dos fotogramas consecutivos
 # causado por el movimiento del objeto o de la cámara. Se trata de un campo vectorial 2D en el que cada vector es un
-# vector de desplazamiento que muestra el movimiento de los puntos del primer fotograma al segundo. Considere la s
+# vector de desplazamiento que muestra el movimiento de los puntos del primer fotograma al segundo. Considere la
 # Siguiente imagen (Imagen cortesía: Wikipedia article on Optical Flow).
 #
 #
@@ -3938,9 +5267,8 @@ while True:
 cap.release()
 out.release()
 
-
 ############################################
-# 26 Simple Rastreo de Objetos por Color######
+# 32 Simple Rastreo de Objetos por Color######
 ############################################
 # 1. Cómo usar un Filtro de Color HSV para Crear una Máscara y luego Rastrear nuestro Objeto Deseado
 
@@ -4065,10 +5393,8 @@ while True:
 # Libera la cámara y cierra las ventanas abiertas
 cap.release()
 out.release()
-
-# !/usr/bin/env python
 ##########################################################################################
-# 27 y 28 Detección de puntos de referencia faciales con Dlib e intercambio de caras######
+# 33 Detección de puntos de referencia faciales con Dlib e intercambio de caras######
 ##########################################################################################
 # LIBRERIAS
 # Nuestra configuración, importar librerías, crear nuestra función Imshow y descargar nuestras imágenes
@@ -4077,35 +5403,32 @@ import dlib  # librería de machine learning
 import numpy as np
 from matplotlib import pyplot as plt
 
-
 # CLASES UTILIZADAS
 class TooManyFaces(Exception):
     pass
-
 
 class NoFaces(Exception):
     pass
 
 
-# FUNCIONES UTILIZADAS EXPLICADAS DESDE 27 y 28 y leyendolas para entender todo el proceso correctamente
-def imshow(title="Image", image=None, size=10):  # Mostrar por pantalla la imagen
+# FUNCIONES UTILIZADAS EXPLICADAS DESDE  leyendolas para entender todo el proceso correctamente
+def imshow(title = "Image", image = None, size = 10): # Mostrar por pantalla la imagen
     w, h = image.shape[0], image.shape[1]
-    aspect_ratio = w / h
-    plt.figure(figsize=(size * aspect_ratio, size))
+    aspect_ratio = w/h
+    plt.figure(figsize=(size * aspect_ratio,size))
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     plt.title(title)
     plt.show()
 
 
-def read_im_and_landmarks(image):  # Obtienes la función simple de puntos de referencia.
+def read_im_and_landmarks(image): # Obtienes la función simple de puntos de referencia.
     im = image
-    im = cv2.resize(im, None, fx=1, fy=1, interpolation=cv2.INTER_LINEAR)
+    im = cv2.resize(im,None,fx=1, fy=1, interpolation = cv2.INTER_LINEAR)
     im = cv2.resize(im, (im.shape[1] * SCALE_FACTOR,
                          im.shape[0] * SCALE_FACTOR))
     s = get_landmarks(im)
 
     return im, s
-
 
 def annotate_landmarks(im, landmarks):  # Dibuja las marcas de línea que tenemos en la cara.
     im = im.copy()
@@ -4118,9 +5441,7 @@ def annotate_landmarks(im, landmarks):  # Dibuja las marcas de línea que tenemo
                     color=(0, 0, 255))
         cv2.circle(im, pos, 3, color=(0, 255, 255))
     return im
-
-
-def get_landmarks(im):  # Toma una imagen.
+def get_landmarks(im): # Toma una imagen.
     """
     La función get_landmarks()toma una imagen en forma de matriz numpy y devuelve una matriz de elementos de 68x2, cada
     una de las cuales se corresponde con las coordenadas x, y de un punto de característica particular en la imagen de
@@ -4200,7 +5521,6 @@ def transformation_from_points(points1, points2):
                                  c2.T - (s2 / s1) * R * c1.T)),
                       np.matrix([0., 0., 1.])])
 
-
 # get_face_mask para obtener la primera masa para que podamos extraer la cara de la imagen para ponerla en la primera
 # imagen.
 def get_face_mask(im, landmarks):
@@ -4222,7 +5542,6 @@ def get_face_mask(im, landmarks):
     im = cv2.GaussianBlur(im, (FEATHER_AMOUNT, FEATHER_AMOUNT), 0)
     return im
 
-
 # draw_convex_hull es un casco convexo de dibujo, que nos permite mapear los puntos correctamente en tres interfaces.
 def draw_convex_hull(im, points, color):
     points = cv2.convexHull(points)
@@ -4231,7 +5550,7 @@ def draw_convex_hull(im, points, color):
 
 # Crea una máscara negra del tamaño de la imagen de la que saca la T con los datos de la matriz M que corresponde a la
 # Otra imagen
-def warp_im(im, M, dshape):  # asigna la segunda imagen a la primera
+def warp_im(im, M, dshape): # asigna la segunda imagen a la primera
     output_im = np.zeros(dshape, dtype=im.dtype)
     cv2.warpAffine(im,
                    M[:2],
@@ -4280,6 +5599,13 @@ def correct_colours(im1, im2, landmarks1):
             im2_blur.astype(np.float64))
 
 
+
+
+
+
+
+
+
 def swappy(image1, image2):
     # 1. Detección de puntos de referencia faciales: read_im_and_landmarks llama a get_landmarks
     # 2. Rotar, escalar y traducir la segunda imagen para que se ajuste a la primera: transformation_from_points y warp_im
@@ -4300,7 +5626,7 @@ def swappy(image1, image2):
     """
     warped_mask = warp_im(mask, M, im1.shape)
     combined_mask = np.max([get_face_mask(im1, landmarks1), warped_mask],
-                           axis=0)
+                              axis=0)
 
     warped_im2 = warp_im(im2, M, im1.shape)
 
@@ -4315,15 +5641,10 @@ def swappy(image1, image2):
     return image
 
 
-# ******  27. Aplicar la detección de puntos de referencia faciales
-'''# Descarga y descomprime nuestras imágenes y el modelo Facial landmark
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/shape_predictor_68_face_landmarks.zip')
-get_ipython().system('unzip -qq images.zip')
-get_ipython().system('unzip -qq shape_predictor_68_face_landmarks.zip')'''
+# ******  A. Aplicar la detección de puntos de referencia faciales
 
 # ## **Detección de puntos de referencia faciales**
-PREDICTOR_PATH = "modelos/shape_predictor_68_face_landmarks.dat"  # poniendo la parte del modelo en esta variable de aquí
+PREDICTOR_PATH = "modelos/shape_predictor_68_face_landmarks.dat" # poniendo la parte del modelo en esta variable de aquí
 predictor = dlib.shape_predictor(PREDICTOR_PATH)  # cargando el predictor que es un objeto predictor de dylib.
 # entra lo que ella predice y solo señalamos la parte del modelo.
 detector = dlib.get_frontal_face_detector()  # creamos el detector
@@ -4335,12 +5656,14 @@ landmarks = get_landmarks(image)
 image_with_landmarks = annotate_landmarks(image, landmarks)
 imshow('Result', image_with_landmarks)
 
+
 # Otra imagen
 image = cv2.imread('images/Hillary.jpg')
 imshow('Original', image)
 landmarks = get_landmarks(image)
 image_with_landmarks = annotate_landmarks(image, landmarks)
 imshow('Result', image_with_landmarks)
+
 
 # ##
 # ## ** 28 Intercambio de caras**
@@ -4370,7 +5693,7 @@ JAW_POINTS = list(range(0, 17))
 
 # Puntos utilizados para alinear las imágenes.
 ALIGN_POINTS = (LEFT_BROW_POINTS + RIGHT_EYE_POINTS + LEFT_EYE_POINTS +
-                RIGHT_BROW_POINTS + NOSE_POINTS + MOUTH_POINTS)
+                               RIGHT_BROW_POINTS + NOSE_POINTS + MOUTH_POINTS)
 
 # Puntos de la segunda imagen a superponer sobre la primera. Se superpondrá el casco convexo de cada
 # elemento se superpondrá.
@@ -4396,6 +5719,8 @@ imshow('Face Swap 1', swapped)
 
 swapped = swappy(image2, image1)
 imshow('Face Swap 2', swapped)
+
+
 
 # Copyright (c) 2015 Matthew Earl
 #
@@ -4432,11 +5757,8 @@ If successful, a file `output.jpg` will be produced with the facial features
 from `<head image>` replaced with the facial features from `<face image>`.
 """
 
-#!/usr/bin/env python
-# coding: utf-8
-
 ##############################################
-# 29 **Implement the Tilt Shift Effect**######
+# 34 **Implement the Tilt Shift Effect**######
 ##############################################
 # Tilt Shift  es un efecto que toma nuestra imagen estándar normal, como el paisaje de una ciudad o de arriba hacia
 # abajo, algo que es bonito y lo hace parecer parece que es un modelo miniaturizado, enfocándose en ciertas áreas y
@@ -4463,12 +5785,6 @@ def imshow(title = "Image", image = None, size = 10):
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     plt.title(title)
     plt.show()
-
-'''# Download our images
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images_tilt.zip')
-get_ipython().system('unzip -qq images_tilt.zip')
-get_ipython().system('find . -name ".DS_Store" -delete')
-get_ipython().system('find . -name ".ipynb_checkpoints" -delete')'''
 
 
 # #### **Nuestras funciones para implementar Tilt Shift**
@@ -4794,8 +6110,9 @@ def main():
 if __name__ == "__main__":
     main()
 
+
 #############################################################
-# 30 **Algoritmo GrabCut para la eliminación del fondo**#####
+# 35 **Algoritmo GrabCut para la eliminación del fondo**#####
 #############################################################
 # Es un algoritmo de segmentación.
 # - En esta lección vamos a utilizar el algoritmo GrabCut para la eliminación de fondo
@@ -4818,9 +6135,6 @@ def imshow(title = "Image", image = None, size = 10):
     plt.show()
 
 
-'''
-get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/woman.jpeg')
-'''
 
 ### **¿Cómo funciona Grab Cut?**
 #
@@ -4909,12 +6223,13 @@ image = image * mask2[:,:,np.newaxis]
 
 imshow("Mask", mask * 80)
 imshow("Mask2", mask2 * 255)
+imshow("Image", image)
 
-#!/usr/bin/env python
-# coding: utf-8
+
 #########################################################################
-# 31 **Reconocimiento Óptico de Caracteres con PyTesseract & EASY OCR**#####
+# 35 **Reconocimiento Óptico de Caracteres con PyTesseract & EASY OCR**#####
 #########################################################################
+
 # - En esta lección implementaremos OCR en algunas imágenes usando PyTesseract
 #
 # ![](https://miro.medium.com/max/1400/1*X7RfC5wOZ-Gsoo95Ez1FvQ.png)
@@ -4923,7 +6238,7 @@ imshow("Mask2", mask2 * 255)
 # #### **Install PyTesseract **
 #  librería de código abierto, a alto nivel toma una entrada de imagen, reconoce el texto de la misma, lo detecta ,
 #  trata y limpia devolviendo un texto como una cadena
-'''# Install PyTesseract and setup on Colab
+'''# 
 get_ipython().system('sudo apt install tesseract-ocr')
 get_ipython().system('pip install pytesseract')
 get_ipython().system('pip install easyocr')'''
@@ -4954,13 +6269,7 @@ def imshow(title = "Image", image = None, size = 10):
     plt.title(title)
     plt.show()
 
-'''# Descargar y descomprimir nuestras imágenes
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/OCRSamples.zip')
-get_ipython().system('unzip -qq OCRSamples.zip')
-get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/Receipt-woolworth.jpg')
 
-get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/whatsapp_conv.jpeg')
-'''
 
 # ## **Nuestra primera prueba de OCR**
 img = cv2.imread('images/OCR Samples/OCR1.png')
@@ -5175,10 +6484,8 @@ print("EASY OCR Extracted: {}".format(text))
 '''
 
 
-#!/usr/bin/env python
-# coding: utf-8
 #########################################################################
-# 32 **Generación y lectura de códigos de barras**#####
+# 37 **Generación y lectura de códigos de barras**#####
 #########################################################################
 
 # - In this lesson we'll to create barcodes of various standards as well reading what's on them.
@@ -5303,9 +6610,7 @@ result = decode(img)
 for i in result:
     print(i.data.decode("utf-8"))  # https://wwww.opencv.org
 
-'''
-get_ipython().system('wget https://i.stack.imgur.com/1DwED.jpg')
-'''
+
 # ### **Detección de códigos QR**
 from pyzbar.pyzbar import decode
 
@@ -5339,8 +6644,7 @@ for bc in codes:
 # mostrar nuestra salida
 imshow("QR Scanner", image, size = 12)
 
-'''get_ipython().system('wget https://www.differencebetween.com/wp-content/uploads/2011/04/1024px-ISBN.jpg')
-'''
+
 
 image = cv2.imread("images/1024px-ISBN.jpg")
 
@@ -5368,8 +6672,9 @@ for bc in barcodes:
 imshow("QR Scanner", image, size = 16)
 
 
+
 #########################################################################
-# 32 **YOLOv3 usando cv2.dnn.readNetFrom()**#####
+# 38 **YOLOv3 usando cv2.dnn.readNetFrom()**#####
 #########################################################################
 # tutorial oficial en https://opencv-tutorial.readthedocs.io/en/latest/yolo/yolo.html
 # https://towardsdatascience.com/object-detection-using-yolov3-and-opencv-19ee0792a420
@@ -5403,11 +6708,6 @@ def imshow(title="Image", image=None, size=8):
     plt.title(title)
     plt.show()
 
-
-'''# Download and unzip our images and YOLO files
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/YOLO.zip')
-get_ipython().system('unzip -qq YOLO.zip')
-'''
 
 # ## **Detección de Objetos YOLO**
 # ![](https://opencv-tutorial.readthedocs.io/en/latest/_images/yolo1_net.png)
@@ -5636,7 +6936,7 @@ for file in file_names:
 
 
 ##############################
-#### 33b YOLOV8 INFERENCIA ########
+#### 39 YOLOV8 INFERENCIA ########
 ###############################
 
 from ultralytics import YOLO
@@ -5646,9 +6946,8 @@ model = YOLO("modelos/YOLO8/yolo/Yolov8s.pt")
 results = model.predict(source="modelos/YOLO8/1.mov", show=True)  # acepta todos los formatos - img/carpeta/video
 print(results)
 
-
 # *******************************************************
-# ***** 34 Transferencia de Estilos Neuronales con OpenCV
+# ***** 40 Transferencia de Estilos Neuronales con OpenCV
 # *******************************************************
 # ####**En esta lección aprenderemos a usar Modelos pre-entrenados para implementar la Transferencia Neuronal de
 # Estilos en OpenCV**
@@ -5687,14 +6986,6 @@ def imshow(title="Image", image=None, size=10):
     plt.title(title)
     plt.show()
 
-
-'''# Descargar y descomprimir nuestras imágenes y archivos YOLO
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/NeuralStyleTransfer.zip')
-get_ipython().system('unzip -qq NeuralStyleTransfer.zip')
-'''
-
-'''
-get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/city.jpg')'''
 
 ### **Implementar la Transferencia Neuronal de Estilos usando Modelos preentrenados**
 #
@@ -5762,6 +7053,8 @@ for (i, model) in enumerate(model_file_paths):
 #
 #
 
+# In[ ]:
+
 
 # Cargar nuestros modelos de transferencia neural t7
 model_file_path = "modelos/NeuralStyleTransfer/models/ECCV16/"
@@ -5802,9 +7095,6 @@ for (i, model) in enumerate(model_file_paths):
     imshow("Original", img)
     imshow("Style", style)
     imshow("Neural Style Transfers", output)
-
-'''get_ipython().system('wget https://github.com/rajeevratan84/ModernComputerVision/raw/main/dj.mp4')
-'''
 
 # Cargar nuestros modelos de transferencia neuronal t7
 model_file_path = "modelos/NeuralStyleTransfer/models/ECCV16/starry_night.t7"
@@ -5875,10 +7165,8 @@ out.release()
 # Alternativamente, dale una oportunidad a este repositorio de github y pruébalo tú mismo -
 # https://github.com/jcjohnson/fast-neural-style
 
-
-
 # *******************************************************************
-# ***** 35A Deteccion de rostros mediante aprendizaje profundo Caffemodel
+# ***** 41 OpCV Deteccion_rostros_aprendizaje_profundo Caffemodel
 # *******************************************************************
 '''Para detectar los rostros, podemos utilizar OpenCV que nos permitirá leer en un modelo previamente entrenado y
 realizar inferencias usando ese modelo'''
@@ -5918,7 +7206,7 @@ se entrenó ese modelo como el factor de escala, alto, ancho y rgb.
 Cuando llamamos a este método readNetFromCaffe, regresa para una instancia de la red neuronal, cuyo objeto se usará a 
 continuación para realizar inferencias en nuestras imágenes de prueba de la transmisión de video'
 '''
-net = cv2.dnn.readNetFromCaffe("deploy.prototxt", "res10_300x300_ssd_iter_140000_fp16.caffemodel")
+net = cv2.dnn.readNetFromCaffe("modelos/faceDetector/deploy.prototxt", "modelos/faceDetector/res10_300x300_ssd_iter_140000_fp16.caffemodel")
 
 '''Identifica los parámetros del modelo que se asociaron con la forma en que se realizó el modelo entrenado siendo 
 importante porque cualquier imagen que pasemos a través del modelo para realizar la inferencia también deben procesarse
@@ -5988,11 +7276,8 @@ while cv2.waitKey(1) != 27:  # mientras no pulsemos la tecla con ord 27 (esc)
 source.release()
 cv2.destroyWindow(win_name)
 
-# !/usr/bin/env python
-# coding: utf-8
-
 # ***************************************************************
-# ***** 35 Detectores de disparo único (SSD) con OpenCV Caffemodel
+# ***** 42 Detectores de disparo único (SSD) con OpenCV Caffemodel
 # *****************************************************************
 # ####**En esta lección aprenderemos a usar modelos pre-entrenados para implementar un SSD en OpenCV**
 # Fuente - https://github.com/datitran/object_detector_app/tree/master/object_detection
@@ -6176,9 +7461,8 @@ for i in range(detections.shape[2]):
 # Mostrar nuestras detecciones
 imshow("detections", frame)
 
-
 # ********************************************************
-# ***** 35C Detección de video mediante aprendizaje profundo
+# ***** 43 Detección de video mediante aprendizaje profundo
 # ********************************************************
 # 1.Arquitectura: Multi-Box (SSD) basado en Mobilenet
 # 2.Marco: Tensorflow
@@ -6405,7 +7689,7 @@ out_mp4.release()
 cv2.destroyWindow(win_name)
 
 # *******************************************************************
-# *****35D Estimacion de la pose humana mediante el aprendizaje profundo
+# *****44 Estimacion de la pose humana mediante el aprendizaje profundo
 # *******************************************************************
 '''
 La estimación de la pose humana puede ser difícil:
@@ -6599,6 +7883,597 @@ plt.axis('off');
 plt.imshow(imSkeleton);
 # plt.title('Displaying Skeleton')
 plt.show()
+
+# ****************************************************************************
+# ***** 45 Coloriza fotos en blanco y negro usando un modelo Caffe en OpenCV
+# ****************************************************************************
+# En esta lección aprenderemos a usar modelos pre-entrenados para colorear automáticamente una foto en blanco y negro
+# (escala de grises)
+#
+
+# ### **Colorizar imágenes en blanco y negro es una técnica increíblemente útil e increíble lograda por el aprendizaje
+# profundo.**
+#
+# [Colorización de imágenes en blanco y negro ](http://arxiv.org/pdf/1603.08511.pdf)
+#
+# - Los autores abrazan la incertidumbre subyacente del problema (conversión de blanco y negro a color) planteándolo
+#   como una tarea de clasificación y utilizan el reequilibrio de clases en tiempo de entrenamiento para aumentar la
+#   diversidad de colores en el resultado.
+# - El sistema se implementa como un paso feed-forward en una CNN en tiempo de prueba y se entrena con más de un millón
+#   de imágenes en color.
+# Evalúan nuestro algoritmo mediante una "prueba de Turing de coloración", en la que se pide a los participantes humanos
+# que elijan entre una imagen en color generada y otra real.
+# Su método consigue engañar a los humanos en el 32% de las pruebas, un porcentaje significativamente superior al de
+# métodos anteriores.
+#
+# ![](http://richzhang.github.io/colorization/resources/images/teaser3.jpg)
+#
+# por Richard Zhang, Phillip Isola, Alexei A. Efros. En ECCV, 2016.
+#
+# Utilizaremos los siguientes archivos de modelo Caffe que descargaremos en la siguiente celda de abajo. Estos serán
+# luego cargados en OpenCV:
+#
+# 1. colorization_deploy_v2.prototext
+# 2. colorization_release_v2.caffe
+# 3. pts_in_hull.npy
+
+
+# Nuestra configuración, importar librerías, crear nuestra función Imshow y descargar nuestras imágenes
+import cv2
+import numpy as np
+from os import listdir
+from os.path import isfile, join
+from matplotlib import pyplot as plt
+
+
+# Define nuestra función imshow
+def imshow(title="Image", image=None, size=10):
+    w, h = image.shape[0], image.shape[1]
+    aspect_ratio = w / h
+    plt.figure(figsize=(size * aspect_ratio, size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
+
+
+# El script está basado en https://github.com/richzhang/colorization/blob/master/colorize.py
+# Para descargar el caffemodel y el prototxt, y npy véase: https://github.com/richzhang/colorization/tree/caffe
+
+# Inicia el programa principal
+file_path = "images/color/"
+blackandwhite_imgs = [f for f in listdir(file_path) if isfile(join(file_path, f))]
+kernel = 'modelos/color/pts_in_hull.npy'
+
+# Selecciona el modelo deseado
+if __name__ == '__main__':
+
+    # cargar el modelo y los pesos
+    net = cv2.dnn.readNetFromCaffe("modelos/color/colorization_deploy_v2.prototxt",
+                                   "modelos/color/colorization_release_v2.caffemodel")
+
+    # cargar centros de cluster del fichero .npy ( array de 2D )
+    pts_in_hull = np.load(kernel)
+    '''[[ -90   50]
+        [ -90   60]...'''
+    # rellenar los centros de cluster como kernel de convolución 1x1
+    # transpose, realiza una transposición de filas a columnas y a eso se le añaden dimensiones (a 1) con reshape
+    # que devuelve una array con los mismos valores pero cambio en las dimensiones
+    # pasa a ser un array 4D
+    pts_in_hull = pts_in_hull.transpose().reshape(2, 313, 1, 1)
+    print(pts_in_hull)
+    '''[[[[ -90]]
+       [[ -90]]
+       [[ -90]]
+    '''
+    # pasa ese kernel como etiqueta de la red, para poder usarlo posteriormente
+    net.getLayer(net.getLayerId('class8_ab')).blobs = [pts_in_hull.astype(np.float32)]
+    net.getLayer(net.getLayerId('conv8_313_rh')).blobs = [np.full([1, 313], 2.606, np.float32)]
+
+    # para cada imagen
+    for image in blackandwhite_imgs:
+        # carga la imagen
+        img = cv2.imread(file_path + image)
+
+        # cambia el orden de los colores y lo pasa a flotante / 255
+        img_rgb = (img[:, :, [2, 1, 0]] * 1.0 / 255).astype(np.float32)
+        # Pasa de BGR a ese fomrato de laboratorio
+        img_lab = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2LAB)
+
+        # sacar canal L
+        img_l = img_lab[:, :, 0]
+
+        # obtener el tamaño original de la imagen
+        (H_orig, W_orig) = img_rgb.shape[:2]
+
+        # redimensiona la imagen al tamaño de entrada de la red
+        img_rs = cv2.resize(img_rgb, (224, 224))
+
+        # redimensiona la imagen al tamaño de entrada de la red
+        img_lab_rs = cv2.cvtColor(img_rs, cv2.COLOR_RGB2Lab)
+        img_l_rs = img_lab_rs[:, :, 0]
+
+        # restar 50 para centrado medio
+        img_l_rs -= 50
+
+        # realiza la transformación de la imagen a blob 4D
+        net.setInput(cv2.dnn.blobFromImage(img_l_rs))
+
+        # este es nuestro resultado
+        # normalmente en net.forward() que realmente realiza el paso de la red con el blob, no introducimos parámetros
+        # Sin embargo, en este caso usa la etiqueta antes añadida para pasar el kernel a la red
+        ab_dec = net.forward('class8_ab')[0, :, :, :].transpose((1, 2, 0))
+
+        # Saca el ancho y el alto
+        (H_out, W_out) = ab_dec.shape[:2]
+
+        ab_dec_us = cv2.resize(ab_dec, (W_orig, H_orig))
+        img_lab_out = np.concatenate((img_l[:, :, np.newaxis], ab_dec_us), axis=2)
+
+        # concatenar con imagen original L
+        img_bgr_out = np.clip(cv2.cvtColor(img_lab_out, cv2.COLOR_Lab2BGR), 0, 1)
+
+        # mostrar imagen original
+        imshow('Original', img)
+        # Redimensionar la imagen corlizada a sus dimensiones originales
+        img_bgr_out = cv2.resize(img_bgr_out, (W_orig, H_orig), interpolation=cv2.INTER_AREA)
+        imshow('Colorized', img_bgr_out)
+
+
+# *****************************************
+# ***** 46 Pintar imágenes para restauralas
+# *****************************************
+# **En esta lección tomaremos una foto vieja dañada, y la restauraremos usando la función inpaint()**
+
+# Nuestra configuración, importar librerías, crear nuestra función Imshow y descargar nuestras imágenes
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+
+# Definir nuestra función imshow
+def imshow(title = "Image", image = None, size = 10):
+    w, h = image.shape[0], image.shape[1]
+    aspect_ratio = w/h
+    plt.figure(figsize=(size * aspect_ratio,size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
+
+
+# Cargamos nuestra foto dañada
+image = cv2.imread('images/abraham.jpg')
+imshow('Original Damaged Photo', image)
+
+# Cargamos la foto en la que hemos marcado las zonas dañadas, con un programa de utilidad de fotos normal
+# dibujando las lineas
+marked_damages = cv2.imread('images/mask.jpg', 0)
+imshow('Marked Damages', marked_damages)
+
+# Hagamos una máscara de nuestra imagen marcada cambiando todos los colores
+# que no sean blancos, a negro, para usar esas marcas dibujadas en blanco
+ret, thresh1 = cv2.threshold(marked_damages, 254, 255, cv2.THRESH_BINARY)
+imshow('Threshold Binary', thresh1)
+
+
+# Vamos a dilatar (hacer más gruesas) las marcas que hemos hecho
+# ya que el umbral lo ha estrechado ligeramente
+kernel = np.ones((7,7), np.uint8)
+mask = cv2.dilate(thresh1, kernel, iterations = 1)
+imshow('Dilated Mask', mask)
+cv2.imwrite("images/abraham_mask.png", mask)
+
+restored = cv2.inpaint(image, mask, 3, cv2.INPAINT_TELEA)
+
+imshow('Restored', restored)
+
+# *************************************************************************************
+# ***** 77 Anadir y eliminar ruido y corregir contraste con ecualizacion de histograma
+# *************************************************************************************
+# 1. Cómo añadir ruido blanco o efectos de grano de película a las imágenes
+# 2. Cómo implementar la ecualización de histograma
+
+### **¿Qué es el ruido?**
+#
+# ![](https://2.bp.blogspot.com/-b-hwrNlSs4Y/V6IKh7NamaI/AAAAAAAAOB4/rJ7oPYVKZgg2Py9eA7pR62Lbn1yNJjnvwCLcB/s1600/ISO-Noise.jpg)
+#
+# Los sensores de las cámaras digitales pueden hacer fotos en entornos con poca luz aumentando la sensibilidad del
+# sensor de la cámara (CCD). Sin embargo, este aumento de la sensibilidad (aumento ISO) tiene un precio. El precio es
+# el ruido. El ruido surge porque la mayor sensibilidad del sensor lo hace susceptible al ruido aleatorio. Esto se
+# debe a que en las escenas con poca luz no hay mucha variación entre la escena y el ruido aleatorio de los fotones.
+#
+# https://blog.michaeldanielho.com/2016/08/understanding-cameras-exposure-setting.html
+
+# Nuestra configuración, importar librerías, crear nuestra función Imshow y descargar nuestras imágenes
+import cv2
+import random
+import numpy as np
+from matplotlib import pyplot as plt
+
+
+# Definir nuestra función imshow
+def imshow(title="Image", image=None, size=10):
+    w, h = image.shape[0], image.shape[1]
+    aspect_ratio = w / h
+    plt.figure(figsize=(size * aspect_ratio, size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
+
+
+# ## **Añadir grano de película o ruido a las imágenes**
+
+def addWhiteNoise(image):
+    # Establece el rango para una probabilidad aleatoria
+    # Una probabilidad grande significará más ruido
+    prob = random.uniform(0.05, 0.1)
+
+    # Generar una matriz aleatoria con la forma de nuestra imagen de entrada
+    rnd = np.random.rand(image.shape[0], image.shape[1])
+
+    # Si los valores aleatorios de nuestra matriz rnd son menores que nuestra probabilidad aleatoria
+    # Cambiamos aleatoriamente ese píxel de nuestra imagen de entrada a un valor dentro del rango especificado
+    image[rnd < prob] = np.random.randint(50, 230)
+    return image
+
+
+# Cargar nuestra imagen
+image = cv2.imread('images/londonxmas.jpeg')
+imshow("Input Image", image)
+
+# Aplicar nuestra función de ruido blanco a nuestra imagen de entrada
+noise_1 = addWhiteNoise(image)
+imshow("Noise Added", noise_1)
+
+# cv2.fastNlMeansDenoisingColored(input, None, h, hForColorComponents, templateWindowSize, searchWindowSize)
+# - Entrada ( input )
+# - matriz de salida ( se pone a None)
+# - h, parámetro que decide la intensidad del filtro. Un valor h más alto elimina mejor el ruido, pero también los
+#   detalles de la imagen. - la fuerza del filtro 'h' (5-12 es un buen rango)
+# - Lo siguiente es hForColorComponents, el mismo valor que h de nuevo normalmente, pero solo para imágenes a color
+# - tamaño de la ventana de plantilla templateWindowSize (sólo números impares) rec. 7
+# - busqueda de tamaño de ventana searchWindowSize (sólo números impares) rec. 21
+
+# ojo reducir el ruido elimina detalles
+dst = cv2.fastNlMeansDenoisingColored(noise_1, None, 11, 6, 7, 21)
+
+imshow("Noise Removed", dst)
+
+# **hay 4 variaciones **
+# - cv2.fastNlMeansDenoising() - trabaja con una sola imagen en escala de grises
+# - cv2.fastNlMeansDenoisingColored() - trabaja con una imagen en color.
+# - cv2.fastNlMeansDenoisingMulti() - trabaja con secuencia de imágenes capturadas en corto periodo de tiempo
+#                                   (imágenes en escala de grises)
+# - cv2.fastNlMeansDenoisingColoredMulti() - igual que el anterior, pero para imágenes en color.
+
+
+# ### **Usando la Cualificación del Histograma**
+# ![](https://docs.opencv.org/master/histogram_equalization.png)
+#
+# Esto 'ajusta' el rango dinámico de una imagen ( capacidad de captar en una imagen la mayor cantidad posible de tonos
+# de exposición, es decir, la cantidad de señales que es capaz de captar o reproducir, en términos de luminosidad).
+# Esto provoca que se extienda más uniformemente según la distribución de intensidad, y mejorando así el contraste.
+#
+# El contraste significa diferencia. Una diferencia que en fotografía suele hacer referencia a la luminosidad y
+# cromaticidad de una imagen. Es decir, nos ayuda a comprender cómo la luz y el color influyen en una fotografía.
+# Luz y color.
+
+# #### **Primero, echemos un vistazo al histograma de nuestra imagen de entrada**
+
+# Cargar nuestra imagen
+img = cv2.imread('images/soaps.jpeg')
+imshow("Original", img)
+
+gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Crear nuestra distribución del histograma
+hist, bins = np.histogram(gray_image.flatten(), 256, [0, 256])
+
+# Obtener la suma acumulada
+cdf = hist.cumsum()
+
+# Obtener una distribución acumulativa normalizada
+cdf_normalized = cdf * float(hist.max()) / cdf.max()
+
+# Trazar nuestro CDF superpuesto a nuestro histograma
+plt.plot(cdf_normalized, color='b')
+plt.hist(gray_image.flatten(), 256, [0, 256], color='r')
+plt.xlim([0, 256])
+plt.legend(('cdf', 'histogram'), loc='upper left')
+plt.show()
+imshow("gray_image", gray_image)
+
+# #### **Ahora, apliquemos la ecualización del histograma**
+
+img = cv2.imread('images/soaps.jpeg')
+
+# Convertir a escala de grises
+gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Crear nuestra distribución del histograma, es lo que transforma la imagen
+gray_image = cv2.equalizeHist(gray_image)
+imshow("equalizeHist", gray_image)
+
+# Esta parte sirve para crear el histograma no para la imagrn
+# Obtener una distribución acumulativa normalizada
+hist, bins = np.histogram(gray_image.flatten(), 256, [0, 256])
+
+# Obtener la suma acumulada
+cdf = hist.cumsum()
+
+# Obtener una distribución acumulativa normalizada
+cdf_normalized = cdf * float(hist.max()) / cdf.max()
+
+# Trazar nuestro CDF superpuesto a nuestro histograma
+plt.plot(cdf_normalized, color='b')
+plt.hist(gray_image.flatten(), 256, [0, 256], color='r')
+plt.xlim([0, 256])
+plt.legend(('cdf', 'histogram'), loc='upper left')
+plt.show()
+
+# ### **Excerise:**
+# 1. Igualar todos los canales RGB (BGR) de esta imagen y luego fusionarlos para obtener una imagen en color igualada.
+
+import cv2
+
+img = cv2.imread('images/soaps.jpeg')
+
+imshow("Original", img)
+
+# Igualar nuestro histograma
+# El formato de color por defecto es BGR
+
+red_channel = img[:, :, 2]
+red = cv2.equalizeHist(red_channel)
+
+green_channel = img[:, :, 1]
+green = cv2.equalizeHist(green_channel)
+
+blue_channel = img[:, :, 0]
+blue = cv2.equalizeHist(blue_channel)
+
+# crear una imagen vacía con la misma forma que la imagen de origen
+red_img = np.zeros(img.shape)
+red_img[:, :, 2] = red
+red_img = np.array(red_img, dtype=np.uint8)
+imshow("Red", red_img)
+
+green_img = np.zeros(img.shape)
+green_img[:, :, 1] = green
+green_img = np.array(green_img, dtype=np.uint8)
+imshow("Green", green_img)
+
+blue_img = np.zeros(img.shape)
+blue_img[:, :, 0] = blue
+blue_img = np.array(blue_img, dtype=np.uint8)
+imshow("Blue", blue_img)
+
+merged = cv2.merge([blue, green, red])
+imshow("Merged", merged)
+
+
+# *************************************************************
+# ***** 48 Detección de Desenfoque_Encontrar Imágenes Enfocadas
+# *************************************************************
+
+
+# ### **Para Detectar Desenfoque, simplemente Convolvemos con el kernel Laplaciano.**
+#
+# Tomamos la escala de grises de una imagen y la convolucionamos con el kernel Laplaciano (kernel 3 x 3):
+#
+# Para cuantificar el desenfoque, entonces tomamos la varianza de la salida de respuesta.
+#
+# El Laplaciano es la 2ª derivada de una imagen y, por tanto, resalta las áreas de una imagen que contienen cambios
+# rápidos de intensidad. De ahí su uso en la detección de bordes. Una varianza alta debería, en teoría, indicar la
+# presencia tanto de bordes como de no bordes (de ahí el amplio rango de valores que resulta en una varianza alta),
+# lo que es típico de una imagen normal enfocada.
+#
+# Una varianza baja, por lo tanto, podría significar que hay muy pocos bordes en la imagen, lo que significa que podría
+# estar borrosa, ya que cuanto más borrosa esté, menos bordes habrá. #
+
+
+
+import cv2
+from matplotlib import pyplot as plt
+
+# Define nuestra función imshow
+def imshow(title = "Image", image = None, size = 10):
+    w, h = image.shape[0], image.shape[1]
+    aspect_ratio = w/h
+    plt.figure(figsize=(size * aspect_ratio,size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
+
+
+# #### **producir some Blurred Images**
+
+# Cargar nuestra imagen de entrada
+image = cv2.imread('./images/liberty.jpeg')
+imshow("Original Image", image)
+
+blur_1 = cv2.GaussianBlur(image, (5,5), 0)
+imshow('Blurred Image 1', blur_1)
+
+blur_2 = cv2.GaussianBlur(image, (9,9), 0)
+imshow('Blurred Image 2', blur_2)
+
+blur_3 = cv2.GaussianBlur(image, (13,13), 0)
+imshow('Blurred Image 3', blur_3)
+
+
+def getBlurScore(image):
+  if len(image.shape) == 3:
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+  return cv2.Laplacian(image, cv2.CV_64F).var()
+
+
+# #### **Mostrar nuestras puntuaciones, ¡recuerda que más alto significa menos desenfoque!**
+
+print("Blur Score = {}".format(getBlurScore(image)))
+print("Blur Score = {}".format(getBlurScore(blur_1)))
+print("Blur Score = {}".format(getBlurScore(blur_2)))
+print("Blur Score = {}".format(getBlurScore(blur_3)))
+
+
+# ******************************
+# ***** 49 Reconocimiento facial
+# ******************************
+
+# En esta lección, implementaremos **simples Reconocimientos Faciales usando la librería de python face-recognition**.
+#
+# 1. Instalar `face-recognition` #
+# 2. Comprobar similitud facial
+# 3. Reconocer caras en una imagen
+
+'''
+get_ipython().system('pip install face-recognition')
+'''
+# ## **2. Comprobar la similitud facial entre dos caras**
+
+
+# Definir nuestra función imshow
+def imshow(title = "Image", image = None, size = 10):
+    w, h = image.shape[0], image.shape[1]
+    aspect_ratio = w/h
+    plt.figure(figsize=(size * aspect_ratio,size))
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.show()
+
+
+import cv2
+from matplotlib import pyplot as plt
+
+biden = cv2.imread('images/biden.jpg')
+biden2 = cv2.imread('images/biden2.jpg')
+trump = cv2.imread('images/trump2.jpeg')
+
+imshow('Trump', trump)
+imshow('Biden', biden)
+imshow('Biden', biden2)
+
+
+# ### **Ahora probemos con las dos imágenes anteriores**
+
+# In[5]:
+
+
+import face_recognition
+
+known_image = face_recognition.load_image_file("images/biden.jpg")
+unknown_image = face_recognition.load_image_file("images/trump2.jpeg")
+
+# ponemos la imagen en la primera posición
+biden_encoding = face_recognition.face_encodings(known_image)[0]
+unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
+
+# [biden_encoding] con lo que podríamos coger muchas imágenes diferentes para tomar la salida
+result = face_recognition.compare_faces([biden_encoding], unknown_encoding)
+# indexamos el primer resultado porque solo queremos comparar con la primera cara
+
+print(f'Face Match is {result[0]}')  # Face Match is False
+
+
+# ### **Ahora probemos con las dos imágenes de Biden**
+import face_recognition
+
+known_image = face_recognition.load_image_file("images/biden.jpg")
+unknown_image = face_recognition.load_image_file("images/biden2.jpg")
+
+biden_encoding = face_recognition.face_encodings(known_image)[0]
+unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
+
+result = face_recognition.compare_faces([biden_encoding], unknown_encoding)
+print(f'Face Match is {result[0]}')  # Face Match is True
+
+
+# ## **3. Reconocer caras en una imagen**
+import face_recognition
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+# Carga una imagen de ejemplo y aprende a reconocerla.
+trump_image = face_recognition.load_image_file("images/trump2.jpeg")
+trump_face_encoding = face_recognition.face_encodings(trump_image)[0]
+
+# Carga una segunda imagen de ejemplo y aprende a reconocerla.
+biden_image = face_recognition.load_image_file("images/biden.jpg")
+biden_face_encoding = face_recognition.face_encodings(biden_image)[0]
+
+# Crear matrices de codificaciones de caras conocidas y sus nombres
+known_face_encodings = [
+    trump_face_encoding,
+    biden_face_encoding
+]
+known_face_names = [
+    "Donald Trump",
+    "Joe Biden"
+]
+
+# Inicializar algunas variables
+face_locations = []
+face_encodings = []
+face_names = []
+process_this_frame = True
+
+
+# Obtener un único fotograma de vídeo
+#frame = cv2.imread('images/biden2.jpg')
+frame = cv2.imread('images/Trump.jpg')
+# Redimensiona el fotograma de vídeo a 1/4 de tamaño para un procesamiento más rápido del reconocimiento facial
+small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+
+# Convertir la imagen de color BGR (que utiliza OpenCV) a color RGB (que utiliza face_recognition)
+rgb_small_frame = small_frame[:, :, ::-1]
+
+# Sólo procesa cada dos fotogramas de vídeo para ahorrar tiempo
+if process_this_frame:
+    # Encuentra todas las caras y codificaciones de caras en el fotograma actual del vídeo
+    face_locations = face_recognition.face_locations(rgb_small_frame)
+    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+
+    face_names = []
+    for face_encoding in face_encodings:
+        # Ver si la cara coincide con la(s) cara(s) conocida(s)
+        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+        name = "Unknown"
+
+        # Si se ha encontrado una coincidencia en codificaciones_cara_conocidas, utiliza sólo la primera.
+        # if True in coincidencias:
+        # first_match_index = matches.index(True)
+        # nombre = nombres_cara_conocidos[indice_primera_pareja]
+
+        # O en su lugar, utilizar la cara conocida con la menor distancia a la nueva cara
+        face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+        best_match_index = np.argmin(face_distances)
+        if matches[best_match_index]:
+            name = known_face_names[best_match_index]
+
+        face_names.append(name)
+
+
+# Mostrar los resultados
+for (top, right, bottom, left), name in zip(face_locations, face_names):
+    # Vuelve a escalar las localizaciones de caras ya que el fotograma en el que detectamos se escaló a 1/4 de tamaño
+    top *= 4
+    right *= 4
+    bottom *= 4
+    left *= 4
+
+    # Dibuja una caja alrededor de la cara
+    cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+
+    # Dibuja una etiqueta con un nombre debajo de la cara
+    cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+    font = cv2.FONT_HERSHEY_DUPLEX
+    cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+
+# Mostrar la imagen resultante
+imshow('Face Recognition', frame)
+
+
+
 
 
 

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 ########################################################
 # 14 Contar círculos, elipses y encontrar a Waldo*######
 ########################################################
@@ -24,10 +21,7 @@ def imshow(title = "Image", image = None, size = 12):
     plt.title(title)
     plt.show()
 
-'''# Download and unzip our images
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')
-'''
+
 
 # ## **Contar manchas circulares**
 # la siguiente imagen ayuda mucho a enterder los parametros!

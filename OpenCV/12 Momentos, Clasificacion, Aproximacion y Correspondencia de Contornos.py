@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 ###############################################################################
 # 12 Momentos, Clasificación, Aproximación y Correspondencia de Contorno ######
 ###############################################################################
@@ -24,10 +21,6 @@ def imshow(title = "Image", image = None, size = 16):
     plt.title(title)
     plt.show()
 
-'''# Descarga y descomprime nuestras imágenes
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')
-'''
 
 # ### **Encontrar contornos como de costumbre** ( visto en 11)
 
@@ -63,9 +56,8 @@ import numpy as np
 # Función que usaremos para mostrar el área del contorno
 
 def get_contour_areas(contours):
-    """devuelve las áreas de todos los contornos como una lista
-    Entonces, estamos recorriendo los contornos que antes hemos sacado y estamos obteniendo el área de cada contorno
-    y añadiendolo a una lista"""
+    """devuelve las áreas de todos los contornos como una lista, estamos recorriendo los contornos que antes hemos
+    sacado, obteniendo el área de cada contorno y añadiendolo a una lista"""
     all_areas = []
     for cnt in contours:
         area = cv2.contourArea(cnt)
@@ -98,18 +90,16 @@ for (i, c) in enumerate(sorted_contours):
     cv2.drawContours(image, [c], -1, (255,0,0), 3)
 
 # lo que hemos realizado es clasificar de forma numerica por el tamaño del área de las figuras de la imagen
-# ( son 2cuadrados,1 circulo, 1 triangulo) que hemos calculado a raíz de los contornos, es decir, hemos dibujado
+# ( son 2 cuadrados,1 círculo, 1 triángulo) que hemos calculado a raíz de los contornos, es decir, hemos dibujado
 # el controno y un número que clasifica de más grande a pequeño las áreas de las figuras del ejemplo
 imshow('Contours by area', image)
 
 
 # #### **Definir algunas funciones que usaremos**
-
-
 # Funciones que usaremos para ordenar por posición
 def x_cord_contour(contours):
     """Devuelve la coorednada X para el centroide del controno ( una función Usando los momentos para sacar
-    la coordenada x  )"""
+    la coordenada x )"""
     if cv2.contourArea(contours) > 10:  # rechaza los contornos más pequeños
         M = cv2.moments(contours)
         return (int(M['m10']/M['m00']))
@@ -157,8 +147,9 @@ imshow('Sorting Left to Right', orginal_image)
 # Entonces, esta es una función que puede tomar un contorno y aproximarlo
 # - **contorno** – es el contorno individual que deseamos aproximar
 # - **Precisión de la aproximación**: un parámetro importante determina la precisión de la aproximación. Los valores
-# pequeños dan aproximaciones precisas, los valores grandes dan una aproximación más genérica
-# una buena good regla empírica od es menos del 5% del perímetro del contorno
+#                                     pequeños dan aproximaciones precisas, los valores grandes dan una aproximación
+#                                     más genérica una buena regla empírica od es menos del 5% del perímetro del
+#                                     contorno
 # # - **Cerrado**: un valor booleano que indica si el contorno aproximado debe estar abierto o cerrado
 
 import numpy as np
@@ -194,12 +185,13 @@ imshow('Bounding Rectangles', orig_image)
 # ******
 # Iterar a través de cada contorno y calcular el contorno aproximado
 # una forma de limpiar sus contornos y aproximarlos, como en la imagen que es un dibujo a mano irregular y lo mejora
+
 for c in contours:  # toma un contorno de una imagen
     # Calcule la precisión como un porcentaje del perímetro del contorno
     #  Toma una precisión y precisión como un porcentaje del parámetro de contorno.
     # Así que quitas el 3 por ciento aquí del parámetro cuántico
     accuracy = 0.03 * cv2.arcLength(c, True)
-    # ahora calcula  calcular el contorno aproximado con ese porcentaje de precisión
+    # ahora calcular el contorno aproximado con ese porcentaje de precisión
     approx = cv2.approxPolyDP(c, accuracy, True)
     # lo dibujas
     cv2.drawContours(copy, [approx], 0, (0, 255, 0), 2)

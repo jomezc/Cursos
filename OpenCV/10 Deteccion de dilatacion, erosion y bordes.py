@@ -1,15 +1,6 @@
-#!/usr/bin/env python
-# coding: utf-8
 #####################################################
-# 10 Detección de dilatación, erosión y bordes ######
+# 10 Detección de dilatación, erosion y bordes apertura cierre ######
 #####################################################
-# # **Detección de dilatación, erosión y bordes**
-# ####**En esta lección aprenderemos:**
-# - **Dilatación**: agrega píxeles a los límites de los objetos en una imagen
-# - **Erosión**: elimina píxeles en los límites de los objetos en una imagen
-# - **Apertura** - Erosión seguida de dilatación
-# - **Cierre** - Dilatación seguida de erosión
-# 5. Detección de borde astuto
 
 # Nuestra configuración, importar bibliotecas, crear nuestra función Imshow y descargar nuestras imágenes
 import cv2
@@ -25,9 +16,6 @@ def imshow(title = "Image", image = None, size = 10):
     plt.title(title)
     plt.show()
 
-'''# Descarga y descomprime nuestras imágenes
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')'''
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/Screenshot%202021-11-15%20at%205.19.08%20pm.png)
 
 image = cv2.imread('images/opencv_inv.png', 0)
@@ -37,19 +25,23 @@ imshow('Original', image)
 # funciones
 kernel = np.ones((5, 5), np.uint8)
 
-# Ahora erosionamos
+# Ahora erosionamos, quitando pixeles a los limites de los objetos
 erosion = cv2.erode(image, kernel, iterations = 1)
 imshow('Erosion', erosion)
 
-# Dilatar aqui
+# Dilatar aqui, es decir agregando píxeles a los límites de los objetos, el fondo en este caso en una imagen
 dilation = cv2.dilate(image, kernel, iterations = 1)
 imshow('Dilation', dilation)
 
-# Apertura - Bueno para eliminar el ruido
+# Apertura - Bueno para eliminar el ruido, La operación de apertura es una operación de erosión seguida de dilatación.
+# se usa para eliminar el ruido interno presente dentro de una imagen.
 opening = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
 imshow('Opening',opening)
 
-# Cierre - Bueno para eliminar el ruido
+# Cierre - Bueno para eliminar el ruido, aplica dilatación seguida de erosión.
+# Al igual que el operador Apertura, también utiliza un elemento estructurante, pero se utiliza para eliminar pequeños
+# agujeros en lugar de pertusiones.
+
 closing = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
 imshow('Closing',closing)
 
@@ -64,14 +56,27 @@ imshow('Closing',closing)
 # de grises de la imagen.
 
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/Screenshot%202021-11-15%20at%205.24.15%20pm.png)
-# - El primer argumento es nuestra imagen de entrada.
-# - El segundo y tercer argumento son nuestro minVal y maxVal respectivamente.
-# - El cuarto argumento (opcional) es opening_size. Es el tamaño del núcleo Sobel utilizado para encontrar gradientes
-#   de imagen. Por defecto es 3.
-#
+
 # La detección de bordes necesita un umbral para indicar qué diferencia/cambio debe contarse como borde
 
 image = cv2.imread('images/londonxmas.jpeg',0)
+'''
+Detector de bordes Canny con OpenCV
+La función Canny() en OpenCV se utiliza para detectar los bordes de una imagen
+canny = cv2.Canny(imagen, umbral_minimo, umbral_maximo)
+Donde:
+- canny: es la imagen resultante. Aparecerán los bordes detectados tras el proceso.
+- imagen: es la imagen original.
+- umbral_minimo: es el umbral mínimo en la umbralización por histéresis
+- umbral_maximo: es el umbral máximo en la umbralización por histéresis
+
+hay mas parámetros: 
+- opening_size: Tamaño de apertura del filtro Sobel. Es el tamaño del núcleo Sobel utilizado para encontrar gradientes
+                de imagen. Por defecto es 3.
+- L2Gradient: Parámetro booleano utilizado para mayor precisión en el cálculo de Edge Gradient.
+             el umbral mínimo y el máximo dependerá de cada situación.
+Docu 
+https://docs.opencv.org/4.x/da/d22/tutorial_py_canny.html'''
 
 # Canny Edge Detection utiliza valores de gradiente como umbrales
 # El primer gradiente de umbral

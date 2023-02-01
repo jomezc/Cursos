@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
 ########################################################################
 # 15 Encontrar esquinas ######
 ########################################################################
@@ -11,19 +9,17 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-# Define our imshow function 
-def imshow(title = "Image", image = None, size = 10):
+
+# Define our imshow function
+def imshow(title="Image", image=None, size=10):
     w, h = image.shape[0], image.shape[1]
-    aspect_ratio = w/h
-    plt.figure(figsize=(size * aspect_ratio,size))
+    aspect_ratio = w / h
+    plt.figure(figsize=(size * aspect_ratio, size))
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     plt.title(title)
     plt.show()
 
-'''# Download and unzip our images
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/images.zip')
-get_ipython().system('unzip -qq images.zip')
-'''
+
 
 # ## **¿Qué es una esquina?**
 
@@ -57,14 +53,13 @@ gray = np.float32(gray)
 harris_corners = cv2.cornerHarris(gray, 3, 3, 0.05)
 
 # Usamos la dilatación de los puntos de las esquinas para agrandarlos\
-kernel = np.ones((7,7),np.uint8)
-harris_corners = cv2.dilate(harris_corners, kernel, iterations = 2)
+kernel = np.ones((7, 7), np.uint8)
+harris_corners = cv2.dilate(harris_corners, kernel, iterations=2)
 
 # Umbral para un valor óptimo, puede variar según la imagen.
-image[harris_corners > 0.025 * harris_corners.max() ] = [255, 127, 127]
+image[harris_corners > 0.025 * harris_corners.max()] = [255, 127, 127]
 
 imshow('Harris Corners', image)
-
 
 # **cv2.goodFeaturesToTrack**(imagen de entrada, maxCorners, qualityLevel, minDistance)
 
@@ -79,7 +74,7 @@ imshow('Harris Corners', image)
 
 
 img = cv2.imread('images/chess.JPG')
-gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # Especificamos las 50 mejores esquinas
 corners = cv2.goodFeaturesToTrack(gray, 150, 0.0005, 10)
@@ -88,9 +83,6 @@ for corner in corners:
     x, y = corner[0]
     x = int(x)
     y = int(y)
-    cv2.rectangle(img,(x-10,y-10),(x+10,y+10),(0,255,0), 2)
-    
+    cv2.rectangle(img, (x - 10, y - 10), (x + 10, y + 10), (0, 255, 0), 2)
+
 imshow("Corners Found", img)
-
-
-
