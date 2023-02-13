@@ -43,7 +43,7 @@ def imshow(title = "Image", image = None, size = 8):
 
 # Cargar las etiquetas de clase COCO con las que se ha entrenado nuestro modelo YOLO
 # coco es un tipo de conjunto de datos de objetos comunes
-# ImageNet es un conjunto de datos clasificado que ha demostrado se invaluable para la investigación de computer vision
+# ImageNet es un conjunto de datos clasificado que ha demostrado ser invaluable para la investigación de computer vision
 # contiene los nombres de los diferentes objetos que nuestro modelo ha sido entrenado para identificar.
 
 labelsPath = "modelos/YOLO3/yolo/coco.names"
@@ -123,10 +123,10 @@ print(len(ln), ln)  # 3 ['yolo_82', 'yolo_94', 'yolo_106']
 # 4. el valor medio que se va a restar de todos los fotogramas (por defecto=0)
 # 5. la opción swapBR=True (ya que OpenCV usa BGR) para cambiar el orden de los canales de color en la imagen
 # 6. Recorte de argumento de entrada, indica que puede recortar su imagen de entrada para que tenga el tamaño correcto
-#     o puede cambiar su tamaño, al ponerlo a False, significa que simplemente vamos a cambiar el tamaño de la imagen para
-#      300x300
+#   o puede cambiar su tamaño, al ponerlo a False, significa que simplemente vamos a cambiar el tamaño de la imagen para
+#    300x300
 
-#La llamada a la función devuelve una representación del blob del fotograma con el pre-procesamiento realizado
+# La llamada a la función devuelve una representación del blob del fotograma con el pre-procesamiento realizado
 
 # **Nota** Un blob es un objeto 4D numpy array (imágenes, canales, ancho, alto). La imagen de abajo muestra el canal
 # rojo del blob. Observa el brillo de la chaqueta roja en el fondo.
@@ -226,7 +226,7 @@ for file in file_names:
     # NMSBoxes
     # Aunque eliminamos los cuadros delimitadores de baja confianza, existe la posibilidad de que todavía tengamos
     # detecciones duplicadas alrededor de un objeto. Para solucionar esta situación, necesitaremos aplicar la supresión
-    # no máxima (NMS) , también llamada supresión no máxima . Pasamos el valor de umbral de confianza y el valor de
+    # no máxima (NMS). Pasamos el valor de umbral de confianza y el valor de
     # umbral de NMS como parámetros para seleccionar un cuadro delimitador. Del rango de 0 a 1, debemos seleccionar
     # un valor intermedio como 0.4 o 0.5 para asegurarnos de que detectamos los objetos superpuestos, pero no terminamos
     # obteniendo múltiples cuadros delimitadores para el mismo objeto.

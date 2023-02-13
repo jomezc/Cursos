@@ -9,3 +9,4 @@ import cv2
 model = YOLO("modelos/YOLO8/yolo/Yolov8n.pt")
 results = model.predict(source="modelos/YOLO8/1.mov", show=True)  # acepta todos los formatos - img/carpeta/video
 print(results)
+results.get

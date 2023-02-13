@@ -22,6 +22,8 @@ from importlib.metadata import version
 print(random.sample((10,1.1,12,'dd'),2)) # funciona!, [10, 'dd']
 print(numpy.__version__)  # 1.24.1
 print(version('numpy'))  # 1.24.1
+# consola -> python3 -m pip show numpy pandas matplotlib
+# python3 -m pip list todos
 
 # pip --version  # version de pip
 # python --version # versión de python
@@ -3528,7 +3530,7 @@ for p in sys.path:
 
 """
 /Users/jesusgomezcanovas/Dropbox/guapo/programar/python/venv/bin/python 
-/Users/jesusgomezcanovas/Library/CloudStorage/Dropbox/guapo/programar/python/Deiphone.py 
+/Users/jesusgomezcanovas/Library/CloudStorage/Dropbox/guapo/programar/python/Traductor de codigo python.py 
 /Users/jesusgomezcanovas/Library/CloudStorage/Dropbox/guapo/programar/python
 /Users/jesusgomezcanovas/Library/CloudStorage/Dropbox/guapo/programar/python
 /Library/Frameworks/Python.framework/Versions/3.11/lib/python311.zip

@@ -2758,16 +2758,18 @@ for corner in corners:
 
 imshow("Corners Found", img)
 
-# ******************************************
-# ***** 16 Usando la camara en OpenCV
-# ******************************************
+
+# ************************************************************
+# ***** 16 Usando la camara en OpenCV e importar videos youtube
+# ************************************************************
+
 import cv2
 import sys
 
 # especificamos un índice de dispositivo de cámara predeterminado de cero.
 s = 0
 print(sys.argv)  # contiene los argumentos de la librería sys, por ejemplo 0 es la ruta
-# ['C:\\Users\\jgomcano\\PycharmProjects\\guiapython\\OpenCV\\Usando la camara en openCV\\16 Usando_camara_OpenCV.py']
+# ['C:\\Users\\jgomcano\\PycharmProjects\\guiapython\\OpenCV\\Usando la camara en openCV\\16 Usando_camara_OpenCV e importar videos youtube.py']
 # y simplemente estamos verificando si hubo una especificación de línea de comando para anular ese valor predeterminado.
 if len(sys.argv) > 1:
     s = sys.argv[1]
@@ -2828,6 +2830,192 @@ while True:
 # Libera la cámara y cierra las ventanas
 cap.release()
 cv2.destroyAllWindows()
+
+
+
+## ```cap.get(id)```
+# Es un método donde id es un número del 0 al 18. Cada número denota una propiedad del vídeo (si es aplicable a ese vídeo)
+# **Puedes ver que los índices 3 y 4 corresponden a las dimensiones del vídeo**
+import cv2
+
+cap = cv2.VideoCapture('./videos/drummer.mp4')
+
+for i in range(0,18):
+    print(cap.get(i))
+
+# **Capturando Video Usando Capturas de Pantalla**
+#
+# #### **En esta lección aprenderemos a utilizar una clase para permitir la reconexión automática a un flujo de vídeo**
+
+# #### **Instrucciones de instalación:**
+#
+# MacOS o Linux
+# 1. pip install Pillow
+# 2. sudo -H pip install pyscreenshot
+#
+# **Windows**
+# 1. pip install Pillow
+# 2. pip install pyscreenshot
+
+# # **Capturar una sola imagen de pantalla**
+
+import pyscreenshot as ImageGrab
+
+# grab fullscreen
+im = ImageGrab.grab()
+
+# save image file
+im.save('fullscreen.png')
+
+# ## **Capture Video from Screen**
+import numpy as np
+from PIL import ImageGrab
+import cv2
+import time
+
+last_time = time.time()
+
+while (True):
+
+    # frame = np.array(ImageGrab.grab(bbox=(0,0,300,300)))
+    frame = np.array(ImageGrab.grab())
+    # Obtener pantalla completa
+    # frame = np.array(ImageGrab.grab())
+
+    # Mostrar tasa de FPS
+    FPS = 1.0 / (time.time() - last_time)
+    print('FPS = {}'.format(FPS))
+    last_time = time.time()
+
+    # Mostrar pantalla
+    cv2.imshow('window', cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+
+    if cv2.waitKey(1) == 13:  # 13 is the Enter Key
+        print("Exited...")
+        break
+
+cv2.destroyAllWindows()
+
+# ## **¿Necesitas una velocidad de fotogramas súper rápida? Usa MSS**
+#
+# ```pip install mss```
+
+
+import numpy as np
+import cv2
+from mss import mss
+from PIL import Image
+import time
+
+bounding_box = {'top': 100, 'left': 0, 'width': 400, 'height': 300}
+
+sct = mss()
+frame_count = 0
+last_time = time.time()
+
+while True:
+    frame_count += 1
+    sct_img = sct.grab()
+    cv2.imshow('screen', np.array(sct_img))
+
+    # Mostrar tasa de FPS
+    if frame_count % 30 == 0:
+        FPS = 1.0 / (time.time() - last_time)
+        print('FPS = {}'.format(FPS))
+    last_time = time.time()
+
+    if cv2.waitKey(1) == 13:  # 13 es la tecla Enter
+        print("Exited...")
+        break
+
+cv2.destroyAllWindows()
+
+# # **Importar videos de YouTube (incluyendo transmisiones en vivo) a OpenCV**
+#
+# #### **En esta lección aprenderemos:**
+# 1. Cómo usar la Biblioteca Pafy para importar videos de YouTube en Opencv
+# 2. Cómo sacar datos META de videos de youtube
+# 3. Descarga el video o audio desde un enlace de youtube
+
+# **Necesitarás instalar:**
+# 1. pip install pafy
+# 2. pip install youtube-dl
+#
+# https://pypi.org/project/pafy/
+
+# ## Mostrar un video de YouTube en OpenCV
+
+
+import cv2
+import pafy
+
+url = 'https://youtu.be/QC8iQqtG0hg'
+video = pafy.new(url)
+
+best = video.getbest(preftype="mp4")
+
+capture = cv2.VideoCapture()
+capture.open(best.url)
+
+while (True):
+    ret, frame = capture.read()
+    if ret == True:
+        cv2.imshow('src', frame)
+
+    if cv2.waitKey(1) == 13:  # 13 is the Enter Key
+        break
+
+# Suelte la cámara y cierre las ventanas
+capture.release()
+cv2.destroyAllWindows()
+
+# ### Obtener datos META de vídeo
+
+import pafy
+
+url = 'https://youtu.be/QC8iQqtG0hg'
+video = pafy.new(url)
+
+print("Title: {}".format(video.title))
+print("Rating: {}".format(video.rating))
+print("Viewcount: {}".format(video.viewcount))
+print("Author: {}".format(video.author))
+print("Length: {}".format(video.length))
+print("Duration: {}".format(video.duration))
+
+# ### Ver los flujos disponibles
+
+
+# In[ ]:
+
+
+streams = video.streams
+
+for s in streams:
+    print(s.resolution)
+    print(s.extension)
+    print(s.get_filesize())
+    print(s.url)
+
+# ### Obtenga la transmisión de la más alta calidad
+
+best = video.getbest()
+best.resolution, best.extension
+
+best.url
+
+# ### Download Videos
+
+best.download(quiet=False)
+
+# ### Obtener y descargar audio
+
+audiostreams = video.audiostreams
+for a in audiostreams:
+    print(a.bitrate, a.extension, a.get_filesize())
+
+audiostreams[1].download()
+
 
 
 # ************************************************
@@ -8473,7 +8661,144 @@ for (top, right, bottom, left), name in zip(face_locations, face_names):
 imshow('Face Recognition', frame)
 
 
+# ******************************
+# ***** 50 RTSP
+# ******************************
 
+
+'''### **Protocolo de transmisión en tiempo real RTSP**
+
+RSPT es un protocolo de control de presentación multimedia cliente-servidor, diseñado para satisfacer las necesidades
+de entrega eficiente de streaming multimedia a través de redes IP. El protocolo subyacente utilizado para RTSP es el
+protocolo RTP.
+
+RTSP fue desarrollado por RealNetworks, Netscape y la Universidad de Columbia alrededor de 1996. Es un protocolo que
+se utiliza para transferir datos multimedia en tiempo real (por ejemplo, audio/vídeo) entre un cliente y un servidor.
+Normalmente, un cliente solicita y el servidor responde a la solicitud con los datos a través de este protocolo.
+Se trata de un protocolo de transmisión en tiempo real, lo que significa que los datos se transfieren y representan
+simultáneamente en tiempo real. Aquí los datos multimedia se encapsulan en paquetes del Protocolo de Transporte en
+Tiempo Real (RTP). Así que no es el RTSP el que hace el trabajo, sino el RTP. '''
+
+import cv2
+
+# Nuestro Enlace RSTP de Prueba Gratuito
+# Puede configurar sus Cámaras IPTV CCTV para emitir un Stream RSTP
+cap = cv2.VideoCapture("rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov")
+
+while (1):
+    ret, frame = cap.read()
+
+    cv2.imshow('RTSP Stream', frame)
+
+    if cv2.waitKey(1) == 13:  # 13 is the Enter Key
+        break
+
+# Release camera and close windows
+cap.release()
+cv2.destroyAllWindows()
+
+
+
+### **¿Interesado en Ingerir Múltiples Flujos IP Fácilmente? Mira ImageZMG**
+'''
+- https://github.com/jeffbass/imagezmq#introduction
+- https://www.pyimageconf.com/static/talks/jeff_bass.pdf'''
+
+# Necesitará instalar ImageZMQ primero
+#!pip install imagezmq
+# ejecute este programa en el Mac para visualizar secuencias de imágenes de varias RPis import cv2
+import imagezmq
+
+image_hub = imagezmq.ImageHub()
+
+while True:  # show streamed images until Ctrl-C
+    rpi_name, image = image_hub.recv_image()
+    cv2.imshow(rpi_name, image) # 1 ventana por cada RPi
+    cv2.waitKey(1)
+    image_hub.send_reply(b'OK')
+
+
+# Reconexión automática a un flujo RSTP
+
+#### **En esta lección aprenderemos a usar una clase para habilitar la reconexión automática a un stream de video**
+
+import cv2
+import requests
+import time
+
+
+class VideoCapture:
+    def __init__(self, cam_address, cam_force_address=None, blocking=False):
+        """
+        cam_address: dirección ip de la cámara de vídeo
+        cam_force_address: dirección ip para desconectar otros clientes (tomar el control a la fuerza)
+        blocking: si es true los métodos read() y connect_camera() se bloquean hasta que se reconecta la cámara ip
+        """
+        self.cam_address = cam_address
+        self.cam_force_address = cam_force_address
+        self.blocking = blocking
+        self.capture = None
+
+        # NOTA: Puede aumentarse para reducir la impresión
+        self.RECONNECTION_PERIOD = 0.5
+        # Llama al método connect
+        self.connect_camera()
+
+    def connect_camera(self):
+        print("Connecting...")
+        while True:
+            try:
+                if self.cam_force_address is not None:
+                    requests.get(self.cam_force_address)
+
+                self.capture = cv2.VideoCapture(self.cam_address)
+
+                if not self.capture.isOpened():
+                    time.sleep(self.RECONNECTION_PERIOD)
+                    raise Exception("Could not connect to a camera: {0}".format(self.cam_address))
+
+                print("Connected to a camera: {}".format(self.cam_address))
+
+                break
+            except Exception as e:
+                print(e)
+
+                if self.blocking is False:
+                    break
+
+                time.sleep(self.RECONNECTION_PERIOD)
+
+    def getStream(self):
+        """
+        Lee la imagen y si no se recibe intenta reconectar la cámara
+        :return: ret - bool que especifica si la imagen se ha leído correctamente
+                 frame - imagen opencv de la cámara
+        """
+
+        ret, frame = self.capture.read()
+
+        # Si se cae la señal intentamos reconectar
+        if ret is False:
+            self.connect_camera()
+
+        return ret, frame
+
+cap = VideoCapture("rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov")
+
+while (1):
+    ret, frame = cap.getStream()
+    # Note this will keep the loop running until you force the program to exit
+    try:
+        cv2.imshow('RTSP Stream', frame)
+    except:
+        print("Feed has gone down...")
+
+    if cv2.waitKey(1) == 13:  # 13 is the Enter Key
+        print("Exited...")
+        break
+
+# Release camera and close windows
+cv2.destroyAllWindows()
 
 
 
