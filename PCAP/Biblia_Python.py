@@ -17,7 +17,7 @@ print("Texto")  # Imprimir por pantalla
 
 # versiones y basic pip
 
-import random , numpy
+import random, numpy
 from importlib.metadata import version
 print(random.sample((10,1.1,12,'dd'),2)) # funciona!, [10, 'dd']
 print(numpy.__version__)  # 1.24.1

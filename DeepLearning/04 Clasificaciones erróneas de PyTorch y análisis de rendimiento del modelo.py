@@ -138,7 +138,7 @@ net = Net()
 net.to(device)
 
 # Cargar pesos desde la ruta especificada
-net.load_state_dict(torch.load('mnist_cnn_net.pth'))
+net.load_state_dict(torch.load('models/mnist_cnn_net.pth'))
 
 
 # Modelo cargado con éxito si se muestra ```Todas las claves coincidieron correctamente```.
