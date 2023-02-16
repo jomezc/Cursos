@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # codificación: utf-8
-
+##############################################
+# 02 Keras TensorFlow CNN MNIST Tutorial ######
+##############################################
 # # **Introducción a Keras usando un backend de TensorFlow 2.0**
 # ### **Entrenamiento de una CNN simple en el conjunto de datos MNIST - Dígitos escritos a mano**
 

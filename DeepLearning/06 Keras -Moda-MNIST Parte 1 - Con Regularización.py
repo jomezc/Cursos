@@ -1,34 +1,29 @@
 #!/usr/bin/env python
 # codificación: utf-8
-
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
+########################################################
+# 06 Keras -Fashion-MNIST Part 2 - con Regularizacion####
+########################################################
 #
 # # **Regularización en Keras - Parte 2 - Con Regularización**
 # ### **Primero entrenamos una CNN en el conjunto de datos Fashion-MNIST sin usar métodos de regularización**
 #
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/CleanShot%202020-12-02%20at%204.01.54%402x.png)
-# ---
-#
-#
-#
-# ---
-#
-#
-# En esta lección, primero aprendemos a crear un **modelo de red neuronal convolucional simple** usando Keras con TensorFlow 2.0 y lo entrenamos para **clasificar imágenes en el conjunto de datos Fashion-MNIST**, sin el uso de ningún método de regularización.
-#1. Cargando, Inspeccionando y Visualizando nuestros datos
+
+# En esta lección, primero aprendemos a crear un **modelo de red neuronal convolucional simple** usando Keras con
+# TensorFlow 2.0 y lo entrenamos para **clasificar imágenes en el conjunto de datos Fashion-MNIST**, con el uso de
+# ningún método de regularización.
+
+# 1. Cargando, Inspeccionando y Visualizando nuestros datos
 # 2. Preprocesar nuestros datos y definir nuestro **Aumento de datos**
 # 3. Construya una CNN simple con regularización
 # - Regularización L2
 # - Aumento de datos
 #   - Abandonar
 # - Norma de lote
-#4. Capacitar a nuestra CNN con Regularización
-#
-#
+# 4. Capacitar a nuestra CNN con Regularización
+
 
 # # **Cargando, Inspeccionando y Visualizando nuestros datos**
-
-# En 1]:
 
 
 # Cargamos nuestros datos directamente desde los conjuntos de datos incluidos en tensorflow.keras
@@ -44,8 +39,6 @@ classes = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress',
 
 # #### **Comprueba si estamos usando la GPU**
 
-# En 2]:
-
 
 # Comprobar para ver si estamos usando la GPU
 from tensorflow.python.client import device_lib
@@ -54,8 +47,6 @@ print(device_lib.list_local_devices())
 
 
 # ### **Inspeccionar nuestros datos**
-
-# En 3]:
 
 
 # Mostrar el número de muestras en x_train, x_test, y_train, y_test
@@ -67,7 +58,7 @@ print ("Number of labels in our training data: " + str(len(y_train)))
 print ("Number of samples in our test data: " + str(len(x_test)))
 print ("Number of labels in our test data: " + str(len(y_test)))
 
-# Imprimir las dimensiones de la imagen y no. de etiquetas en nuestros datos de entrenamiento y prueba
+# Imprimir las dimensiones de la imagen y Nº. de etiquetas en nuestros datos de entrenamiento y prueba
 print("\n")
 print ("Dimensions of x_train:" + str(x_train[0].shape))
 print ("Labels in x_train:" + str(y_train.shape))
@@ -77,10 +68,7 @@ print ("Labels in y_test:" + str(y_test.shape))
 
 
 # ### **Visualización de algunos de nuestros datos de muestra**
-#
 # Tracemos 50 imágenes de muestra.
-
-# En[4]:
 
 
 # Veamos las 50 primeras imágenes del conjunto de datos de entrenamiento del MNIST
@@ -100,12 +88,11 @@ for index in range(1, num_of_images + 1):
     plt.axis('off')
     plt.imshow(x_train[index], cmap='gray_r')
 
+plt.show()
 
 # # **2. Preprocesamiento de datos con ImageDataGenerator**
 #
 # Primero remodelamos y cambiamos nuestros tipos de datos como lo habíamos hecho anteriormente.
-
-# En[5]:
 
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -122,11 +109,7 @@ x_test = x_test.astype('float32')
 
 
 # **Recopilamos el tamaño y la forma de nuestra imagen y normalizamos nuestros datos de prueba**
-#
 # Usaremos ImageDataGenerator para normalizar y proporcionar aumentos de datos para nuestros **datos de entrenamiento**.
-
-# En[6]:
-
 
 # Permite almacenar el número de filas y columnas
 img_rows = x_train[0].shape[0]
@@ -140,8 +123,6 @@ x_test /= 255.0
 
 
 # ### **Una codificación en caliente de nuestras etiquetas**
-
-# En[7]:
 
 
 from tensorflow.keras.utils import to_categorical
@@ -161,8 +142,6 @@ num_pixels = x_train.shape[1] * x_train.shape[2]
 #
 # Esta es la misma CNN que usamos anteriormente para el proyecto de clasificación MNIST.
 
-# En[8]:
-
 
 import tensorflow as tf
 from tensorflow.keras.datasets import mnist
@@ -175,21 +154,21 @@ from tensorflow.keras import regularizers
 
 L2 = 0.001
 
-# crear modelo
+# crear modelo, añadiendo la regularización
 model = Sequential()
 
 model.add(Conv2D(32, kernel_size=(3, 3),
                  activation='relu',
-                 kernel_regularizer = regularizers.l2(L2),
+                 kernel_regularizer = regularizers.l2(L2),  # añadimos L2
                  input_shape=input_shape))
-model.add(BatchNormalization())
-model.add(Conv2D(64, (3, 3), activation='relu', kernel_regularizer = regularizers.l2(L2)))
-model.add(BatchNormalization())
+# model.add(BatchNormalization())  # añadimos normalización
+model.add(Conv2D(64, (3, 3), activation='relu', kernel_regularizer = regularizers.l2(L2)))  # añadimos L2
+model.add(BatchNormalization())  # añadimos normalización
 model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.2))
+model.add(Dropout(0.2))  # añadimos Dropout
 model.add(Flatten())
-model.add(Dense(128, activation='relu',kernel_regularizer = regularizers.l2(L2)))
-model.add(Dropout(0.2))
+model.add(Dense(128, activation='relu',kernel_regularizer = regularizers.l2(L2)))   # añadimos L2
+model.add(Dropout(0.2))  # añadimos Dropout
 model.add(Dense(num_classes, activation='softmax'))
 
 model.compile(loss = 'categorical_crossentropy',
@@ -200,9 +179,6 @@ print(model.summary())
 
 
 # # **Entrenando Nuestro Modelo**
-
-# En[9]:
-
 
 # Definir generador de datos para aumento
 train_datagen = ImageDataGenerator(
@@ -219,7 +195,7 @@ train_datagen = ImageDataGenerator(
 #train_datagen.fit(x_train)
 
 batch_size = 32
-epochs = 15
+epochs = 30  # AUMENTADO PARA VER LA MEJORA tarda lo suyo
 
 # Ajustar el modelo
 # Tenga en cuenta que usamos train_datagen.flow, esto toma datos y etiqueta matrices, genera lotes de datos aumentados.
@@ -234,10 +210,13 @@ history = model.fit(train_datagen.flow(x_train, y_train, batch_size = batch_size
 score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
-
-
-# En[ ]:
-
+'''
+Epoch 29/30
+1875/1875 [==============================] - 7s 4ms/step - loss: 0.4028 - accuracy: 0.8880 - val_loss: 0.3576 - val_accuracy: 0.9069
+Epoch 30/30
+1875/1875 [==============================] - 12s 6ms/step - loss: 0.3941 - accuracy: 0.8900 - val_loss: 0.3723 - val_accuracy: 0.8964
+Test loss: 0.3722538650035858
+Test accuracy: 0.896399974822998'''
 
 
 

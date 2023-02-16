@@ -1,33 +1,28 @@
 #!/usr/bin/env python
 # codificación: utf-8
-
+################################################################
+# 08 PyTorch - Moda-MNSIT Parte 2 - Con Regularización.ipynb####
+################################################################
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
 #
 # # **Regularización en PyTorch - Parte 2**
 # ### **Ahora usamos algunos métodos de regularización en nuestro Fashion-MNIST CNN**
-#
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/CleanShot%202020-12-02%20at%204.01.54%402x.png)
-# ---
-#
-#
-#
-# ---
-#
-#
-# En esta lección, primero aprendemos a crear un **modelo de red neuronal convolucional simple** en PyTorch y lo entrenamos para **clasificar imágenes en el conjunto de datos Fashion-MNIST**, ahora **CON** el uso de cualquier regularización métodos.
-# 1. Importe bibliotecas de PyTorch, defina nuestros transformadores, cargue nuestro conjunto de datos y visualice nuestras imágenes.
+# En esta lección, primero aprendemos a crear un **modelo de red neuronal convolucional simple** en PyTorch y lo
+# entrenamos para **clasificar imágenes en el conjunto de datos Fashion-MNIST**, ahora **CON** el uso de cualquier
+# regularización métodos.
+
+# 1. Importe bibliotecas de PyTorch, defina nuestros transformadores, cargue nuestro conjunto de datos y visualice
+#    nuestras imágenes.
 # 2. Cree una CNN simple con los siguientes métodos de **regularización**:
 # - Regularización L2
 # - Aumento de datos
 #   - Abandonar
 # - Norma de lote
-#3. Capacitar a nuestra CNN con Regularización
+
+# 3. Capacitar a nuestra CNN con Regularización
 #
 
 # # **1. Importe bibliotecas de PyTorch, defina transformadores y cargue y visualice conjuntos de datos**
-
-# En[ ]:
-
 
 # Importar PyTorch
 import torch
@@ -46,11 +41,7 @@ import torch.nn as nn
 # ¿Estamos usando nuestra GPU?
 print("GPU available: {}".format(torch.cuda.is_available()))
 
-
-# En[ ]:
-
-
-device = 'cuda' # 'cpu' si no hay GPU disponible
+device = 'cuda'  # 'cpu' si no hay GPU disponible
 
 
 # # **2. Construyendo una CNN con Regulación**
@@ -63,9 +54,8 @@ device = 'cuda' # 'cpu' si no hay GPU disponible
 #
 # #### **NOTA**
 #
-# No aplicamos los mismos aumentos a nuestros conjuntos de datos de prueba o validación. Por lo tanto, mantenemos funciones de transformación separadas (ver más abajo) para nuestros datos de Entrenamiento y Validación/Prueba.
-
-# En[ ]:
+# No aplicamos los mismos aumentos a nuestros conjuntos de datos de prueba o validación. Por lo tanto, mantenemos
+# funciones de transformación separadas (ver más abajo) para nuestros datos de Entrenamiento y Validación/Prueba.
 
 
 data_transforms = {
@@ -76,8 +66,9 @@ data_transforms = {
         transforms.RandomAffine(degrees = 10, translate = (0.05,0.05), shear = 5), 
         transforms.ColorJitter(hue = .05, saturation = .05),
         transforms.RandomHorizontalFlip(),
-        transforms.RandomRotation(15, resample = PIL.Image.BILINEAR),
         transforms.Grayscale(num_output_channels = 1),
+
+        # Estas Siempre
         transforms.ToTensor(),
         transforms.Normalize((0.5, ), (0.5, )),
     ]),
@@ -89,9 +80,6 @@ data_transforms = {
 
 
 # ### **Obtener y crear nuestros cargadores de datos**
-
-# En[ ]:
-
 
 # Cargue nuestros datos de tren y especifique qué transformación usar al cargar
 trainset = torchvision.datasets.FashionMNIST(root='./data', train=True,
@@ -110,7 +98,6 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=32,
 
 
 # ### **Agregando Abandono**
-#
 # En las redes neuronales convolucionales, el abandono se agrega comúnmente después de las capas CONV-RELU.
 #
 # P.ej. CONV->RELU->**CAÍDA**
@@ -127,9 +114,6 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=32,
 # CONV_1 -> **BatchNorm** -> ReLU -> Abandono - CONV_2
 #
 # **NOTA** El argumento de entrada de BatchNorm es el tamaño de **salida** de la capa anterior.
-
-# En[ ]:
-
 
 import torch.nn as nn
 import torch.nn.functional as F
@@ -151,8 +135,10 @@ class Net(nn.Module):
         self.dropOut = nn.Dropout(0.2)
 
     def forward(self, x):
+        # a la salida de la convolución 1 le aplicamos la normalización y a eso la activación relu
         x = F.relu(self.conv1_bn(self.conv1(x)))
         x = self.dropOut(x)
+        # a la salida de la convolución 2 le aplicamos la normalización y a eso la activación relu
         x = self.dropOut(F.relu(self.conv2_bn(self.conv2(x))))
 
         x = self.pool(x)
@@ -167,11 +153,11 @@ net.to(device)
 
 
 # ### **Añadir regularización L2**
+# La regularización L2 sobre los parámetros/pesos del modelo se incluye directamente en la mayoría de los optimizadores,
+# incluido optim.SGD.
 #
-#
-# La regularización L2 sobre los parámetros/pesos del modelo se incluye directamente en la mayoría de los optimizadores, incluido optim.SGD.
-#
-# Se puede controlar con el parámetro **weight_decay** como se puede ver en la [documentación SGD] (http://pytorch.org/docs/optim.html#torch.optim.SGD).
+# Se puede controlar con el parámetro **weight_decay** como se puede ver en la [documentación SGD]
+# (http://pytorch.org/docs/optim.html#torch.optim.SGD).
 #
 # ```weight_decay``` (**flotante**, opcional) – disminución del peso *(penalización L2) (predeterminado: 0)*
 #
@@ -179,12 +165,10 @@ net.to(device)
 #
 # **NOTA:**
 #
-# La regularización L1 no está incluida por defecto en los optimizadores, pero podría añadirse incluyendo un extra loss nn.L1Loss en los pesos del modelo.
+# La regularización L1 no está incluida por defecto en los optimizadores, pero podría añadirse incluyendo un extra loss
+# nn.L1Loss en los pesos del modelo.
 #
 #
-
-# En[ ]:
-
 
 # Importamos nuestra función de optimizador
 import torch.optim as optim
@@ -198,9 +182,8 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9, weight_decay = 0.001)
 
 
-## **3. Entrenamiento de nuestro modelo utilizando métodos de regulación: aumento de datos, abandono, BatchNorm y regularización L2**
-
-# En[ ]:
+# # **3. Entrenamiento de nuestro modelo utilizando métodos de regulación: aumento de datos, abandono, BatchNorm y
+# regularización L2**
 
 
 # Recorremos el conjunto de datos de entrenamiento varias veces (cada vez se denomina época)
@@ -280,9 +263,6 @@ print('Finished Training')
 
 # ### **Precisión de nuestros modelos**
 
-# En[ ]:
-
-
 correct = 0 
 total = 0
 
@@ -299,11 +279,6 @@ with torch.no_grad():
 
 accuracy = 100 * correct / total
 print(f'Accuracy of the network on the 10000 test images: {accuracy:.4}%')
-
-
-# ### **Parcelas de entrenamiento**
-
-# En[ ]:
 
 
 import matplotlib.pyplot as plt
@@ -329,6 +304,12 @@ ax2.set_ylabel('Test Accuracy', color='b')
 
 plt.show()
 
+
+'''Epoch: 15, Mini-Batches Completed: 1600, Loss: 0.540, Test Accuracy = 90.810%
+Epoch: 15, Mini-Batches Completed: 1700, Loss: 0.555, Test Accuracy = 90.660%
+Epoch: 15, Mini-Batches Completed: 1800, Loss: 0.526, Test Accuracy = 90.870%
+Finished Training
+Accuracy of the network on the 10000 test images: 90.94%'''
 
 # #### **Detención anticipada en PyTorch**
 #

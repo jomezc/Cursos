@@ -1,21 +1,20 @@
 #!/usr/bin/env python
 # codificación: utf-8
+########################################################
+# 07 PyTorch - Moda-MNSIT Parte 1 - Sin regularización##
+########################################################
 
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
-#
 # # **Regularización en PyTorch - Parte 1**
 # ### **Primero entrenamos una CNN en el conjunto de datos Fashion-MNIST sin usar métodos de regularización**
 #
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/CleanShot%202020-12-02%20at%204.01.54%402x.png)
-# ---
-#
-#
-#
-# ---
-#
-#
-# En esta lección, primero aprendemos a crear un **modelo de red neuronal convolucional simple** en PyTorch y lo entrenamos para **clasificar imágenes en el conjunto de datos Fashion-MNIST**, sin el uso de ningún método de regularización.
-# 1. Importe bibliotecas de PyTorch, defina nuestros transformadores, cargue nuestro conjunto de datos y visualice nuestras imágenes.
+
+# En esta lección, primero aprendemos a crear un **modelo de red neuronal convolucional simple** en PyTorch y lo
+# entrenamos para **clasificar imágenes en el conjunto de datos Fashion-MNIST**, sin el uso de ningún método de
+# regularización.
+
+# 1. Importe bibliotecas de PyTorch, defina nuestros transformadores, cargue nuestro conjunto de datos y visualice
+# nuestras imágenes.
 # 2. Construya una CNN simple sin regularización
 # 3. Capacitar a nuestra CNN
 # 3. Eche un vistazo al aumento de datos
@@ -23,10 +22,6 @@
 #
 
 # # **Importar bibliotecas de PyTorch, definir transformadores y cargar y visualizar conjuntos de datos**
-
-# En[17]:
-
-
 # Importar PyTorch
 import torch
 import PIL
@@ -40,22 +35,17 @@ import torchvision.transforms as transforms
 import torch.optim as optim
 import torch.nn as nn
 
+
 # ¿Estamos usando nuestra GPU?
-print("GPU available: {}".format(torch.cuda.is_available()))
+print("GPU available: {}".format(torch.cuda.is_available()))  # GPU available: True
 device = 'cuda' # 'cpu' si no hay GPU disponible
 
 
 # ### **Nuestra transformación de datos**
 
-# En[18]:
-
-
 # Transforme a un tensor PyTorch y normalice nuestro valor entre -1 y +1
 transform = transforms.Compose([transforms.ToTensor(),
                                transforms.Normalize((0.5, ), (0.5, )) ])
-
-
-# En[ ]:
 
 
 # Cargue nuestros datos de entrenamiento y especifique qué transformación usar al cargar
@@ -65,10 +55,6 @@ trainset = torchvision.datasets.FashionMNIST(root='./data', train=True,
 # Cargue nuestros datos de prueba y especifique qué transformación usar al cargar
 testset = torchvision.datasets.FashionMNIST(root='./data', train=False,
                                        download=True, transform=transform)
-
-
-# En 19]:
-
 
 # Preparar el tren y probar el cargador
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=32,
@@ -93,9 +79,6 @@ print(testset.data.shape)
 
 # ### **Visualización de nuestros datos**
 
-# En[21]:
-
-
 # Veamos las 50 primeras imágenes del conjunto de datos de entrenamiento del MNIST
 import matplotlib.pyplot as plt
 
@@ -107,10 +90,6 @@ for index in range(1, num_of_images + 1):
     plt.axis('off')
     plt.imshow(trainset.data[index], cmap='gray_r')
   
-
-
-# En[22]:
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -125,7 +104,7 @@ def imshow(img):
 
 # obtener algunas imágenes de entrenamiento aleatorias
 dataiter = iter(trainloader)
-images, labels = dataiter.next()
+images, labels = next(dataiter)
 
 # mostrar imagenes
 imshow(torchvision.utils.make_grid(images))
@@ -135,10 +114,7 @@ print(' '.join('%5s' % classes[labels[j]] for j in range(8)))
 
 
 # # **2. Construyendo y entrenando nuestra CNN simple sin regularización**
-#
 # #### **Definiendo nuestro modelo**
-
-# En[23]:
 
 
 import torch.nn as nn
@@ -168,9 +144,6 @@ net.to(device)
 
 # #### **Definición de nuestras funciones de pérdida y optimización**
 
-# En[24]:
-
-
 # Importamos nuestra función de optimizador
 import torch.optim as optim
 
@@ -183,10 +156,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
 
-## **3. Entrenando Nuestro Modelo**
-
-# En[25]:
-
+# # **3. Entrenando Nuestro Modelo**
 
 # Recorremos el conjunto de datos de entrenamiento varias veces (cada vez se denomina época)
 epochs = 15
@@ -229,6 +199,7 @@ for epoch in range(epochs):
             correct = 0 # Inicializar nuestra variable para mantener el conteo de las predicciones correctas
             total = 0 # Inicializar nuestra variable para mantener el conteo del número de etiquetas iteradas
 
+
             # No necesitamos gradientes para la validación, así que envuélvalos
             # no_grad para ahorrar memoria
             with torch.no_grad():
@@ -265,12 +236,8 @@ print('Finished Training')
 
 # #### **Precisión de nuestro modelo**
 
-# En[27]:
-
-
 correct = 0 
 total = 0
-
 with torch.no_grad():
     for data in testloader:
         images, labels = data
@@ -287,9 +254,6 @@ print(f'Accuracy of the network on the 10000 test images: {accuracy:.4}%')
 
 
 # #### **Nuestras Parcelas de Entrenamiento**
-
-# En[28]:
-
 
 # Para crear una trama con un eje y secundario, necesitamos crear una subtrama
 fig, ax1 = plt.subplots()
@@ -315,16 +279,13 @@ plt.show()
 
 # #### **Guardando los pesos de nuestro modelo**
 
-# En[29]:
-
-
-PATH = './fashion_mnist_cnn_net.pth'
+PATH = 'models/fashion_mnist_cnn_net.pth'
 torch.save(net.state_dict(), PATH)
 
 
 # # **4. Aumento de datos**
-#
-# Para introducir el aumento de datos en nuestros datos de entrenamiento, simplemente creamos nuevas funciones de transformación.
+# Para introducir el aumento de datos en nuestros datos de entrenamiento, simplemente creamos nuevas funciones de
+# transformación.
 #
 # **Recuerda nuestra función de transformación anterior**
 #
@@ -332,8 +293,6 @@ torch.save(net.state_dict(), PATH)
 # transforma.Normalizar((0.5, ), (0.5, )) ])```
 #
 # ### **Primero vamos a demostrar cómo el aumento de datos afecta nuestras imágenes**
-
-# En[30]:
 
 
 # Importamos PIL, una biblioteca de procesamiento de imágenes para implementar rotaciones aleatorias
@@ -343,29 +302,23 @@ data_aug_transform = transforms.Compose([
         transforms.RandomAffine(degrees = 10, translate = (0.05,0.05), shear = 5), 
         transforms.ColorJitter(hue = .05, saturation = .05),
         transforms.RandomHorizontalFlip(),
-        transforms.RandomRotation(15, resample = PIL.Image.BILINEAR),
+        # transforms.RandomRotation(15, resample = PIL.Image.BILINEAR),
         transforms.Grayscale(num_output_channels = 1)
 ])
 
 
 # #### **Realice el aumento de datos en una sola imagen usando la función a continuación para visualizar los efectos**
 
-# En[33]:
-
-
 from matplotlib.pyplot import figure, imshow, axis
 from matplotlib.image import imread
 
 def showAugmentations(image, augmentations = 6):
-    fig = figure()
+    fig = plt.figure()
     for i in range(augmentations):
         a = fig.add_subplot(1,augmentations,i+1)
         img = data_aug_transform(image)
-        imshow(img ,cmap='Greys_r')
-        axis('off')
-
-
-# En[34]:
+        imshow(img,cmap='Greys_r')
+        plt.axis('off')
 
 
 # Cargue la primera imagen de nuestros datos de entrenamiento como una matriz numpy
@@ -373,11 +326,7 @@ image = trainset.data[0].numpy()
 
 # Convertirlo a formato de imagen PIL
 img_pil = PIL.Image.fromarray(image)
-
 showAugmentations(img_pil, 8)
-
-
-# En[ ]:
 
 
 

@@ -1,20 +1,15 @@
 #!/usr/bin/env python
 # codificación: utf-8
-
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
-#
+##################################################################################
+# 04 Clasificaciones erróneas de PyTorch y análisis de rendimiento del modelo#####
+##################################################################################
 # # **Análisis de rendimiento del modelo PyTorch**
-# ---
-#
-#
-#
-# ---
-#
-#
-#
-# En esta lección, aprendemos a usar el modelo MNIST que entrenamos en la lección anterior y analizamos su desempeño, hacemos:
+
+# En esta lección, aprendemos a usar el modelo MNIST que entrenamos en la lección anterior y analizamos su desempeño,
+# hacemos:
+
 # 1. Configure nuestro modelo y datos de PyTorch
-#2. Cargar el modelo previamente entrenado
+# 2. Cargar el modelo previamente entrenado
 # 3. Ver las imágenes que clasificamos mal
 # 4. Crea una Matriz de Confusión
 # 5. Crear informe de clasificación
@@ -22,9 +17,8 @@
 
 # # **1. Configure nuestras importaciones de PyTorch, modele y cargue el conjunto de datos MNIST**
 #
-# Solo necesitamos cargar el conjunto de datos de prueba ya que estamos analizando el rendimiento en ese segmento de datos.
-
-# En[ ]:
+# Solo necesitamos cargar el conjunto de datos de prueba, ya que estamos analizando el rendimiento en ese segmento de
+# datos.
 
 
 # Importar PyTorch
@@ -41,16 +35,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 # ¿Estamos usando nuestra GPU?
-print("GPU available: {}".format(torch.cuda.is_available()))
+print("GPU available: {}".format(torch.cuda.is_available()))  # GPU available: True
 
 # Establecer dispositivo en cuda
 device = 'cuda'
 
 
 # #### **Nuestra función de trazado de imágenes**
-
-# En[ ]:
-
 
 import cv2
 import numpy as np
@@ -67,9 +58,6 @@ def imgshow(title, image = None, size = 6):
 
 
 # ### **Cargando nuestro conjunto de datos de prueba MNIST**
-
-# En[ ]:
-
 
 # Transforme a un tensor PyTorch y normalice nuestro valor entre -1 y +1
 transform = transforms.Compose([transforms.ToTensor(),
@@ -88,9 +76,6 @@ testloader = torch.utils.data.DataLoader(testset,
 
 
 # ### **Creando nuestra clase de definición de modelo**
-
-# En[ ]:
-
 
 class Net(nn.Module):
     def __init__(self):
@@ -111,26 +96,13 @@ class Net(nn.Module):
 
 
 # # **2. Cargando modelo**
-#
-# He subido el modelo a mi Google Drive - https://drive.google.com/file/d/1yj01iUbYL8ZXHiYRE5Xd639tddSAkzKs/view?usp=sharing
-#
 # Usamos gdown en nuestra terminal para descargar el archivo modelo que entrenamos en la última lección.
-#
-# Actualización del 4 de marzo de 2022: archivo movido a S3
-
-# En[ ]:
-
-
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/mnist_cnn_net.pth')
-
-
 # #### **NOTA**
 #
-# Al cargar nuestro modelo, necesitamos crear la instancia del modelo, es decir, ```net = Net()``` y luego, dado que lo entrenamos usando nuestra GPU en Colab, lo movemos a la GPU usando ```net.to( dispositivo``` donde dispositivo = 'cuda'.
-#
-# Entonces podemos cargar los pesos de nuestro modelo descargado.
+# Al cargar nuestro modelo, necesitamos crear la instancia del modelo, es decir, ```net = Net()``` y luego, dado que lo
+# entrenamos usando nuestra GPU, lo movemos a la GPU usando ```net.to(dispositivo``` donde dispositivo = 'cuda'.
 
-# En[ ]:
+# Entonces podemos cargar los pesos de nuestro modelo descargado.
 
 
 # Crear una instancia del modelo
@@ -143,11 +115,8 @@ net.load_state_dict(torch.load('models/mnist_cnn_net.pth'))
 
 # Modelo cargado con éxito si se muestra ```Todas las claves coincidieron correctamente```.
 #
-# ### **Ahora calculemos su precisión (hecho en la lección anterior, así que esto es solo un resumen) en los datos de prueba**
-#
-#
-
-# En[ ]:
+# ### **Ahora calculemos su precisión (hecho en la lección anterior, así que esto es solo un resumen) en los datos de
+# prueba**
 
 
 correct = 0 
@@ -166,28 +135,34 @@ with torch.no_grad():
 
 accuracy = 100 * correct / total
 print(f'Accuracy of the network on the 10000 test images: {accuracy:.3}%')
+# Accuracy of the network on the 10000 test images: 98.2%
 
 
-## **3. Mostrando nuestras imágenes mal clasificadas** ##
+
+# # **3. Mostrando nuestras imágenes mal clasificadas** ##
 #
-# De 10.000 imágenes, nuestro modelo predijo que el 98,7 % era correcto. Esto es bueno para un primer intento con un modelo tan simple. (hay modelos mucho mejores).
+# De 10.000 imágenes, nuestro modelo predijo que el 98,7 % era correcto. Esto es bueno para un primer intento con un
+# modelo tan simple. (hay modelos mucho mejores).
 #
 # **¡Una buena práctica!**
 #
-# Es un buen hábito al crear clasificadores de imágenes inspeccionar visualmente las imágenes que están mal clasificadas.
+# Es un buen hábito al crear clasificadores de imágenes inspeccionar visualmente las imágenes que están mal
+# clasificadas.
 # 1. Podemos detectar qué tipos de imágenes son un desafío para nuestro modelo
 # 2. Podemos detectar cualquier imagen etiquetada incorrectamente
-#3. Si a veces no podemos identificar correctamente la clase, ver tu lucha en CNN duele menos :)
+# 3. Si a veces no podemos identificar correctamente la clase, ver tu lucha en CNN duele menos :)
 #
 # **Recordatorio** de por qué usamos ```net.eval()``` y ```torch.no_grad()```
 #
 # [Tomado de Stackoverflow:](https://stackoverflow.com/questions/60018578/what-does-model-eval-do-in-pytorch)
 #
-# **model.eval()** es una especie de interruptor para algunas capas/partes específicas del modelo que se comportan de manera diferente durante el tiempo de entrenamiento e inferencia (evaluación). Por ejemplo, capas de **abandonos**, capas BatchNorm, etc. Debe desactivarlas durante la evaluación del modelo y .eval() lo hará por usted. Además, la práctica común para evaluar/validar es usar torch.no_grad() junto con model.eval() para desactivar el cálculo de gradientes.
+# **model.eval()** es una especie de interruptor para algunas capas/partes específicas del modelo que se comportan de
+# manera diferente durante el tiempo de entrenamiento e inferencia (evaluación). Por ejemplo, capas de **abandonos**,
+# capas BatchNorm, etc. Debe desactivarlas durante la evaluación del modelo y .eval() lo hará por usted. Además,
+# la práctica común para evaluar/validar es usar torch.no_grad() junto con model.eval() para desactivar el cálculo de
+# gradientes.
 #
 # Entonces, aunque no usamos Dropouts o BatchNorm en nuestro modelo, es una buena práctica usarlo al hacer inferencias.
-
-# En[ ]:
 
 
 # Establecer el modelo en modo de evaluación o inferencia
@@ -219,16 +194,17 @@ with torch.no_grad():
                 img = np.reshape(images[i].cpu().numpy(),[28,28])
                 imgshow("", np.uint8(img), size = 1)
 
+'''
+Actual Label: 4, Predicted Label: 9
+Actual Label: 6, Predicted Label: 0
+Actual Label: 2, Predicted Label: 3
+... para todos las predicciones erróneas'''
 
 # # **4. Creando nuestra Matriz de Confusión**
 #
 # Usamos la herramienta Confusion Matrix de Sklean para crearlo. Todo lo que necesitamos es:
 # 1. Las verdaderas etiquetas
 # 2. Las etiquetas predichas
-#
-
-# En[ ]:
-
 
 from sklearn.metrics import confusion_matrix
 
@@ -244,23 +220,34 @@ with torch.no_grad():
         outputs = net(inputs)
         _, preds = torch.max(outputs, 1)
 
-        # Agregar resultados de predicción por lotes
+        # Agregar resultados de predicción por lotes,
+        # cat es para concatenar, entiendo que preds.view(-1).cpu() es la ultima predicción despues de ese recorrido
+        # net(inputs) y de sacar el máximo torch.max(outputs, 1) y lo va añadiendo a lo que ya se ha realizado en las
+        # iteraciónes anteriores
         pred_list = torch.cat([pred_list, preds.view(-1).cpu()])
         label_list = torch.cat([label_list, classes.view(-1).cpu()])
 
 # Matriz de confusión
 conf_mat = confusion_matrix(label_list.numpy(), pred_list.numpy())
 print(conf_mat)
-
+'''[[ 970    0    1    1    0    0    1    1    3    3]
+ [   1 1129    1    1    0    0    3    0    0    0]
+ [   4    6 1005    6    3    0    1    3    3    1]
+ [   0    0    1 1000    0    3    0    2    3    1]
+ [   1    0    1    0  971    0    0    0    2    7]
+ [   2    0    0    5    0  879    3    1    2    0]
+ [   7    3    0    0    3    5  937    0    3    0]
+ [   1    4   12    4    0    0    0  994    5    8]
+ [   6    0    1    4    3    2    2    2  950    4]
+ [   3    4    0    4    6    3    0    5    1  983]]'''
 
 # #### **Interpretación de la matriz de confusión**
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/CleanShot%202020-11-30%20at%2010.46.45.png)
 
 # ### **Creando una trama más presentable**
 #
-# Reutilizaremos esta función muy bien hecha de la documentación de sklearn sobre el trazado de una matriz de confusión usando gradientes de color y etiquetas.
-
-# En[ ]:
+# Reutilizaremos esta función muy bien hecha de la documentación de sklearn sobre el trazado de una matriz de confusión
+# usando gradientes de color y etiquetas.
 
 
 import numpy as np
@@ -344,7 +331,6 @@ http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matr
     plt.show()
 
 
-# En[ ]:
 
 
 target_names = list(range(0,10))
@@ -353,28 +339,45 @@ plot_confusion_matrix(conf_mat, target_names)
 
 # ## **Veamos nuestra precisión por clase**
 
-# En[ ]:
-
 
 # Precisión por clase
 class_accuracy = 100 * conf_mat.diagonal() / conf_mat.sum(1)
-
-for (i,ca) in enumerate(class_accuracy):
+for (i, ca) in enumerate(class_accuracy):
     print(f'Accuracy for {i} : {ca:.3f}%')
-
+'''Accuracy for 0 : 98.980%
+Accuracy for 1 : 99.471%
+Accuracy for 2 : 97.384%
+Accuracy for 3 : 99.010%
+Accuracy for 4 : 98.880%
+Accuracy for 5 : 98.543%
+Accuracy for 6 : 97.808%
+Accuracy for 7 : 96.693%
+Accuracy for 8 : 97.536%
+Accuracy for 9 : 97.423%'''
 
 # # **5. Ahora veamos el Informe de Clasificación**
 
-# En[ ]:
-
-
 from sklearn.metrics import classification_report
-
 print(classification_report(label_list.numpy(), pred_list.numpy()))
+'''precision    recall  f1-score   support
 
+           0       0.97      0.99      0.98       980
+           1       0.99      0.99      0.99      1135
+           2       0.98      0.97      0.98      1032
+           3       0.98      0.99      0.98      1010
+           4       0.98      0.99      0.99       982
+           5       0.99      0.99      0.99       892
+           6       0.99      0.98      0.98       958
+           7       0.99      0.97      0.98      1028
+           8       0.98      0.98      0.98       974
+           9       0.98      0.97      0.98      1009
+
+    accuracy                           0.98     10000
+   macro avg       0.98      0.98      0.98     10000
+weighted avg       0.98      0.98      0.98     10000
+'''
 
 # ### **5.1 El soporte es la suma total de esa clase en el conjunto de datos**
-#
 # ### **5.2 Revisión del retiro del mercado**
 #
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/CleanShot%202020-11-30%20at%2011.11.12.png)
@@ -384,9 +387,11 @@ print(classification_report(label_list.numpy(), pred_list.numpy()))
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/CleanShot%202020-11-30%20at%2011.11.22.png)
 #
 # ### **5.4 Alta recuperación (o sensibilidad) con baja precisión.**
-# Esto nos dice que la mayoría de los ejemplos positivos se reconocen correctamente (falsos negativos bajos), pero hay muchos falsos positivos, es decir, otras clases se predicen como nuestra clase en cuestión.
+# Esto nos dice que la mayoría de los ejemplos positivos se reconocen correctamente (falsos negativos bajos), pero hay
+# muchos falsos positivos, es decir, otras clases se predicen como nuestra clase en cuestión.
 #
 # ### **5.5 Baja recuperación (o sensibilidad) con alta precisión.**
 #
-# A nuestro clasificador le faltan muchos ejemplos positivos (FN alto), pero aquellos que predecimos como positivos son realmente positivos (Falsos positivos bajos)
+# A nuestro clasificador le faltan muchos ejemplos positivos (FN alto), pero aquellos que predecimos como positivos son
+# realmente positivos (Falsos positivos bajos)
 #
