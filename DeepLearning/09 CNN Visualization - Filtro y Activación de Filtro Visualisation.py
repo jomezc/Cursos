@@ -1,22 +1,18 @@
 #!/usr/bin/env python
 # codificación: utf-8
-
+#######################################################################
+# 09 CNN Visualization - Filtro y Activación de Filtro Visualisation####
+#######################################################################
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
 #
 # # **Visualización de lo que aprenden las CNN**
-#
-# ---
-#
-#
+
 # En esta lección, usamos **Keras con TensorFlow 2.0** para visualizar lo siguiente (ver más abajo). Esto lo ayuda a obtener una mejor comprensión de lo que sucede debajo del capó y desmitifica algunos de los aspectos del aprendizaje profundo.**
 # 1. Entrenamiento de una CNN básica en el conjunto de datos MNIST
 #2. Visualiza sus filtros
 # 3. Visualiza las activaciones del filtro mientras propagamos una imagen de entrada
 
 # # **Entrenamiento de una CNN básica en el conjunto de datos MNIST**
-
-# En 1]:
-
 
 # Podemos cargar los conjuntos de datos incorporados desde esta función
 from tensorflow.keras.datasets import mnist
@@ -45,9 +41,6 @@ print ("Labels in x_train:" + str(y_train.shape))
 print("\n")
 print ("Dimensions of x_test:" + str(x_test[0].shape))
 print ("Labels in y_test:" + str(y_test.shape))
-
-
-# En 2]:
 
 
 # Permite almacenar el número de filas y columnas
@@ -88,9 +81,6 @@ num_classes = y_test.shape[1]
 num_pixels = x_train.shape[1] * x_train.shape[2]
 
 
-# En 3]:
-
-
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Flatten
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
@@ -110,9 +100,6 @@ model.compile(loss = 'categorical_crossentropy',
               metrics = ['accuracy'])
 
 print(model.summary())
-
-
-# En[4]:
 
 
 batch_size = 128
@@ -139,16 +126,12 @@ print('Test accuracy:', score[1])
 
 # ## **Obtenga las salidas simbólicas de cada capa "clave" (les dimos nombres únicos).**
 
-# En[5]:
-
 
 layer_dict = dict([(layer.name, layer) for layer in model.layers])
 layer_dict
 
 
 # ## **Obtenga las formas solo de nuestros filtros de conversión**
-
-# En[6]:
 
 
 # resumir formas de filtro
@@ -165,22 +148,14 @@ for layer in model.layers:
 
 # ## **Echemos un vistazo a los pesos de nuestra primera capa de conversión**
 
-# En[7]:
-
-
 # recuperar pesos de la primera capa Conv (oculta)
 filters, biases = model.layers[0].get_weights()
-
-
-# En[8]:
 
 
 # Echemos un vistazo a nuestros filtros
 print(filters.shape)
 filters
 
-
-# En[9]:
 
 
 # Y ahora veamos nuestros sesgos
@@ -192,9 +167,6 @@ biases
 #
 # Nuestra gama de pesos de filtro
 
-# En[10]:
-
-
 # normalizar los valores de filtro a 0-1 para que podamos visualizarlos
 f_min, f_max = filters.min(), filters.max()
 print(f'Before Normalisation, Min = {f_min} and Max =  {f_max}')
@@ -203,8 +175,6 @@ print(f'After Normalisation, Min = {filters.min()} and Max =  {filters.max()}')
 
 
 # ## **Visualizar nuestros rellenos entrenados**
-
-# En[12]:
 
 
 import matplotlib.pyplot as plt
@@ -234,8 +204,6 @@ plt.show()
 
 # # **Activaciones de filtros**
 
-# En[13]:
-
 
 from tensorflow.keras.models import Model
 
@@ -246,13 +214,8 @@ layer_outputs = [layer.output for layer in model.layers[:2]]
 activation_model = Model(inputs=model.input, outputs=layer_outputs)
 
 
-# En[14]:
-
 
 layer_outputs
-
-
-# En[15]:
 
 
 import matplotlib.pyplot as plt
@@ -265,9 +228,6 @@ plt.axis('off')
 
 # ## **Obtenga la salida después del segundo filtro de conversión (después de ReLU)**
 
-# En[16]:
-
-
 # Devuelve una lista de dos matrices Numpy: una matriz por activación de capa
 activations = activation_model.predict(img_tensor)
 
@@ -276,21 +236,14 @@ print("Number of layer activations: " + str(len(activations)))
 
 # #### **La activación de la primera capa de convolución para la entrada de imagen**
 
-# En[17]:
-
 
 first_layer_activation = activations[0]
 print(first_layer_activation.shape)
 
 
-# En[18]:
-
 
 second_layer_activation = activations[1]
 print(second_layer_activation.shape)
-
-
-# En 19]:
 
 
 print(model.summary())
@@ -298,17 +251,12 @@ print(model.summary())
 
 # ## **La salida del mapa de características del 4.° filtro de conversión en la primera capa de conversión**
 
-# En 20]:
-
 
 plt.matshow(first_layer_activation[0, :, :, 3], cmap='viridis')
 plt.legend()
 
 
 # ## **Crear una función que muestre la activación de capas específicas**
-
-# En[21]:
-
 
 def display_activation(activations, col_size, row_size, act_index): 
     activation = activations[act_index]
@@ -320,13 +268,7 @@ def display_activation(activations, col_size, row_size, act_index):
             activation_index += 1
 
 
-# En[22]:
-
-
 display_activation(activations, 4, 8, 0)
-
-
-# En[ ]:
 
 
 
