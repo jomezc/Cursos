@@ -117,6 +117,7 @@ testset = torchvision.datasets.MNIST('mnist',
 
 # ### **Acerca de los datos de prueba y entrenamiento**
 #
+
 # Hay dos subconjuntos de datos que se utilizan aquí:
 # - **Datos de entrenamiento** Datos que se usan para optimizar los parámetros del modelo (usados durante el
 #                              entrenamiento)
