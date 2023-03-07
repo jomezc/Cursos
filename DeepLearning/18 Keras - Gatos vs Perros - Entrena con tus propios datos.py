@@ -7,10 +7,12 @@
 #
 # ---
 #
-# En esta lección, aprendemos cómo configurar generadores de datos para cargar nuestro propio conjunto de datos y entrenar un clasificador usando Keras.
+# En esta lección, aprendemos cómo configurar generadores de datos para cargar nuestro propio conjunto de datos y
+# entrenar un clasificador usando Keras.
+
 # 1. Descarga y explora nuestros datos
 # 2. Crea una CNN simple
-#3. Crea nuestros Generadores de Datos
+# 3. Crea nuestros Generadores de Datos
 # 4. Entrena a nuestro modelo
 # 5. Prueba algunas inferencias
 # 6. Puntos de control
@@ -30,18 +32,7 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 
 
-### **1. Descarga y explora nuestros datos**
-
-# En[6]:
-
-
-get_ipython().system('gdown --id 1Dvw0UpvItjig0JbnzbTgYKB-ibMrXdxk')
-get_ipython().system('unzip -q dogs-vs-cats.zip')
-get_ipython().system('unzip -q train.zip')
-get_ipython().system('unzip -q test1.zip')
-
-
-# En 2]:
+### **1. Descarga y explora nuestros datos** ( en 16 ***)
 
 
 # Definir el tamaño de nuestras imágenes
@@ -57,10 +48,8 @@ IMAGE_CHANNELS = 3
 #
 # `perro.1034234.jpg`
 
-# En[7]:
 
-
-filenames = os.listdir("./train")
+filenames = os.listdir("images/gatos_perros/train")
 
 categories = []
 
@@ -92,7 +81,7 @@ df['class'].value_counts().plot.bar()
 
 
 sample = random.choice(filenames)
-image = load_img("./train/" + sample)
+image = load_img("images/gatos_perros/train/" + sample)
 plt.imshow(image)
 
 
@@ -119,17 +108,14 @@ model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Flatten())
 model.add(Dense(256, activation='relu'))
 model.add(Dense(128, activation='relu'))
-model.add(Dense(2, activation='softmax')) #2 porque tenemos clases de perros y gatos
+model.add(Dense(2, activation='softmax'))  #2 porque tenemos clases de perros y gatos
 
 opt = keras.optimizers.Adam(learning_rate=0.0005)
 model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
 model.summary()
 
 
-### **3. Crea nuestros generadores de datos**
-
-# En[12]:
-
+# ## **3. Crea nuestros generadores de datos**
 
 df["class"] = df["class"].replace({0: 'cat', 1: 'dog'}) 
 df.head()
@@ -145,13 +131,7 @@ train_df = train_df.reset_index(drop=True)
 validate_df = validate_df.reset_index(drop=True)
 
 
-# En[15]:
-
-
 train_df.head()
-
-
-# En[17]:
 
 
 validate_df.head()
@@ -159,62 +139,56 @@ validate_df.head()
 
 # ### **Cree nuestro generador de datos de entrenamiento**
 
-# En[18]:
-
-
 batch_size = 32
 
 train_datagen = ImageDataGenerator(rescale = 1./255)
 
 train_generator = train_datagen.flow_from_dataframe(
     train_df, 
-    "./train/", 
+    "images/gatos_perros/train/",
     x_col = 'filename',
     y_col = 'class',
     target_size = IMAGE_SIZE,
     class_mode = 'categorical',
-    batch_size = batch_size
+    batch_size = batch_size,
+    # Error , sol:https://stackoverflow.com/questions/57123656/way-to-print-invalid-filenames-for-generator-in-keras
+    validate_filenames=False
 )
 
 
 # ### **Crear nuestro Generador de Datos de Validación**
 
-# En 19]:
-
-
 validation_datagen = ImageDataGenerator(rescale=1./255)
 
 validation_generator = validation_datagen.flow_from_dataframe(
     validate_df, 
-    "./train/", 
+    "images/gatos_perros/train",
     x_col='filename',
     y_col='class',
     target_size=IMAGE_SIZE,
     class_mode='categorical',
-    batch_size=batch_size
+    batch_size=batch_size,
+    validate_filenames=False
 )
 
 
 # #### **Crear un generador de datos de ejemplo para cargar solo una imagen**
-
-# En 20]:
 
 
 example_df = train_df.sample(n=1).reset_index(drop=True)
 
 example_generator = train_datagen.flow_from_dataframe(
     example_df, 
-    "./train/", 
+    "images/gatos_perros/train",
     x_col='filename',
     y_col='class',
     target_size=IMAGE_SIZE,
-    class_mode='categorical'
+    class_mode='categorical',
+    validate_filenames=False
 )
 
 
 # #### **Vista previa de esa imagen**
-
-# En[21]:
 
 
 plt.figure(figsize=(6, 6))
@@ -230,9 +204,6 @@ plt.show()
 
 ### **4. Comience a entrenar nuestro modelo**
 
-# En[22]:
-
-
 epochs = 10
 
 history = model.fit(
@@ -243,15 +214,8 @@ history = model.fit(
     steps_per_epoch = 20000//batch_size,
 )
 
-
-# En[ ]:
-
-
 # Guardar nuestro modelo
 model.save_weights("cats_vs_dogs_10_epochs.h5")
-
-
-# En[ ]:
 
 
 # Viewour para gráficos de rendimiento
@@ -273,28 +237,20 @@ plt.show()
 
 # #### **Obtenga las predicciones de nuestras imágenes de validación**
 
-# En[ ]:
-
-
 # Ejecutamos nuestra predicción en todas las imágenes del conjunto de validación
 predict = model.predict_generator(validation_generator, steps = np.ceil(5000/batch_size))
 
 
 # #### **Añádelo a nuestro marco de datos para verlo fácilmente**
 
-# En[ ]:
-
 
 validate_df['predicted'] = np.argmax(predict, axis=-1)
 label_map = dict((v,k) for k,v in train_generator.class_indices.items())
 validate_df['predicted'] = validate_df['predicted'].replace(label_map)
-validate_df
+print(validate_df)
 
 
 # ## **Inferencia en un lote de imágenes de nuestro conjunto de datos de validación**
-
-# En[ ]:
-
 
 sample_test = validate_df.head(18)
 sample_test.head()
@@ -304,7 +260,7 @@ plt.figure(figsize=(12, 24))
 for index, row in sample_test.iterrows():
     filename = row['filename']
     category = row['predicted']
-    img = load_img("./train/"+filename, target_size=IMAGE_SIZE)
+    img = load_img("images/gatos_perros/train/"+filename, target_size=IMAGE_SIZE)
     plt.subplot(6, 3, index+1)
     plt.imshow(img)
     plt.xlabel(filename + '(' + "{}".format(category) + ')' )
@@ -313,13 +269,9 @@ plt.tight_layout()
 plt.show()
 
 
-# En[ ]:
-
 
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
-
-# En[ ]:
 
 
 checkpoint = ModelCheckpoint("MNIST_Checkpoint.h5",
@@ -337,9 +289,9 @@ earlystop = EarlyStopping(monitor = 'val_loss', # valor que se está monitoreand
 
 # ### **Otra devolución de llamada útil es Reducir nuestra tasa de aprendizaje en Plateau**
 #
-# Podemos evitar que nuestro sistema oscile alrededor del mínimo global al intentar reducir la tasa de aprendizaje por un hecho determinado. Si no se ve una mejora en nuestra métrica monitoreada (normalmente, val_loss), esperamos un cierto número de épocas (paciencia), luego esta devolución de llamada reduce la tasa de aprendizaje en un factor.
-
-# En[ ]:
+# Podemos evitar que nuestro sistema oscile alrededor del mínimo global al intentar reducir la tasa de aprendizaje por
+# un hecho determinado. Si no se ve una mejora en nuestra métrica monitoreada (normalmente, val_loss), esperamos un
+# cierto número de épocas (paciencia), luego esta devolución de llamada reduce la tasa de aprendizaje en un factor.
 
 
 from keras.callbacks import ReduceLROnPlateau
@@ -347,14 +299,8 @@ from keras.callbacks import ReduceLROnPlateau
 reduce_lr = ReduceLROnPlateau(monitor = 'val_loss', factor = 0.2, patience = 3, verbose = 1, min_delta = 0.0001)
 
 
-# En[ ]:
-
-
 # colocamos nuestras devoluciones de llamadas en una lista de devoluciones de llamadas
 callbacks = [earlystop, checkpoint, reduce_lr]
-
-
-# En[ ]:
 
 
 epochs = 10
@@ -368,15 +314,6 @@ history = model.fit(
     steps_per_epoch = 20000//batch_size,
 )
 
-
-# En[ ]:
-
-
-while True:
-  pass
-
-
-# En[ ]:
 
 
 

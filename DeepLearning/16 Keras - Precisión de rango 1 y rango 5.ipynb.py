@@ -8,7 +8,11 @@
 # 2. Obtendremos las 5 mejores clases a partir de una sola inferencia de imagen
 # 3. A continuación, construiremos una función que nos dé la precisión de rango N usando algunas imágenes de prueba.
 #
-# ---
+# ---# El rango es una forma de dar al clasificador como precisión un poco más de margen.
+# # Entonces, en lugar de regresar,  una clase particular, lo que haría de forma natural, Cuando consideramos la
+# # inexactitud, miramos los cinco primeros o el árbol superior, si la clase correcta pertenece a las cinco clases de
+# # mayor probabilidad que se generan desde CNN, entonces consideramos que está correctamente identificado.
+# # 
 #
 
 # En[ ]:
@@ -25,16 +29,11 @@ model = MobileNetV2(weights='imagenet')
 model.summary()
 
 
-# En[ ]:
-
-
 # Obtenga los nombres de las etiquetas de clase de imageNet y las imágenes de prueba
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/imagesDLCV.zip')
+'''wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/imagesDLCV.zip'
 get_ipython().system('unzip imagesDLCV.zip')
-get_ipython().system('rm -rf ./images/class1/.DS_Store')
-
-
-# En[ ]:
+get_ipython().system('rm -rf ./images/class1/.DS_Store'
+'''
 
 
 import cv2
@@ -42,12 +41,11 @@ from os import listdir
 from os.path import isfile, join
 
 # Obtener imágenes ubicadas en la carpeta ./images
-mypath = "./images/class1/"
+mypath = "images/class1/"
 file_names = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 file_names
 
 
-# En[ ]:
 
 
 import matplotlib.pyplot as plt
@@ -80,19 +78,14 @@ for (i,file) in enumerate(file_names):
 plt.show()
 
 
-# En[ ]:
+
+print(preditions)
 
 
-preditions
 
 
-# En[ ]:
+print(all_top_classes)
 
-
-all_top_classes
-
-
-# En[ ]:
 
 
 # Crea nuestras etiquetas de verdad en el suelo
@@ -107,8 +100,6 @@ ground_truth = ['basketball',
                 'collie']
 
 
-# En[ ]:
-
 
 def getScore(all_top_classes, ground_truth, N):
   # Calcular rango-Y puntuación
@@ -121,27 +112,18 @@ def getScore(all_top_classes, ground_truth, N):
 
 # ## **Obtener precisión de rango 5**
 
-# En[ ]:
-
-
 getScore(all_top_classes, ground_truth, 5)
 
 
 # ## **Obtener precisión de rango 1**
 
-# En[ ]:
-
-
 getScore(all_top_classes, ground_truth, 1)
 
-
-# En[ ]:
 
 
 getScore(all_top_classes, ground_truth, 10)
 
 
-# En[ ]:
 
 
 

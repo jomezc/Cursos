@@ -61,7 +61,7 @@ from PIL import Image
 
 
 get_ipython().system('gdown --id 1Dvw0UpvItjig0JbnzbTgYKB-ibMrXdxk')
-get_ipython().system('unzip -q dogs-vs-cats.zip')
+get_ipython().system('unzip -q gatos_perros.zip')
 get_ipython().system('unzip -q train.zip')
 get_ipython().system('unzip -q test1.zip')
 
@@ -657,7 +657,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from PIL import Image
 
 get_ipython().system('gdown --id 1Dvw0UpvItjig0JbnzbTgYKB-ibMrXdxk')
-get_ipython().system('unzip -q dogs-vs-cats.zip')
+get_ipython().system('unzip -q gatos_perros.zip')
 get_ipython().system('unzip -q train.zip')
 get_ipython().system('unzip -q test1.zip')
 

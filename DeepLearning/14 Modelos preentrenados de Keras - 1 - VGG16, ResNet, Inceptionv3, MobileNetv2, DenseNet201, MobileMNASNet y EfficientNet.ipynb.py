@@ -31,33 +31,22 @@ model = VGG16(weights='imagenet')
 model.summary()
 
 
-# En[ ]:
-
-
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/imagesDLCV.zip')
-get_ipython().system('unzip imagesDLCV.zip')
-get_ipython().system('rm rf images/class1/.DS_Store')
-
-
-# En[ ]:
-
+'''wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/imagesDLCV.zip'''
 
 import cv2
 from os import listdir
 from os.path import isfile, join
 
 # Obtener imágenes ubicadas en la carpeta ./images
-mypath = "./images/class1/"
+mypath = "images/class1/"
 file_names = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-file_names
+print(file_names)
 
-
-# En[ ]:
 
 
 import matplotlib.pyplot as plt
 
-fig=plt.figure(figsize=(16,16))
+fig=plt.figure(figsize=(16, 16))
 
 # Bucle a través de las imágenes, páselas a través de nuestro clasificador
 for (i,file) in enumerate(file_names):
@@ -67,7 +56,7 @@ for (i,file) in enumerate(file_names):
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
     
-    # cargar imagen usando opencv
+    # cargar imagen usando opencv para luego mostrarla en el plot
     img2 = cv2.imread(mypath+file)
     # imageL = cv2.resize(img2, Ninguno, fx=.5, fy=.5, interpolación = cv2.INTER_CUBIC)
     
@@ -75,8 +64,9 @@ for (i,file) in enumerate(file_names):
     preds = model.predict(x)
     preditions = decode_predictions(preds, top=3)[0]
     print(preditions)
+
     # Trazar imagen
-    sub = fig.add_subplot(len(file_names),1, i+1)
+    sub = fig.add_subplot(len(file_names), 1, i+1)
     sub.set_title(f'Predicted {str(preditions[0][1])}')
     plt.axis('off')
     plt.imshow(cv2.cvtColor(img2, cv2.COLOR_BGR2RGB))
@@ -86,9 +76,6 @@ plt.show()
 
 # # **2. ResNet50**
 
-# En[ ]:
-
-
 from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.resnet50 import preprocess_input, decode_predictions
@@ -96,10 +83,6 @@ import numpy as np
 
 model = ResNet50(weights='imagenet')
 model.summary()
-
-
-# En[ ]:
-
 
 fig=plt.figure(figsize=(16,16))
 
@@ -130,9 +113,6 @@ plt.show()
 
 ## **h. Inicio Bz**
 
-# En[ ]:
-
-
 from tensorflow.keras.applications.inception_v3 import InceptionV3
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.inception_v3 import preprocess_input
@@ -141,8 +121,6 @@ import numpy as np
 model = InceptionV3(weights='imagenet')
 model.summary()
 
-
-# En[ ]:
 
 
 fig=plt.figure(figsize=(16,16))
@@ -175,9 +153,6 @@ plt.show()
 
 # # **4. red móvil**
 
-# En[ ]:
-
-
 from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
@@ -186,8 +161,6 @@ import numpy as np
 model = MobileNetV2(weights='imagenet')
 model.summary()
 
-
-# En[ ]:
 
 
 fig=plt.figure(figsize=(16,16))
@@ -220,8 +193,6 @@ plt.show()
 
 # # **5. Denseno t201**
 
-# En[ ]:
-
 
 from tensorflow.keras.applications.densenet import DenseNet201
 from tensorflow.keras.preprocessing import image
@@ -231,8 +202,6 @@ import numpy as np
 model = DenseNet201(weights='imagenet')
 model.summary()
 
-
-# En[ ]:
 
 
 fig=plt.figure(figsize=(16,16))
@@ -264,8 +233,6 @@ plt.show()
 
 # # **6. NASNet móvil**
 
-# En[ ]:
-
 
 from tensorflow.keras.applications.nasnet import NASNetMobile
 from tensorflow.keras.preprocessing import image
@@ -274,9 +241,6 @@ import numpy as np
 
 model = NASNetMobile(weights='imagenet')
 model.summary()
-
-
-# En[ ]:
 
 
 fig=plt.figure(figsize=(16,16))
@@ -310,8 +274,6 @@ plt.show()
 #
 # Pruebe otras EfficientNets B0 a B7 - https://keras.io/api/applications/ficientnet/
 
-# En[ ]:
-
 
 from tensorflow.keras.applications.efficientnet import EfficientNetB7
 from tensorflow.keras.preprocessing import image
@@ -321,8 +283,6 @@ import numpy as np
 model = EfficientNetB7(weights='imagenet')
 model.summary()
 
-
-# En[ ]:
 
 
 fig=plt.figure(figsize=(16,16))
@@ -351,9 +311,6 @@ for (i,file) in enumerate(file_names):
     plt.imshow(cv2.cvtColor(img2, cv2.COLOR_BGR2RGB))
 
 plt.show()
-
-
-# En[ ]:
 
 
 

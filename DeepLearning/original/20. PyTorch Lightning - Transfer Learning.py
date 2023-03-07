@@ -50,7 +50,7 @@ from PIL import Image
 
 
 get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/dogs-vs-cats.zip')
-get_ipython().system('unzip -q dogs-vs-cats.zip')
+get_ipython().system('unzip -q gatos_perros.zip')
 get_ipython().system('unzip -q train.zip')
 get_ipython().system('unzip -q test1.zip')
 

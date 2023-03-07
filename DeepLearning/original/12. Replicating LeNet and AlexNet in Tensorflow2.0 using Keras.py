@@ -264,10 +264,6 @@ print('Test accuracy:', scores[1])
 
 # ## **Current Top Performers in CIFAR10**
 # 
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/Screenshot%202021-12-04%20at%207.56.25%20pm.png)
-
-# In[ ]:
-
-
+# https://paperswithcode.com/sota/image-classification-on-cifar-10
 
 

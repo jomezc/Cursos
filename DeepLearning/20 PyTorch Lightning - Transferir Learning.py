@@ -19,8 +19,8 @@
 
 
 # Primero instalamos PyTorch Lightning y TorchMetricsß
-get_ipython().system('pip install pytorch-lightning --quiet')
-get_ipython().system('pip install torchmetrics')
+'''pip install pytorch-lightning --quiet'''
+'''pip install torchmetrics'''
 
 
 # En 2]:
@@ -44,20 +44,10 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from PIL import Image
 
 
-# #### **Descargue nuestros conjuntos de datos**
-
-# En 3]:
-
-
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/dogs-vs-cats.zip')
-get_ipython().system('unzip -q dogs-vs-cats.zip')
-get_ipython().system('unzip -q train.zip')
-get_ipython().system('unzip -q test1.zip')
+# #### **Descargue nuestros conjuntos de datos (en 17)
 
 
 # ## **Configurar nuestros cargadores de datos**
-
-# En[4]:
 
 
 class Dataset():

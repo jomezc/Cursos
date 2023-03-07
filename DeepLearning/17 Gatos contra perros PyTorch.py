@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # codificación: utf-8
 
-# En 3]:
-
-
 import numpy as np 
 import pandas as pd 
 import os
@@ -31,36 +28,19 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Descargue nuestro conjunto de datos de gatos contra perros. Debe hablar alrededor de 15-20 segundos.
 # Fuente: https://www.kaggle.com/c/dogs-vs-cats/data
 
-# En 2]:
-
-
-get_ipython().system('gdown --id 1Dvw0UpvItjig0JbnzbTgYKB-ibMrXdxk')
-get_ipython().system('unzip -q dogs-vs-cats.zip')
-get_ipython().system('unzip -q train.zip')
-get_ipython().system('unzip -q test1.zip')
-
-
-# En[4]:
-
 
 # Establecer rutas de directorio para nuestros archivos
-train_dir = './train'
-test_dir = './test1'
+train_dir = 'images/gatos_perros/train'
+test_dir = 'images/gatos_perros/train'
 
 # Obtener archivos en nuestros directorios
 train_files = os.listdir(train_dir)
 test_files = os.listdir(test_dir)
 
 
-# En[5]:
-
-
 print(f'Number of images in {train_dir} is {len(train_files)}')
 print(f'Number of images in {test_dir} is {len(test_files)}')
-
-
-# En[7]:
-
+''''''
 
 imgpath = os.path.join(train_dir, train_files[0])
 print(imgpath)
@@ -68,21 +48,14 @@ print(imgpath)
 
 # #### **Crear nuestras transformaciones**
 
-# En[8]:
-
-
 transformations = transforms.Compose([transforms.Resize((60,60)),transforms.ToTensor()])
 
 
-# ## **Crear una clase de conjunto de datos que almacene la información de nuestro conjunto de datos (rutas, etiquetas y transformaciones**)
+# ## **Crear una clase de conjunto de datos que almacene la información de nuestro conjunto de datos (rutas, etiquetas
+# y transformaciones**)
 #
 # Este objeto puede ser utilizado por funciones de antorcha como `torch.utils.data.random_split`
-#
 # https://pytorch.org/docs/stable/data.html#torch.utils.data.Dataset
-
-# En[9]:
-
-
 class Dataset():
     def __init__(self, filelist, filepath, transform = None):
         self.filelist = filelist
@@ -107,9 +80,6 @@ class Dataset():
         return (img, label)
 
 
-# En[10]:
-
-
 # Crear nuestros objetos de conjunto de datos de tren y prueba
 train = Dataset(train_files, train_dir, transformations)
 val = Dataset(test_files, test_dir, transformations)
@@ -117,14 +87,8 @@ val = Dataset(test_files, test_dir, transformations)
 
 # ### **Usando nuestro objeto de conjunto de datos**
 
-# En[11]:
-
-
 # Obtener una entrada de datos
-train.__getitem__(0)
-
-
-# En[12]:
+print(train.__getitem__(0))
 
 
 # Obtener la forma de una sola imagen
@@ -134,13 +98,7 @@ print(train.__getitem__(0)[0].shape)
 
 # ## **Usando nuestro objeto de conjunto de datos para crear nuestro tren, división de validación**
 
-# En[13]:
-
-
 train, val = torch.utils.data.random_split(train,[20000,5000]) 
-
-
-# En[14]:
 
 
 # Obtener un tamaño de nuestro
@@ -148,14 +106,9 @@ print(len(train))
 print(len(val))
 
 
-# En[15]:
-
-
 # Vamos a crear una matriz de nuestras etiquetas
 val_set_class_count = [val.__getitem__(x)[1] for x in range(len(val)) ]
 
-
-# En[16]:
 
 
 import seaborn as sns
@@ -165,8 +118,6 @@ sns.countplot(val_set_class_count)
 
 # ## **Cargadores de datos: creemos nuestro iterable sobre un conjunto de datos**
 
-# En[18]:
-
 
 train_dataset = torch.utils.data.DataLoader(dataset = train, batch_size = 32, shuffle=True)
 val_dataset = torch.utils.data.DataLoader(dataset = val, batch_size = 32, shuffle=False)
@@ -174,23 +125,20 @@ val_dataset = torch.utils.data.DataLoader(dataset = val, batch_size = 32, shuffl
 
 # ### **Úselo para obtener algunas imágenes de muestra**
 
-# En 19]:
-
-
-samples, labels = iter(train_dataset).next()
-plt.figure(figsize=(16,24))
+samples, labels = next(iter(train_dataset))
+plt.figure(figsize=(16, 24))
 grid_imgs = torchvision.utils.make_grid(samples[:24])
 np_grid_imgs = grid_imgs.numpy()
 
-# en tensor, la imagen es (lote, ancho, alto), por lo que debe transponerla a (ancho, alto, lote) en números para mostrarla.
+# en tensor, la imagen es (lote, ancho, alto), por lo que debe transponerla a (ancho, alto, lote) en números para
+# mostrarla.
 plt.imshow(np.transpose(np_grid_imgs, (1,2,0)))
 
 
 # **Ahora construimos nuestro Modelo**
 #
-# Usaremos el método ```nn.Sequential``` para construir nuestro modelo. Alternativamente, podemos usar el módulo funcional, sin embargo, esto es más simple y más similar a los estilos con los que trabajará en Keras.
-
-# En 20]:
+# Usaremos el método ```nn.Sequential``` para construir nuestro modelo. Alternativamente, podemos usar el módulo
+# funcional, sin embargo, esto es más simple y más similar a los estilos con los que trabajará en Keras.
 
 
 class CNN(nn.Module):
@@ -225,20 +173,17 @@ class CNN(nn.Module):
         nn.Linear(128,2),
         )
                 
-    def forward(self,x):
+    def forward(self, x):
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.conv3(x)
         x = self.fc1(x)
         x = self.fc2(x)
-        return F.softmax(x,dim = 1) 
+        return F.softmax(x, dim = 1)
 
 
 # ### **Uso de TorchSummary para mostrar un resultado de resumen de estilo Keras**
-#
 # `summary(your_model, input_size=(channels, H, W))`
-
-# En[21]:
 
 
 model = CNN()
@@ -247,33 +192,25 @@ summary(model,(3,60,60))
 
 
 # ### **Definición de una función de pérdida y un optimizador**
-#
 # Necesitamos definir qué tipo de pérdida usaremos y qué método usaremos para actualizar los gradientes.
-# 1. Usamos pérdida de entropía cruzada
-# 2. Usamos el algoritmo de descenso de optimización de Adam; también especificamos una tasa de aprendizaje (LR) de 0.0005.
-# 3. Establecer nuestras épocas en 50
 
-# En[22]:
+# 1. Usamos pérdida de entropía cruzada
+# 2. Usamos el algoritmo de descenso de optimización de Adam; también especificamos una tasa de aprendizaje (LR) de
+# 0.0005.
+
+# 3. Establecer nuestras épocas en 50
 
 
 criterion = nn.CrossEntropyLoss().to(device)
-optimiser = optim.Adam(model.parameters(),lr=0.0005)
+optimiser = optim.Adam(model.parameters(), lr=0.0005)
 epochs = 10
 
 
 # ## **Entrena a nuestro modelo**
-#
 # **Usamos TQDM para realizar un entrenamiento estilo keras**
-#
 
-# En[23]:
-
-
+from tqdm import *
 type(train_dataset)
-
-
-# En[ ]:
-
 
 train_loss = []
 train_accuracy = []
@@ -287,19 +224,22 @@ for epoch in range(epochs):
     counter = 0
     train_running_loss = 0
 
-    # Establecemos nuestra unidad para tqdm y el número de iteraciones, es decir, len(train_dataset) sin necesidad de len ya que train_dataset es iterable
+    # Establecemos nuestra unidad para tqdm y el número de iteraciones, es decir, len(train_dataset) sin necesidad de
+    # len ya que train_dataset es iterable
     # tepoch se convierte
+
     with tqdm(train_dataset, unit="batch") as tepoch:
+
         # nuestras etiquetas de la barra de progreso
         tepoch.set_description(f'Epoch {epoch+1}/{epochs}')
 
-        for data,label in tepoch:
-            data,label = data.to(device), label.to(device)
+        for data, label in tepoch:
+            data, label = data.to(device), label.to(device)
             optimiser.zero_grad()
             output = model(data)
-            loss = criterion(output,label)
+            loss = criterion(output, label)
             loss.backward()
-            optimiser.step() 
+            optimiser.step()
 
             train_running_loss += loss.item() * data.size(0)
 
@@ -316,7 +256,7 @@ for epoch in range(epochs):
         print(f'Epoch {epoch+1} Training Loss = {train_running_loss/len(train_dataset)}')
 
     # Obtenga nuestra precisión de validación y puntajes de pérdida
-    if epoch %1 == 0:
+    if epoch % 1 == 0:
         model.eval()
         total = 0
         correct = 0
@@ -331,7 +271,7 @@ for epoch in range(epochs):
 
                 # Calcule la pérdida corriente multiplicando el valor de la pérdida por el tamaño del lote
                 val_running_loss += loss_val.item() * val_data.size(0)
-                _, pred = torch.max(val_output.data, 1)    
+                _, pred = torch.max(val_output.data, 1)
                 total += val_label.size(0)
                 correct += (pred == val_label).sum().item()
 
@@ -344,13 +284,10 @@ for epoch in range(epochs):
             print(f'Epoch {epoch+1} Validation Loss = {val_running_loss/len(val_dataset)}')
 
 
-# En[ ]:
 
 
-train_loss
+print(train_loss)
 
-
-# En[ ]:
 
 
 epoch_log = [*range(epochs)]
@@ -371,7 +308,7 @@ ax2.plot(epoch_log, train_accuracy, 'b-')
 
 # Crear gráfico para loss_log y precision_log
 ax1.plot(epoch_log, val_loss, 'r-')
-ax2.plot(epoch_log, val_accuarcy, 'b-')
+ax2.plot(epoch_log, val_accuracy, 'b-')
 
 # Establecer etiquetas
 ax1.set_xlabel('Epochs')
@@ -381,14 +318,10 @@ ax2.set_ylabel('Test Accuracy', color='b')
 plt.show()
 
 
-# En[ ]:
 
-
-PATH = './cats_vs_dogs_10_epochs.pth'
+PATH = 'models/cats_vs_dogs_10_epochs.pth'
 torch.save(model.state_dict(), PATH)
 
-
-# En[ ]:
 
 
 # función para mostrar una imagen
@@ -400,14 +333,12 @@ def imshow(img):
 
 # Cargando un mini-lote
 dataiter = iter(val_dataset)
-images, labels = dataiter.next()
+images, labels = next(dataiter)
 
 # Mostrar imágenes usando utils.make_grid() de torchvision
 imshow(torchvision.utils.make_grid(images))
 print('GroundTruth: ',''.join('%1s' % labels[j].numpy() for j in range(32)))
 
-
-# En[ ]:
 
 
 # Cree una instancia del modelo y muévala (memoria y operaciones) al dispositivo CUDA.
@@ -418,10 +349,8 @@ model.to(device)
 model.load_state_dict(torch.load(PATH))
 
 
-# En[ ]:
 
-
-samples, _ = iter(val_dataset).next()
+samples, _ = next(iter(val_dataset))
 samples = samples.to(device)
 
 fig = plt.figure(figsize=(12, 8))
@@ -438,9 +367,7 @@ for num, sample in enumerate(samples[:24]):
     plt.axis('off')
     sample = sample.cpu().numpy()
     plt.imshow(np.transpose(sample, (1,2,0)))
-
-
-# En[ ]:
+plt.show()
 
 
 

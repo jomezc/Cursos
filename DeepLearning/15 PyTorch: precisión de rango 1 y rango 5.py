@@ -7,17 +7,18 @@
 # 1. Primero cargaremos el modelo ImageNet VGG16 previamente entrenado
 # 2. Obtendremos las 5 mejores clases a partir de una sola inferencia de imagen
 # 3. A continuación, construiremos una función que nos dé la precisión de rango N usando algunas imágenes de prueba.
-#
-# ---
-#
 
-# En[ ]:
+# El rango es una forma de dar al clasificador como precisión un poco más de margen.
+# Entonces, en lugar de regresar,  una clase particular, lo que haría de forma natural, Cuando consideramos la
+# inexactitud, miramos los cinco primeros o el árbol superior, si la clase correcta pertenece a las cinco clases de
+# mayor probabilidad que se generan desde CNN, entonces consideramos que está correctamente identificado.
+#
 
 
 # Cargue nuestro VGG16 pre-entrenado
 import torchvision.models as models
 
-model = models.vgg16(pretrained=True)
+model = models.vgg16(pretrained=True).cuda()
 
 
 # ## **Normalización**
@@ -54,10 +55,12 @@ model.eval()
 
 
 # Obtenga los nombres de las etiquetas de clase de imageNet y las imágenes de prueba
-get_ipython().system('wget https://raw.githubusercontent.com/rajeevratan84/ModernComputerVision/main/imageNetclasses.json')
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/imagesDLCV.zip')
-get_ipython().system('unzip imagesDLCV.zip')
-get_ipython().system('rm -rf ./images/class1/.DS_Store')
+'''
+'wget https://raw.githubusercontent.com/rajeevratan84/ModernComputerVision/main/imageNetclasses.json')
+'wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/imagesDLCV.zip')
+'unzip imagesDLCV.zip'
+'rm -rf ./images/class1/.DS_Store'
+'''
 
 
 # ## **Importar nuestros módulos**
@@ -74,7 +77,7 @@ import numpy as np
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-with open('imageNetclasses.json') as f:
+with open('models/imageNetclasses.json') as f:
   class_names = json.load(f)
 
 
@@ -86,11 +89,13 @@ with open('imageNetclasses.json') as f:
 from PIL import Image
 import numpy as np
 
-image = Image.open('./images/class1/1539714414867.jpg')
+image = Image.open('images/class1/1539714414867.jpg')
 
 # Convertir a Tensor
 image_tensor = test_transforms(image).float()
 image_tensor = image_tensor.unsqueeze_(0)
+'''if torch.cuda.is_available():
+    image_tensor = image_tensor.cuda()  # alternativa a input.to(device)'''
 input = Variable(image_tensor)
 input = input.to(device)
 output = model(input)
@@ -107,8 +112,6 @@ plt.show()
 
 # ## **Obtén nuestras probabilidades de clase**
 
-# En[ ]:
-
 
 import torch.nn.functional as nnf
 
@@ -118,17 +121,12 @@ top_p, top_class = prob.topk(5, dim = 1)
 print(top_p, top_class)
 
 
-# En[ ]:
-
-
 # Convertir a matriz numpy
 top_class_np = top_class.cpu().data.numpy()[0]
 top_class_np
 
 
 # ## **Crear una clase que nos dé los nombres de nuestras clases**
-
-# En[ ]:
 
 
 def getClassNames(top_classes):
@@ -139,15 +137,11 @@ def getClassNames(top_classes):
   return all_classes
 
 
-# En[ ]:
-
 
 getClassNames(top_class)
 
 
 # # **Construye nuestra función para darnos nuestra Precisión de Rango-N**
-
-# En[ ]:
 
 
 from os import listdir
@@ -180,13 +174,17 @@ def getRankN(model, directory, ground_truth, N, show_images = True):
     all_top_classes.append(top_class_names)
 
     if show_images:
-      # Trazar imagen
-      sub = fig.add_subplot(len(onlyfiles),1, i+1)
-      x = " ,".join(top_class_names)
-      print(f'Top {N} Predicted Classes {x}')
-      plt.axis('off')
-      plt.imshow(image)
-      plt.show()
+        try:
+            # Trazar imagen
+            sub = fig.add_subplot(len(onlyfiles),1, i+1)
+            x = " ,".join(top_class_names)
+            print(f'Top {N} Predicted Classes {x}')
+            plt.axis('off')
+            plt.imshow(image)
+        except Exception as e:
+            print(e)
+  plt.show()
+
 
   return getScore(all_top_classes, ground_truth, N)
 
@@ -197,9 +195,6 @@ def getScore(all_top_classes, ground_truth, N):
     if ground_truth[i] in labels:
       in_labels += 1
   return f'Rank-{N} Accuracy = {in_labels/len(all_top_classes)*100:.2f}%'
-
-
-# En[ ]:
 
 
 # Crea nuestras etiquetas de verdad en el suelo
@@ -216,29 +211,19 @@ ground_truth = ['basketball',
 
 # ## **Obtener precisión de rango 5**
 
-# En[ ]:
+
+getRankN(model,'images/class1/', ground_truth, N=5)
 
 
-getRankN(model,'./images/class1/', ground_truth, N=5)
+'''# ## **Obtener precisión de rango 1**
 
 
-# ## **Obtener precisión de rango 1**
-
-# En[ ]:
-
-
-getRankN(model,'./images/class1/', ground_truth, N=1)
+getRankN(model,'images/class1/', ground_truth, N=1)
 
 
 # ## **Obtener precisión de rango 10**
+getRankN(model,'images/class1/', ground_truth, N=10)'''
 
-# En[ ]:
-
-
-getRankN(model,'./images/class1/', ground_truth, N=10)
-
-
-# En[ ]:
 
 
 

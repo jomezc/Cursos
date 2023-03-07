@@ -3,13 +3,17 @@
 
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
 #
-# # **Relámpago PyTorch**
-# ### **PyTorch Lightning es una biblioteca Python de código abierto que proporciona una interfaz de alto nivel para PyTorch, un popular marco de aprendizaje profundo.**
+# # ** PyTorch Lightning**
+# ### **PyTorch Lightning es una biblioteca Python de código abierto que proporciona una interfaz de alto nivel para
+# PyTorch, un popular marco de aprendizaje profundo.**
 # ---
 # https://pytorch-lightning.readthedocs.io/en/latest/
 # ---
 #
-# En esta lección, aprendemos a usar la increíble biblioteca **PyTorch Lightning**. Es una excelente manera de organizarse. su código PyTorch y obtenga muchas funciones excelentes y beneficios adicionales. Haremos lo siguiente en esta guía:
+# En esta lección, aprendemos a usar la increíble biblioteca **PyTorch Lightning**. Es una excelente manera de
+# organizarse. su código PyTorch y obtenga muchas funciones excelentes y beneficios adicionales. Haremos lo siguiente
+# en esta guía:
+
 # 1. Configurar e instalar Lightning
 # 2. Organizar su código en la estructura/filosofía de diseño Lightning
 # 3. Selección automática de lotes
@@ -20,22 +24,17 @@
 # 8. Guardar y cargar modelos desde puntos de control
 # 9. Guardar como Torchscript para implementación en producción
 # 10. Inferencias
-# 11. Entrenamiento de múltiples GPU
-# 12. Capacitación en TPU
-# 13. Profiler para encontrar cuellos de botella en el entrenamiento
-# 14. Entrenamiento de GPU de 16 bits
+# 12. Profiler - Performance and Bottleneck Profiler**
+
+## 11. Entrenamiento Multi-GPU** y 13. Training on TPUs, no se pueden probar por no disponer ni de multiples gpu ni TPU
+
 
 ### **1. Configurar e instalar Lightning**
 
-# En 1]:
-
 
 # Primero instalamos PyTorch Lightning y TorchMetrics
-get_ipython().system('pip install pytorch-lightning --quiet')
-get_ipython().system('pip install torchmetrics')
-
-
-# En 3]:
+'''pip install pytorch-lightning --quiet'''
+'''pip install torchmetrics'''
 
 
 # Importar todos los paquetes que usaremos
@@ -54,22 +53,17 @@ from pytorch_lightning.loggers import TensorBoardLogger
 
 from PIL import Image
 
+#torch.set_float32_matmul_precision('high')
+# The flag below controls whether to allow TF32 on matmul. This flag defaults to False
+# in PyTorch 1.12 and later.
+torch.backends.cuda.matmul.allow_tf32 = True
 
-# #### **Descargue nuestros conjuntos de datos**
+# The flag below controls whether to allow TF32 on cuDNN. This flag defaults to True.
+torch.backends.cudnn.allow_tf32 = True
 
-# En[4]:
-
-
-get_ipython().system('gdown --id 1Dvw0UpvItjig0JbnzbTgYKB-ibMrXdxk')
-get_ipython().system('unzip -q dogs-vs-cats.zip')
-get_ipython().system('unzip -q train.zip')
-get_ipython().system('unzip -q test1.zip')
-
+# #### **Descargue nuestros conjuntos de datos** ( en 17)
 
 # ## **Configurar nuestros cargadores de datos**
-
-# En[8]:
-
 
 class Dataset():
     def __init__(self, filelist, filepath, transform = None):
@@ -96,8 +90,8 @@ class Dataset():
 
 
 # Establecer rutas de directorio para nuestros archivos
-train_dir = './train'
-test_dir = './test1'
+train_dir = 'images/gatos_perros/train'
+test_dir = 'images/gatos_perros/test1'
 
 # Obtener archivos en nuestros directorios
 train_files = os.listdir(train_dir)
@@ -113,8 +107,94 @@ val = Dataset(test_files, test_dir, transformations)
 # Dividirse en nuestro tren y validación
 train, val = torch.utils.data.random_split(train,[20000,5000]) 
 
-#train_loader = torch.utils.data.DataLoader(conjunto de datos = tren, lote_tamaño = 32, aleatorio = Verdadero)
-#val_loader = torch.utils.data.DataLoader(conjunto de datos = val, batch_size = 32, shuffle=False)
+class Dataset():
+    def __init__(self, filelist, filepath, transform = None):
+        self.filelist = filelist
+        self.filepath = filepath
+        self.transform = transform
+
+    def __len__(self):
+        return int(len(self.filelist))
+
+    def __getitem__(self, index):
+        imgpath = os.path.join(self.filepath, self.filelist[index])
+        img = Image.open(imgpath)
+
+        if "dog" in imgpath:
+            label = 1
+        else:
+            label = 0
+
+        if self.transform is not None:
+            img = self.transform(img)
+
+        return (img, label)
+
+
+# Set directory paths for our files
+train_dir = 'images/gatos_perros/train'
+test_dir = 'images/gatos_perros/test1'
+
+# Get files in our directories
+train_files = os.listdir(train_dir)
+test_files = os.listdir(test_dir)
+
+# Create our transforms
+transformations = transforms.Compose([transforms.Resize((60,60)),transforms.ToTensor()])
+
+# Create our train and test dataset objects
+train = Dataset(train_files, train_dir, transformations)
+val = Dataset(test_files, test_dir, transformations)
+
+# Split into our train and validation
+train, val = torch.utils.data.random_split(train,[20000,5000])
+
+#train_loader = torch.utils.data.DataLoader(dataset = train, batch_size = 32, shuffle=True)
+#val_loader = torch.utils.data.DataLoader(dataset = val, batch_size = 32, shuffle=False)
+class Dataset():
+    def __init__(self, filelist, filepath, transform = None):
+        self.filelist = filelist
+        self.filepath = filepath
+        self.transform = transform
+
+    def __len__(self):
+        return int(len(self.filelist))
+
+    def __getitem__(self, index):
+        imgpath = os.path.join(self.filepath, self.filelist[index])
+        img = Image.open(imgpath)
+
+        if "dog" in imgpath:
+            label = 1
+        else:
+            label = 0
+
+        if self.transform is not None:
+            img = self.transform(img)
+
+        return (img, label)
+
+
+# Set directory paths for our files
+train_dir = 'images/gatos_perros/train'
+test_dir = 'images/gatos_perros/test1'
+
+# Get files in our directories
+train_files = os.listdir(train_dir)
+test_files = os.listdir(test_dir)
+
+# Create our transforms
+transformations = transforms.Compose([transforms.Resize((60,60)),transforms.ToTensor()])
+
+# Create our train and test dataset objects
+train = Dataset(train_files, train_dir, transformations)
+val = Dataset(test_files, test_dir, transformations)
+
+# Split into our train and validation
+train, val = torch.utils.data.random_split(train,[20000,5000])
+
+train_loader = torch.utils.data.DataLoader(dataset = train, batch_size = 32, shuffle=True)
+val_loader = torch.utils.data.DataLoader(dataset = val, batch_size = 32, shuffle=False)
 
 
 ### **2. Organizar su código en la estructura Lightning/filosofía de diseño**
@@ -193,9 +273,11 @@ class LitModel(pl.LightningModule):
         super().__init__()
         self.batch_size = batch_size
         self.learning_rate = learning_rate #
-        self.accuracy = torchmetrics.Accuracy() #
-        self.train_acc = torchmetrics.Accuracy() #
-        self.valid_acc = torchmetrics.Accuracy() #
+        # error en .Acurracy() deprecado,
+        # cambio por https://torchmetrics.readthedocs.io/en/stable/classification/accuracy.html#module-interface
+        self.accuracy = torchmetrics.Accuracy(task="multiclass", num_classes=2) #
+        self.train_acc = torchmetrics.Accuracy(task="multiclass", num_classes=2) #
+        self.valid_acc = torchmetrics.Accuracy(task="multiclass", num_classes=2) #
         self.conv1 = nn.Sequential(nn.Conv2d(3,16,3), nn.ReLU(), nn.MaxPool2d(2,2)) 
         self.conv2 = nn.Sequential(nn.Conv2d(16,32,3), nn.ReLU(), nn.MaxPool2d(2,2)) 
         self.conv3 = nn.Sequential(nn.Conv2d(32,64,3), nn.ReLU(), nn.MaxPool2d(2,2)) 
@@ -251,7 +333,6 @@ class LitModel(pl.LightningModule):
 
 # ### **Implemente nuestro sintonizador de tasa de aprendizaje automático**
 
-# En[24]:
 
 
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -260,14 +341,15 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 model = LitModel(batch_size = 32, learning_rate=0.001)
 
 # Registrador de tasa de aprendizaje
-trainer = pl.Trainer(gpus=1, auto_lr_find=True)
+# trainer = pl.Trainer(gpus=1, auto_lr_find=True) # por UserWarning Deprecado
+
+trainer = pl.Trainer(accelerator='gpu', devices=1, auto_lr_find=True)
 
 # Los resultados se pueden encontrar en
 trainer.tune(model)
 
 
 # ### **Visualizar el gráfico LR vs Loss**
-#
 # La figura producida por lr_finder.plot() debería parecerse a la figura de abajo. Se recomienda no elegir la tasa de aprendizaje que logra la pérdida más baja, sino algo en el medio de la pendiente descendente más pronunciada (punto rojo). Este es el punto devuelto por py lr_finder.suggestion().
 
 # En[25]:
@@ -292,7 +374,9 @@ fig.show()
 model = LitModel(batch_size = 32, learning_rate=0.001)
 
 # Inicializar un entrenador
-trainer = pl.Trainer(gpus=1, max_epochs=10, progress_bar_refresh_rate=10)
+# trainer = pl.Trainer(gpus=1, max_epochs=10) # por UserWarning Deprecado
+
+trainer = pl.Trainer(accelerator='gpu', devices=1, max_epochs=10)
 
 # Entrena al modelo ⚡
 trainer.fit(model)
@@ -303,20 +387,29 @@ trainer.fit(model)
 # En[ ]:
 
 
+'''
 # Iniciar tensorboard.
 get_ipython().run_line_magic('load_ext', 'tensorboard')
 get_ipython().run_line_magic('tensorboard', '--logdir lightning_logs/')
+'''
+'''from tensorboard import program
 
+if __name__ == "__main__":
+    tb = program.TensorBoard()
+    tb.configure(argv=[None, '--logdir', 'lightning_logs'])
+    url = tb.launch()
+    print(f"Tensorflow listening on {url}")'''
 
 ### **6. Uso de devoluciones de llamada - Detención anticipada y puntos de control**
 #
-# **Detención anticipada**: la detención anticipada es una forma de regularización utilizada para evitar el sobreajuste cuando se entrena a un alumno con un método iterativo, como el descenso de gradiente.
+# **Detención anticipada**: la detención anticipada es una forma de regularización utilizada para evitar el sobreajuste
+# cuando se entrena a un alumno con un método iterativo, como el descenso de gradiente.
 #
 # ![](https://cdn-images-1.medium.com/max/920/1*iAK5uMoOlX1gZu-cSh1nZw.png)
 #
-# **Punto de control del modelo**: la devolución de llamada de ModelCheckpoint se usa para guardar un modelo o pesos (en un archivo de punto de control) en algún intervalo, de modo que el modelo o los pesos se puedan cargar más tarde para continuar el entrenamiento desde el estado guardado.
-
-# En[ ]:
+# **Punto de control del modelo**: la devolución de llamada de ModelCheckpoint se usa para guardar un modelo o pesos
+# (en un archivo de punto de control) en algún intervalo, de modo que el modelo o los pesos se puedan cargar más tarde
+# para continuar el entrenamiento desde el estado guardado.
 
 
 # Configuración de parada anticipada
@@ -331,8 +424,6 @@ early_stop = EarlyStopping(
 )
 
 
-# En[ ]:
-
 
 # Punto de control del modelo de configuración
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -346,11 +437,8 @@ checkpoint_callback = ModelCheckpoint(
 )
 
 
-# En[ ]:
-
-
 # Incluso podemos usar algunas devoluciones de llamadas personalizadas
-class MyPrintingCallback(pl.callbacks.base.Callback):
+class MyPrintingCallback(pl.callbacks.Callback):  # class MyPrintingCallback(pl.callbacks.base.Callback) Deprecado
 
     def on_init_start(self, trainer):
         print('Starting to init trainer!')
@@ -364,8 +452,6 @@ class MyPrintingCallback(pl.callbacks.base.Callback):
 
 # ### **Entrena con nuestras devoluciones de llamadas**
 
-# En[ ]:
-
 
 # modelo inicial
 model = LitModel(batch_size = 32, learning_rate=0.001)
@@ -378,15 +464,18 @@ trainer = pl.Trainer(
     callbacks=[EarlyStopping('val_loss'), checkpoint_callback, MyPrintingCallback()]
 )
 
+# por UserWarning Deprecado
+
+
 trainer.fit(model)
 
 
 # En[ ]:
 
 
-# Iniciar tensorboard.
+'''# Iniciar tensorboard.
 get_ipython().run_line_magic('load_ext', 'tensorboard')
-get_ipython().run_line_magic('tensorboard', '--logdir lightning_logs/')
+get_ipython().run_line_magic('tensorboard', '--logdir lightning_logs/')'''
 
 
 ### **8. Restaurar desde puntos de control**
@@ -441,7 +530,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # En[ ]:
 
 
-samples, _ = iter(val_loader).next()
+samples, _ = next(iter(val_loader))
 samples = samples.to('cuda')
 
 fig = plt.figure(figsize=(12, 8))
@@ -459,7 +548,30 @@ for num, sample in enumerate(samples[:24]):
     sample = sample.cpu().numpy()
     plt.imshow(np.transpose(sample, (1,2,0)))
 
+### **12. Profiler - Perfilador de rendimiento y cuellos de botella**
 
+
+# modelo inicial
+# model = LitModel_mGPU()
+
+# Inicializar un entrenador
+'''trainer = pl.Trainer( # por UserWarning Deprecado 
+    gpus=1,
+    max_epochs=1,
+    progress_bar_refresh_rate=10,
+    profiler="simple"
+)'''
+trainer = pl.Trainer(
+    accelerator='gpu', devices=1,
+    max_epochs=1,
+    progress_bar_refresh_rate=10,
+    profiler="simple"
+)
+# trainer = pl.Trainer(gpus=1, max_epochs=10)
+
+
+## 11. Entrenamiento Multi-GPU** y 13. Training on TPUs, no se pueden probar por no disponer ni de multiples gpu ni TPU
+'''
 ### **11. Entrenamiento Multi-GPU**
 #
 # Para entrenar en CPU/GPU/TPU sin cambiar su código, necesitamos desarrollar algunos buenos hábitos :)
@@ -590,10 +702,7 @@ trainer = pl.Trainer(
 
 trainer.fit(model)
 
-
 ### **12. Profiler - Perfilador de rendimiento y cuellos de botella**
-
-# En[ ]:
 
 
 # modelo inicial
@@ -607,10 +716,11 @@ trainer = pl.Trainer(
     profiler="simple"
 )
 
+
 trainer.fit(model)
 
-
-### **13. Capacitación en TPU**
+'''
+'''### **13. Capacitación en TPU**
 #
 # **Unidad de procesamiento de tensor** es un circuito integrado específico de la aplicación del acelerador de IA desarrollado por Google específicamente para el aprendizaje automático de redes neuronales.
 #
@@ -628,19 +738,13 @@ trainer.fit(model)
 
 # En[ ]:
 
-
-get_ipython().system('pip install cloud-tpu-client==0.10 https://storage.googleapis.com/tpu-pytorch/wheels/torch_xla-1.8-cp37-cp37m-linux_x86_64.whl')
-get_ipython().system('pip install pytorch-lightning --quiet')
-get_ipython().system('pip install torchmetrics')
-
-
-# En[ ]:
-
-
+# pip install -U torch_xla
 # Importar todos los paquetes que usaremos
 
 import os
 import torch
+import torch_xla
+import torch_xla.core.xla_model as xm
 import torchmetrics
 import torch.nn.functional as F
 
@@ -655,11 +759,6 @@ from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.callbacks import ModelCheckpoint
 from PIL import Image
-
-get_ipython().system('gdown --id 1Dvw0UpvItjig0JbnzbTgYKB-ibMrXdxk')
-get_ipython().system('unzip -q dogs-vs-cats.zip')
-get_ipython().system('unzip -q train.zip')
-get_ipython().system('unzip -q test1.zip')
 
 class Dataset():
     def __init__(self, filelist, filepath, transform = None):
@@ -677,7 +776,7 @@ class Dataset():
         if "dog" in imgpath:
             label = 1
         else:
-            label = 0 
+            label = 0
 
         if self.transform is not None:
             img = self.transform(img)
@@ -686,8 +785,8 @@ class Dataset():
 
 
 # Establecer rutas de directorio para nuestros archivos
-train_dir = './train'
-test_dir = './test1'
+train_dir = 'images/gatos_perros/train'
+test_dir = 'images/gatos_perros/test1'
 
 # Obtener archivos en nuestros directorios
 train_files = os.listdir(train_dir)
@@ -699,7 +798,7 @@ transformations = transforms.Compose([transforms.Resize((60,60)),transforms.ToTe
 train = Dataset(train_files, train_dir, transformations)
 val = Dataset(test_files, test_dir, transformations)
 
-train, val = torch.utils.data.random_split(train,[20000,5000]) 
+train, val = torch.utils.data.random_split(train,[20000,5000])
 
 train_loader = torch.utils.data.DataLoader(dataset = train, batch_size = 32, shuffle=True)
 val_loader = torch.utils.data.DataLoader(dataset = val, batch_size = 32, shuffle=False)
@@ -711,12 +810,12 @@ val_loader = torch.utils.data.DataLoader(dataset = val, batch_size = 32, shuffle
 class LitModel_mGPU(pl.LightningModule):
     def __init__(self):
         super().__init__()
-        self.accuracy = torchmetrics.Accuracy()
-        self.train_acc = torchmetrics.Accuracy()
-        self.valid_acc = torchmetrics.Accuracy()
-        self.conv1 = nn.Sequential(nn.Conv2d(3,16,3), nn.ReLU(), nn.MaxPool2d(2,2)) 
-        self.conv2 = nn.Sequential(nn.Conv2d(16,32,3), nn.ReLU(), nn.MaxPool2d(2,2)) 
-        self.conv3 = nn.Sequential(nn.Conv2d(32,64,3), nn.ReLU(), nn.MaxPool2d(2,2)) 
+        self.accuracy = torchmetrics.Accuracy(task="multiclass", num_classes=2)  #
+        self.train_acc = torchmetrics.Accuracy(task="multiclass", num_classes=2)  #
+        self.valid_acc = torchmetrics.Accuracy(task="multiclass", num_classes=2)  #
+        self.conv1 = nn.Sequential(nn.Conv2d(3,16,3), nn.ReLU(), nn.MaxPool2d(2,2))
+        self.conv2 = nn.Sequential(nn.Conv2d(16,32,3), nn.ReLU(), nn.MaxPool2d(2,2))
+        self.conv3 = nn.Sequential(nn.Conv2d(32,64,3), nn.ReLU(), nn.MaxPool2d(2,2))
         self.fc1 = nn.Sequential(nn.Flatten(), nn.Linear(64*5*5,256), nn.ReLU(), nn.Linear(256,128), nn.ReLU())
         self.fc2 = nn.Sequential(nn.Linear(128,2),)
 
@@ -763,10 +862,9 @@ class LitModel_mGPU(pl.LightningModule):
         x = self.conv3(x)
         x = self.fc1(x)
         x = self.fc2(x)
-        return F.softmax(x,dim = 1) 
+        return F.softmax(x,dim = 1)
 
 
-# En[ ]:
 
 
 # modelo inicial
@@ -774,10 +872,10 @@ model = LitModel_mGPU()
 
 # Inicializar un entrenador
 trainer = pl.Trainer(
+    accelerator="tpu", devices=1,
     tpu_cores=8,
-    max_epochs=1,
-    progress_bar_refresh_rate=10,
+    max_epochs=1
 )
 
 trainer.fit(model)
-
+'''
