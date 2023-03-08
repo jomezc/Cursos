@@ -1,19 +1,38 @@
 #!/usr/bin/env python
 # codificación: utf-8
 
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
-#
 # # **PyTorch - Transferir aprendizaje con hormigas vs abejas**
 #
 # ---
 #
-# En esta lección, aprendemos cómo configurar generadores de datos para cargar nuestro propio conjunto de datos y entrenar un clasificador usando Keras.
+# En esta lección, aprendemos cómo configurar generadores de datos para cargar nuestro propio conjunto de datos y
+# entrenar un clasificador usando pytorch.
 # 1. Configurar nuestros datos
 # 2. Construyendo nuestro modelo para Transfer Learning
 # 3. Ajuste fino de Convnet
 # 4. ConvNet como extractor de funciones fijas
 
-# En 1]:
+# Explicación de programador de tasa de aprendizaje.
+'''
+Encontrados Varios programadores explicados en:
+https://towardsdatascience.com/a-visual-guide-to-learning-rate-schedulers-in-pytorch-24bbb262c863
+
+Las redes neuronales tienen muchos hiperparámetros que afectan el rendimiento del modelo. Uno de los hiperparámetros
+esenciales es la tasa de aprendizaje (LR), que determina cuánto cambian los pesos del modelo entre los pasos de
+entrenamiento. En el caso más simple, el valor LR es un valor fijo entre 0 y 1.
+
+Un programador de tasa de aprendizaje ajusta la tasa de aprendizaje de acuerdo con un programa predefinido durante el
+proceso de capacitación. Entre ellos está step LR
+
+El StepLRreduce la tasa de aprendizaje por un factor multiplicativo después de cada número predefinido de pasos de
+entrenamiento.
+
+from torch.optim.lr_scheduler import StepLR
+
+scheduler = StepLR(optimizer,
+                   step_size = 4 , # Período de disminución de la tasa de aprendizaje
+                    gamma = 0.5 ) # Factor multiplicativo de disminución de la tasa de aprendizaje
+'''
 
 
 from __future__ import print_function, division
@@ -35,17 +54,11 @@ plt.ion()   #  modo interactivo
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-# En 2]:
-
-
 # Descarga nuestro conjunto de datos
-get_ipython().system('wget https://download.pytorch.org/tutorial/hymenoptera_data.zip')
-get_ipython().system('unzip hymenoptera_data.zip')
+'''wget https://download.pytorch.org/tutorial/hymenoptera_data.zip'''
 
 
 # ### **Establecer nuestras transformaciones de datos**
-
-# En 3]:
 
 
 # Aumento y normalización de datos para entrenamiento
@@ -55,11 +68,13 @@ data_transforms = {
         transforms.RandomResizedCrop(224),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
+        # Dado que la red original fue entrenado con un conjuntop de datos en un formato determinado, tenemos que
+        # normalizar el nuestro para que sea como con el que se entrenó.
         # Resta la media de cada valor y luego lo divide por la desviación estándar.
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
     'val': transforms.Compose([
-        # cambia el tamaño de las imágenes para que el lado más corto tenga una longitud de 256 píxeles.
+        # Cambia el tamaño de las imágenes para que el lado más corto tenga una longitud de 256 píxeles.
         # El otro lado se escala para mantener la relación de aspecto de la imagen.
         transforms.Resize(256), 
         # recorta el centro de la imagen para que sea una imagen cuadrada de 224 x 224 píxeles.
@@ -71,17 +86,23 @@ data_transforms = {
 
 
 # ### **Crear nuestros cargadores de datos**
-# El comando **datasets.ImageFolder()** espera que nuestros datos estén organizados de la siguiente manera: `root/label/image.jpg`. En otras palabras, las imágenes deben ordenarse en carpetas. Por ejemplo, todas las imágenes de abejas deben estar en una carpeta, todas las imágenes de hormigas deben estar en otra, así:
+# El comando **datasets.ImageFolder()** espera que nuestros datos estén organizados de la siguiente manera:
+# `root/label/image.jpg`. En otras palabras, las imágenes deben ordenarse en carpetas. Por ejemplo, todas las imágenes
+# de abejas deben estar en una carpeta, todas las imágenes de hormigas deben estar en otra, así:
 # - nombre_del_conjunto_de_datos/
 # - /hormigas/
 # - nombre_del_conjunto_de_datos/
 #   - /abejas/
-
-# En[4]:
+# Esto tanto pata train como para val, ejemplo completo. la ruta es hymenoptera_data, y es la que se le pasa. dentro
+# tenemos
+#   - train/ants(etiqueta)/imágenes
+#   - train/bees(etiqueta)/imágenes
+#   - val/ants(etiqueta)/imágenes
+#   - val/bees(etiqueta)/imágenes
 
 
 # Establecer en la ruta de su imagen
-data_dir = './hymenoptera_data'
+data_dir = 'images/hymenoptera_data'
 
 # Use ImageFolder para apuntar a nuestro conjunto de datos completo
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x]) for x in ['train', 'val']}
@@ -98,10 +119,6 @@ print(class_names)
 
 
 # ### **Visualizar algunas Imágenes**
-#
-
-# En[5]:
-
 
 def imshow(inp, title=None):
     """ Imshow para tensor."""
@@ -111,9 +128,11 @@ def imshow(inp, title=None):
     inp = std * inp + mean
     inp = np.clip(inp, 0, 1)
     plt.imshow(inp)
+    plt.show()
     if title is not None:
         plt.title(title)
     plt.pause(0.001)  # pausa un poco para que se actualicen las tramas
+
 
 
 # Obtenga un lote de datos de entrenamiento
@@ -135,16 +154,15 @@ imshow(out, title=[class_names[x] for x in classes])
 # A continuación, el parámetro ``scheduler`` es un objeto del programador LR de
 # ``torch.optim.lr_scheduler``.
 
-# En[6]:
-
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
-    since = time.time()
+    since = time.time()  # tiempo para monitorizacion
 
-    best_model_wts = copy.deepcopy(model.state_dict())
-    best_acc = 0.0
+    best_model_wts = copy.deepcopy(model.state_dict())  # realizamos una copia para salvar el estado original del modelo
+    best_acc = 0.0  # monitorización del accuracy
 
-    for epoch in range(num_epochs):
+    for epoch in range(num_epochs):  # para el número de épocas que establezcamos
+        # pintar información de la época que está realizando
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
 
@@ -190,7 +208,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
             print('{} Loss: {:.4f} Acc: {:.4f}'.format(phase, epoch_loss, epoch_acc))
 
-            # copia profunda del modelo
+            # copia profunda del modelo, hacemos un seguimiento del mejor modelo guardando una copia del mejor y su
+            # Accuracy
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
@@ -207,9 +226,6 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
 
 # ### **Crear función para visualizar las predicciones de nuestro modelo**
-
-# En[7]:
-
 
 def visualize_predictions(model, num_images=6):
     was_training = model.training
@@ -239,33 +255,39 @@ def visualize_predictions(model, num_images=6):
 
 
 ### **3. Ajuste fino de Convnet**
-# Cargamos un modelo **resnet18** preentrenado y cambiamos la capa final completamente conectada para generar el tamaño de nuestra clase (2).
+# en ajuste fino bajamos un modelo preentrenado y no congelamos ninguna capa o congelamos alguna, en este caso ninguna.
+# Cargamos un modelo **resnet18** preentrenado y cambiamos la capa final completamente conectada para generar el tamaño
+# de nuestra clase (2).
 
-# En[8]:
+model_ft = models.resnet18(weights=True)  # cargamos el modelo
+num_ftrs = model_ft.fc.in_features  # obtenemos la cantidad de características aquí del modelo que acabamos de cargar
 
-
-model_ft = models.resnet18(pretrained=True)
-num_ftrs = model_ft.fc.in_features
-
-# Aquí el tamaño de cada muestra de salida se establece en 2.
+# Aquí el tamaño de cada muestra de salida se establece en 2,
+# estamos cambiando la capa final totalmente conectada adaptándola a la salida
 # Alternativamente, se puede generalizar a nn.Linear(num_ftrs, len(class_names)).
+'''Comentamos que se establecería nuestro tamaño de muestra solo para establecer dos clases como la salida final, 
+la capa lineal para decirme que las características extraidas del modelo son la entrada para esa capa y  el numero de 
+clase es la salida, y esta entrada  de características procedía venía de la última capa completamente conectada , son 
+solo una serie de características, ya sabes, que simplemente las envían todas al a la cabecera.'''
 model_ft.fc = nn.Linear(num_ftrs, 2)
 
 model_ft = model_ft.to(device)
 
-criterion = nn.CrossEntropyLoss()
+criterion = nn.CrossEntropyLoss()  # establecemos el criterio , en este caso de entropía cruzada
 
 # Observa que todos los parámetros están siendo optimizados
-optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
+optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)  # definimos el optimizador
 
 # Decae LR por un factor de 0.1 cada 7 épocas
-exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
-
+# explicación de lo que es un programador de tasa de aprendizaje arriba,
+exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft,
+                                       step_size=7,  # Período de disminución de la tasa de aprendizaje
+                                       gamma=0.1)   # Factor multiplicativo de disminución de la tasa de aprendizaje
+# en estos dos pasos anteriores definimos un optimizador cuyo valor de LR ( tasa de aprendizaje) vamos modificando
+# automáticamente en función de un programa cuando se cumplen unas condiciones o características durante la ejecución
+# del entrenamiento, cada 7 pasos se reduce un 10% en este caso
 
 # ### **Entrenar y Evaluar**
-
-# En[10]:
-
 
 model_ft = train_model(model_ft,
                        criterion,
@@ -273,14 +295,10 @@ model_ft = train_model(model_ft,
                        exp_lr_scheduler,
                        num_epochs=5)
 
-
-# En[11]:
-
-
 visualize_predictions(model_ft)
 
 
-### **4. ConvNet como extractor de características fijas**
+# ## **4. ConvNet como extractor de características fijas**
 # ----------------------------------
 #
 # Aquí, necesitamos **congelar** todas las capas de red excepto la capa final.
@@ -292,19 +310,22 @@ visualize_predictions(model_ft)
 # Puedes leer más sobre esto en la documentación
 # aquí https://pytorch.org/docs/notes/autograd.html#excluyendo-subgraphs-from-backward.
 #
+'''Lo que vamos a hacer ahora es usar transferencia de aprendizaje por extracción de características,
+lo que significa que todo lo que hacemos es congelar todas las capas convolucionales, todo el primer bloque de capas
+y la red que cargamos y luego entrenamos a los mejores jugadores.'''
 #
-#
-
-# En[12]:
-
 
 model_conv = torchvision.models.resnet18(pretrained=True)
 
 # Aquí congelamos capas
+# usamos param.requires_grad para congeglar cada convolución del modelo
 for param in model_conv.parameters():
     param.requires_grad = False
 
-# Los parámetros de los módulos recién construidos tienen require_grad=True por defecto
+
+# tomamos las funciones totalmente conectadas aquí, las funciones de la última capa, y luego las agregamos a nuestra
+# clase de salida aquí, estos módulos recién construidos si van a ser entrenables, ya que Los parámetros de los módulos
+# recién construidos tienen requires_grad=True por defecto
 num_ftrs = model_conv.fc.in_features
 model_conv.fc = nn.Linear(num_ftrs, 2)
 
@@ -317,22 +338,18 @@ criterion = nn.CrossEntropyLoss()
 optimizer_conv = optim.SGD(model_conv.fc.parameters(), lr=0.001, momentum=0.9)
 
 # Decae LR por un factor de 0.1 cada 7 épocas
-exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size=7, gamma=0.1)
+exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv,
+                                       step_size=7,  # Período de disminución de la tasa de aprendizaje
+                                       gamma=0.1)  # Factor multiplicativo de disminución de la tasa de aprendizaje
 
 
 # ### **Entrenar y Evaluar**
-
-# En[13]:
-
 
 model_conv = train_model(model_conv,
                          criterion,
                          optimizer_conv,
                          exp_lr_scheduler,
                          num_epochs=5)
-
-
-# En[14]:
 
 
 visualize_predictions(model_conv)

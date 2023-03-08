@@ -10,7 +10,7 @@
 #
 # En esta lección, aprendemos a implementar el **Algoritmo de sueño profundo de Google** usando Keras con Tensorflow 2.0. Este método fue introducido por primera vez por Alexander Mordvintsev de Google en julio de 2015.
 #
-# Nos permite proporcionar el efecto 'Deep Dream' que produce efectos visuales alucinógenos.
+# Nos permite proporcionar el efecto 'Deep Dream' que produce efectos visuales alucinógenos. teniendo una imagen como entrada , detecta partones y los amplifica, dando como salida una imagen
 #
 # En este tutorial nosotros:
 #
@@ -30,6 +30,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.applications import inception_v3
+import matplotlib.pyplot as plt
 
 base_image_path = keras.utils.get_file("castara-tobago.jpeg", "https://github.com/rajeevratan84/ModernComputerVision/raw/main/castara-tobago.jpeg")
 result_prefix = "sky_dream"
@@ -71,7 +72,9 @@ display(Image(base_image_path))
 # - Ejecutar ascenso de gradiente
 # - Imagen de lujo a la siguiente escala
 # - Reinyectar el detalle que se perdió en el momento de la ampliación
-# 5. Deténgase cuando volvamos al tamaño original. Para obtener los detalles perdidos durante la mejora, simplemente tomamos la imagen original, la reducimos, la escalamos y comparamos el resultado con la imagen original (redimensionada).
+# 5. Deténgase cuando volvamos al tamaño original. Para obtener los detalles perdidos durante la mejora, simplemente
+# tomamos la imagen original, la reducimos, la escalamos y comparamos el resultado con la imagen original
+# (redimensionada).
 
 ### **2. Cree nuestras utilidades de preprocesamiento y desprocesamiento de imágenes**
 #
@@ -102,11 +105,8 @@ def deprocess_image(x):
 
 
 ### **3. Calcule la pérdida de Deep Dream**
-#
-# Primero construimos un modelo de extracción de características para recuperar las activaciones de nuestras capas de destino dada una imagen de entrada.
-#
-
-# En[8]:
+# Primero construimos un modelo de extracción de características para recuperar las activaciones de nuestras capas de
+# destino dada una imagen de entrada.
 
 
 # Cree un modelo InceptionV3 cargado con pesos de ImageNet previamente entrenados
@@ -127,9 +127,6 @@ feature_extractor = keras.Model(inputs=model.inputs, outputs=outputs_dict)
 
 # El cálculo de la pérdida real es muy simple:
 
-# En[4]:
-
-
 def compute_loss(input_image):
     features = feature_extractor(input_image)
     ''' Initialize the loss '''
@@ -144,9 +141,6 @@ def compute_loss(input_image):
 
 
 ### **4. Configure el bucle de ascenso de gradiente para una octava **
-
-# En[5]:
-
 
 @tf.function
 def gradient_ascent_step(img, learning_rate):
@@ -171,9 +165,6 @@ def gradient_ascent_loop(img, iterations, learning_rate, max_loss=None):
 
 
 # ### **Ahora ejecuta el ciclo de entrenamiento, iterando sobre diferentes octavas**
-
-# En[9]:
-
 
 original_img = preprocess_image(base_image_path)
 original_shape = original_img.shape[1:3]
@@ -204,13 +195,8 @@ keras.preprocessing.image.save_img(result_prefix + ".png", deprocess_image(img.n
 
 # ## **Muestra tu salida final**
 
-# En[10]:
-
-
 display(Image(result_prefix + ".png"))
 
-
-# En[ ]:
 
 
 

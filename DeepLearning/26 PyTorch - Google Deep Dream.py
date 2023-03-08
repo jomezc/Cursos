@@ -10,7 +10,7 @@
 #
 # En esta lección, aprenderemos a implementar el **Algoritmo de sueños profundos de Google** usando PyTorch. Este método fue introducido por primera vez por Alexander Mordvintsev de Google en julio de 2015.
 #
-# Nos permite proporcionar el efecto 'Deep Dream' que produce efectos visuales alucinógenos.
+# Nos permite proporcionar el efecto 'Deep Dream' que produce efectos visuales alucinógenos. teniendo una imagen como entrada , detecta partones y los amplifica, dando como salida una imagen
 #
 # En este tutorial nosotros:
 #
@@ -20,8 +20,6 @@
 # 4. Implementar Deep Dream dirigido
 
 ### **1. Módulos de carga y red VGG preentrenada**
-
-# En[ ]:
 
 
 import numpy as np
@@ -46,17 +44,18 @@ response = requests.get(url)
 img = Image.open(BytesIO(response.content))
 
 from IPython.display import Image as Img
+from IPython.display import *
 
-display(img)
-
+plt.imshow(img)
+plt.show()
 
 ### **2. Obtener los canales de salida de una capa**
 #
-# Obtenga los canales de salida de una capa y calcule los gradientes a partir de su norma L2. Utilice estos datos para actualizar la imagen de entrada, pero moviendo sus parámetros en la dirección del degradado (en lugar de en contra). ¡Repetir!
+# Obtenga los canales de salida de una capa y calcule los gradientes a partir de su norma L2. Utilice estos datos para
+# actualizar la imagen de entrada, pero moviendo sus parámetros en la dirección del degradado (en lugar de en contra).
+# ¡Repetir!
 #
 # https://www.kaggle.com/sironghuang/understanding-pytorch-hooks
-
-# En[ ]:
 
 
 from PIL import Image
@@ -107,8 +106,6 @@ def dream(image, net, layer, iterations, lr):
 
 # ### **Ejecute nuestro primer sueño profundo de Google**
 
-# En[ ]:
-
 
 orig_size = np.array(img.size)
 new_size = np.array(img.size)*0.5
@@ -121,15 +118,14 @@ img = dream(img, vgg, layer, 20, 1)
 img = img.resize(orig_size)
 fig = plt.figure(figsize = (10 , 10))
 plt.imshow(img)
-
+plt.show()
 
 # ## **Mejorando Deep Dream**
 #
 # Vemos que los patrones tienen la misma escala y el efecto de sueño profundo se mejora en la imagen de baja resolución.
 #
-# Una actualización del código anterior es ejecutar la función de sueño repetidamente, pero cada vez con la imagen redimensionada a una escala diferente.
-
-# En[ ]:
+# Una actualización del código anterior es ejecutar la función de sueño repetidamente, pero cada vez con la imagen
+# redimensionada a una escala diferente.
 
 
 # Realice cálculos de gradientes a partir de los canales de salida de la capa de destino.
@@ -147,8 +143,10 @@ def get_gradients(net_in, net, layer, out_channels = None):
   loss.backward()
   return net_in.grad.data.squeeze()
 
-# Función para ejecutar el sueño. Las conversiones excesivas hacia y desde matrices numpy son para hacer uso de la función np.roll().
-# Al rodar la imagen aleatoriamente cada vez que se calculan los gradientes, evitamos que aparezca un artefacto de efecto de mosaico.
+# Función para ejecutar el sueño. Las conversiones excesivas hacia y desde matrices numpy son para hacer uso de la
+# función np.roll().
+# Al rodar la imagen aleatoriamente cada vez que se calculan los gradientes, evitamos que aparezca un artefacto de
+# efecto de mosaico.
 def dream(image, net, layer, iterations, lr, out_channels = None):
   image_numpy = np.array(image)
   image_tensor = transforms.ToTensor()(image_numpy)
@@ -185,10 +183,8 @@ layer = list( vgg.features.modules() )[27]
 
 from IPython.display import Image as Img
 
-display(img)
-
-
-# En[ ]:
+plt.imshow(img)
+plt.show()
 
 
 # Visualice características en diferentes escalas, la imagen cambia de tamaño varias veces y se ejecuta a través del sueño
@@ -201,13 +197,11 @@ for n in range(-7,1):
 img = img.resize(orig_size)
 fig = plt.figure(figsize = (10 , 10))
 plt.imshow(img)
-
+plt.show()
 
 # ## **3.Sueño profundo dirigido**
 #
 # Aquí guiamos el sueño, usando una imagen de destino con características que nos gustaría visualizar en nuestra imagen de entrada.
-
-# En[ ]:
 
 
 def objective_guide(dst, guide_features):
@@ -236,7 +230,9 @@ def get_gradients(net_in, net, layer, control = False, guide_features = None):
     params = hook.output[0]
   hook.output[0].backward( params )
   return net_in.grad.data.squeeze()
-  
+
+
+  ''' Mucho consumo
 # Nuestro nuevo algoritmo de ensueño
 def dream(image, net, layer, iterations, lr, control = False, guide_features = None):
   image_numpy = np.array(image)
@@ -265,7 +261,7 @@ def dream(image, net, layer, iterations, lr, control = False, guide_features = N
   img_out_pil = Image.fromarray(np.uint8(img_out_np * 255))
   return img_out_pil
 
-layer = list( vgg.features.modules() )[33]
+layer = list( vgg.features.modules() )[10]
 
 # extraer características de destino
 url_guide_features = "https://www.allfordogs.org/wp-content/uploads/2018/05/many-dog-faces.jpg"
@@ -299,8 +295,6 @@ fig = plt.figure(figsize = (10 , 10))
 plt.imshow(img)
 
 
-# En[ ]:
 
-
-
+'''
 

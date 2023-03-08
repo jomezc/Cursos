@@ -19,6 +19,154 @@
 # 9. Guardando nuestro Modelo
 # 10. Graficando nuestros registros de entrenamiento
 
+
+# explicación nnlinear
+'''
+https://stackoverflow.com/questions/54916135/what-is-the-class-definition-of-nn-linear-in-pytorch
+
+import torch.nn as nn
+import torch.nn.functional as F
+
+class Network(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.hidden = nn.Linear(784, 256)
+        self.output = nn.Linear(256, 10)
+
+    def forward(self, x):
+        x = F.sigmoid(self.hidden(x))
+        x = F.softmax(self.output(x), dim=1)
+        return x
+
+¿Cuál es la definición de clase de nn.Linear en pytorch?
+
+De la documentación:
+
+CLASS torch.nn.Linear(características_entrantes, características_salientes, bias=Verdadero)
+
+Aplica una transformación lineal a los datos de entrada: y = x*W^T + b
+
+Parámetros:
+
+    in_features - tamaño de cada muestra de entrada (es decir, tamaño de x)
+    out_features - tamaño de cada muestra de salida (es decir, tamaño de y)
+    bias - Si se establece en False, la capa no aprenderá un sesgo aditivo. Predeterminado: True
+
+Tenga en cuenta que los pesos W tienen forma (out_features, in_features) y los sesgos b tienen forma (out_features).
+Se inicializan aleatoriamente y pueden cambiarse más tarde (por ejemplo, durante el entrenamiento de una red neuronal
+se actualizan mediante algún algoritmo de optimización).
+
+como ejemplo en una red neuronal, self.hidden = nn.Linear(784, 256) define una capa lineal oculta (es decir, situada
+entre las capas de entrada y salida), totalmente conectada, que toma la entrada x de forma (batch_size, 784), donde
+batch size es el número de entradas (cada una de tamaño 784) que se pasan a la red a la vez (como un único tensor), y
+la transforma mediante la ecuación lineal y = x*W^T + b en un tensor y de forma (batch_size, 256). Además, se transforma
+
+ mediante la función sigmoidea, x = F.sigmoid(self.hidden(x)) (que no forma parte de nn.Linear, sino que es un paso
+ adicional).
+
+* PROPIO, es una convolución, vamos
+
+Veamos un ejemplo concreto:
+import torch
+
+import torch.nn as nn
+
+x = torch.tensor([[1.0, -1.0],
+                  [0.0,  1.0],
+                  [0.0,  0.0]])
+
+in_features = x.shape[1]  # = 2
+out_features = 2
+
+m = nn.Linear(in_features, out_features)
+
+donde x contiene tres entradas (es decir, el tamaño del lote es 3), x[0], x[1] y x[3], cada una de tamaño 2, y la
+salida va a ser de forma (tamaño del lote, out_features) = (3, 2).
+
+Los valores de los parámetros (pesos y sesgos) son:
+
+>>> m.weight
+tensor([[-0.4500,  0.5856],
+        [-0.1807, -0.4963]])
+
+>>> m.bias
+tensor([ 0.2223, -0.6114])
+
+y (entre bastidores) se calcula como:
+
+y = x.matmul(m.weight.t()) + m.bias  # y = x*W^T + b
+
+i.e:
+
+y[i,j] == x[i,0] * m.weight[j,0] + x[i,1] * m.weight[j,1] + m.bias[j]
+
+donde i está en el intervalo [0, batch_size) y j en [0, out_features).
+
+'''
+
+# explicación nn sequential *****
+'''
+https://stackoverflow.com/questions/68606661/what-is-difference-between-nn-module-and-nn-sequential
+¿Cuál es la ventaja de utilizar nn.Module en lugar de nn.Sequential?
+Mientras que nn.Module es la clase base para implementar modelos PyTorch, nn.Sequential es una forma rápida de definir
+estructuras de redes neuronales secuenciales dentro o fuera de un nn.Module existente.
+
+ ¿Cuál se utiliza habitualmente para construir el modelo? Ambos son ampliamente utilizados.
+
+¿Cómo debemos seleccionar nn.Module o nn.Sequential? Todas las redes neuronales se implementan con nn.Module. Si las
+capas se utilizan secuencialmente (self.layer3(self.layer2(self.layer1(x))), se puede aprovechar nn.Sequential para no
+tener que definir la función forward del modelo.
+
+Debería empezar mencionando que nn.Module es la clase base para todos los módulos de redes neuronales en PyTorch. Como
+tal nn.Sequential es en realidad una subclase directa de nn.Module
+
+Cuando se crea una nueva red neuronal, lo normal sería crear una nueva clase y heredar de nn.Module, y definir
+dos métodos: __init__ (el inicializador, donde defines tus capas) y forward (el código de inferencia de tu módulo,
+donde usas tus capas). Eso es todo lo que necesitas, ya que PyTorch manejará el paso hacia atrás con Autograd. Aquí hay
+un ejemplo de un módulo:
+
+class NN(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        self.fc1 = nn.Linear(10, 4)
+        self.fc2 = nn.Linear(4, 2)
+
+    def forward(self, x)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        return x
+
+Si el modelo que está definiendo es secuencial, es decir, las capas se llaman secuencialmente en la entrada, una por
+una. Entonces, puede utilizar simplemente un nn.Sequential. Como he explicado antes, nn.Sequential es un tipo especial
+de nn.Module hecho para este tipo particular generalizado de red neuronal. El equivalente aquí es:
+
+class NN(nn.Sequential):
+    def __init__(self):
+        super().__init__(
+           nn.Linear(10, 4),
+           nn.ReLU(),
+           nn.Linear(4, 2),
+           nn.ReLU())
+
+O cimplemente:
+
+NN = Sequential(
+   nn.Linear(10, 4),
+   nn.ReLU(),
+   nn.Linear(4, 2),
+   nn.Linear())
+
+El objetivo de nn.Sequential es implementar rápidamente módulos secuenciales de tal forma que no sea necesario escribir
+la definición forward, ya que se conoce implícitamente porque las capas se llaman secuencialmente en las salidas.
+
+En un módulo más complicado, sin embargo, puede que necesite utilizar múltiples submódulos secuenciales. Por ejemplo,
+si tomamos un clasificador CNN, podríamos definir un nn.Sequential para la parte CNN, y luego definir otro nn.Sequential
+ para la sección del clasificador totalmente conectado del modelo.
+'''
+
+
+
 # ### **1. Importa nuestras bibliotecas y módulos**
 
 # Importamos PyTorch importando ```torch```. Usaremos **torchvision**, que es un paquete de PyTorch que consta de

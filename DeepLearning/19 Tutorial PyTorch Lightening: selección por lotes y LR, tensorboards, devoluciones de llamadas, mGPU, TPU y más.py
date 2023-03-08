@@ -271,46 +271,54 @@ class LitModel(pl.LightningModule):
         self.accuracy = torchmetrics.Accuracy(task="multiclass", num_classes=2) #
         self.train_acc = torchmetrics.Accuracy(task="multiclass", num_classes=2) #
         self.valid_acc = torchmetrics.Accuracy(task="multiclass", num_classes=2) #
-        self.conv1 = nn.Sequential(nn.Conv2d(3,16,3), nn.ReLU(), nn.MaxPool2d(2,2)) 
+        # Convoluciones
+        self.conv1 = nn.Sequential(nn.Conv2d(3,16,3), nn.ReLU(), nn.MaxPool2d(2,2))
         self.conv2 = nn.Sequential(nn.Conv2d(16,32,3), nn.ReLU(), nn.MaxPool2d(2,2)) 
         self.conv3 = nn.Sequential(nn.Conv2d(32,64,3), nn.ReLU(), nn.MaxPool2d(2,2)) 
         self.fc1 = nn.Sequential(nn.Flatten(), nn.Linear(64*5*5,256), nn.ReLU(), nn.Linear(256,128), nn.ReLU())
         self.fc2 = nn.Sequential(nn.Linear(128,2),)
 
     def train_dataloader(self):
+        # definimos una función que usando torch y el objeto dataset que hemos definido cargará y transoformará los
+        # datos usando el tamaño de batch indicado
         # transforma
         return torch.utils.data.DataLoader(dataset = train, batch_size = 32, shuffle=True)
 
     def val_dataloader(self):
+        # del mismo modo definimos una función para la validación para la validación,
         return torch.utils.data.DataLoader(dataset = val, batch_size = 32, shuffle=False)
 
     def cross_entropy_loss(self, logits, labels):
-      return F.nll_loss(logits, labels)
+        # definimos una función para devolvernos una función de pérdida
+        return F.nll_loss(logits, labels)
 
     def training_step(self, batch, batch_idx):
-        data, label = batch
-        output = self.forward(data)
-        loss = nn.CrossEntropyLoss()(output,label)
-        self.log('train_loss', loss)
-        self.log('train_acc_step', self.accuracy(output, label))
-        return {'loss': loss, 'log': self.log}
+        # definimos una función de paso de entrenamiento
+        data, label = batch # desempaquetamos desde el batch los datos y etiquetas
+        output = self.forward(data)  # realizamos la inferencia realizando una pasada de la red
+        loss = nn.CrossEntropyLoss()(output,label)  # calculamos mediante su función la pérdida
+        self.log('train_loss', loss)  # añadimos la perdida a las métricas
+        self.log('train_acc_step', self.accuracy(output, label))  # calculamos y añadimos la medida de accuracy
+        return {'loss': loss, 'log': self.log}  # devolvemos las métricas
 
     def training_epoch_end(self, outs):
         # métrica de época de registro
         self.log('train_acc_epoch', self.accuracy.compute())
 
     def validation_step(self, batch, batch_idx):
-        val_data, val_label = batch
-        val_output = self.forward(val_data)
-        val_loss = nn.CrossEntropyLoss()(val_output, val_label)
-        self.log('val_acc_step', self.accuracy(val_output, val_label))
-        self.log('val_loss', val_loss)
+        # función de paso de la red pero de validación
+        val_data, val_label = batch  # desempaquetamos desde el batch los datos y etiquetas
+        val_output = self.forward(val_data)  # # realizamos la inferencia realizando una pasada de la red
+        val_loss = nn.CrossEntropyLoss()(val_output, val_label)  # # calculamos mediante su función la pérdida
+        self.log('val_acc_step', self.accuracy(val_output, val_label))  # calculamos y añadimos la medida de accuracy
+        self.log('val_loss', val_loss)  # añadimos la perdida a las métricas
 
     def validation_epoch_end(self, outs):
         # métrica de época de registro
         self.log('val_acc_epoch', self.accuracy.compute())
 
     def configure_optimizers(self):
+        # definimos la función de optimización, usanod Adam
         optimizer = torch.optim.Adam(self.parameters(), lr=(self.learning_rate))
         return optimizer
 

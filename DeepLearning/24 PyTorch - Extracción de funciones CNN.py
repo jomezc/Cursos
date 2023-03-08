@@ -4,10 +4,14 @@
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
 #
 # # **PyTorch Cats vs Dogs - Extracción de funciones**
-#
-# ---
-#
-# En esta lección, aprenderemos a usar una red preentrenada como extractor de funciones. Luego usaremos esas características como entrada para nuestro clasificador de regresión logística.
+'''
+En lugar de tener una red neuronal completamente conectada en la parte superior, usaremos una red lineal
+como una regresión logística para usar las entradas de nuestra capa anterior como entradas para ese modelo.
+Y luego y luego crear un modelo a partir de eso.
+'''
+
+# En esta lección, aprenderemos a usar una red preentrenada como extractor de funciones. Luego usaremos esas
+# características como entrada para nuestro clasificador de regresión logística.
 # 1. Cargue nuestro modelo VGG16 preentrenado
 # 2. Descarga nuestros datos y configura nuestras transformaciones
 # 3. Extraiga nuestras características usando VGG16
@@ -23,8 +27,6 @@
 # ---
 
 ### **1. Descarga nuestros Modelos Pre-entrenados (VGG16)**
-
-# En[ ]:
 
 
 import torch
@@ -47,11 +49,12 @@ summary(model, input_size = (3,224,224))
 
 # ### **Eliminar las capas superiores densas totalmente conectadas**
 
-# En[ ]:
 
-
-# eliminar la última capa completamente conectada
+# eliminar las últimas capas completamente conectadas ( siempre eliminamos todas las conectadas para extraer
+# funciones en este paso)
+# convertimos en una lista y eliminamos las últimas capas
 new_classifier = nn.Sequential(*list(model.classifier.children())[:-7])
+# a partir de ese punto creamos un nuevo clasificador
 model.classifier = new_classifier
 
 
@@ -65,29 +68,16 @@ model.classifier = new_classifier
 # (5): abandono (p = 0.5, en el lugar = falso)
 # (6): Lineal(in_features=4096, out_features=1000, bias=True)`
 
-# En[ ]:
-
 
 summary(model, input_size = (3,224,224))
 
 
 ### **2. Descargue nuestros datos y configure nuestros transformadores**
 
-# En[ ]:
-
-
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/dogs-vs-cats.zip')
-get_ipython().system('unzip -q gatos_perros.zip')
-get_ipython().system('unzip -q train.zip')
-get_ipython().system('unzip -q test1.zip')
-
-
-# En[ ]:
-
 
 # Establecer rutas de directorio para nuestros archivos
-train_dir = './train'
-test_dir = './test1'
+train_dir = 'images/gatos_perros/train'
+test_dir = 'images/gatos_perros/test1'
 
 # Obtener archivos en nuestros directorios
 train_files = os.listdir(train_dir)
@@ -96,6 +86,7 @@ test_files = os.listdir(test_dir)
 print(f'Number of images in {train_dir} is {len(train_files)}')
 print(f'Number of images in {test_dir} is {len(test_files)}')
 
+# al ser el origen vgg no necesitamos muchas transformaciones, solo cambiar el tamaño a 224x224 y pasarlo a tensor
 transformations = transforms.Compose([transforms.Resize((224,224)),
                                       transforms.ToTensor()])
 
@@ -133,15 +124,14 @@ val_dataset = torch.utils.data.DataLoader(dataset = val, batch_size = 32, shuffl
 
 ### **3. Extrae nuestras características usando VGG16**
 
-# En[ ]:
+image_names = os.listdir('images/gatos_perros/train')
+image_paths = ['images/gatos_perros/train/' + x for x in image_names]
 
-
-image_names = os.listdir("./train")
-image_paths = ["./train/"+ x for x in image_names]
-
-
-# En[ ]:
-
+# ponemos el modelo en modo de evaluación porque no lo estamos entrenando sólo estamos usando el modelo para extraer
+# características.
+# Los filtros CNN son básicamente detectores de características para dar efecto a bordes, complejos patrones complejos,
+# y todas esas cosas que podemos y podríamos incluir en cualquier imagen en términos de esas características.
+# características y luego utilizar esas características como entradas en otro modelo.
 
 model.eval() 
 model = model.cuda()
@@ -164,42 +154,26 @@ with torch.no_grad():
             features = output
             image_labels = label
 
-    # reformar nuestro tensor a 25000 x 25088
+    # reformar nuestro tensor a 25000 x 25088 , debido a la salida de la última capa 512 * 7 * 7
     features = features.view(features.size(0), -1)
 
-
-# En[ ]:
-
-
 # Compruebe que tenemos funciones para todas las 25000 imágenes
-features.size(0)
-
-
-# En[ ]:
+print(features.size(0))
 
 
 # Compruebe que tenemos etiquetas para todas las 25000 imágenes
-image_labels.shape
-
-
-# En[ ]:
+print(image_labels.shape)
 
 
 # Verifique la forma para asegurarse de que nuestras características sean una matriz aplanada de 512 * 7 * 7
-features.shape
+print(features.shape)
 
 
 ### **4. Entrene a un clasificador LR usando esas características**
 
-# En[ ]:
-
-
 # Convertir nuestros tensores en matrices numpy
 features_np = features.cpu().numpy()
 image_labels_np = image_labels.cpu().numpy()
-
-
-# En[ ]:
 
 
 from sklearn.model_selection import train_test_split
@@ -207,12 +181,11 @@ from sklearn.linear_model import LogisticRegression
 
 # Divida nuestro modelo en un conjunto de datos de prueba y entrenamiento para entrenar nuestro clasificador LR
 X_train, X_test, y_train, y_test = train_test_split(features_np, image_labels_np, test_size=0.2, random_state = 7)
+# random state es un número aleatorio puede ponerse el que sea
 
+'''Creamos un objeto de regresión logística '''
 glm = LogisticRegression(C=0.1)
-glm.fit(X_train,y_train)
-
-
-# En[ ]:
+glm.fit(X_train, y_train)  # y ajustamos el modelo
 
 
 # Obtener Precisión
@@ -222,14 +195,10 @@ print(f'Accuracy on validation set using Logistic Regression: {accuracy*100}%')
 
 ### **5. Ejecute algunas inferencias en nuestros datos de prueba**
 
-# En[ ]:
 
 
-image_names_test = os.listdir("./test1")
-image_paths_test = ["./test1/"+ x for x in image_names_test]
-
-
-# En[ ]:
+image_names_test = os.listdir("images/gatos_perros/test1")
+image_paths_test = ["images/gatos_perros/test1/" + x for x in image_names_test]
 
 
 from torch.autograd import Variable
@@ -246,9 +215,6 @@ def image_loader(loader, image_name):
     return image
 
 
-# En[ ]:
-
-
 import random 
 
 test_sample = random.sample(image_paths_test, 12)
@@ -261,20 +227,16 @@ def test_img():
       output = model(image.to(device))
       output = output.cpu().detach().numpy() 
       result = glm.predict(output)
+      # El modelo de regresión logística va a devolver un numero entre 0 y 1. se establece que si es mayor de 0,5 es un
+      # perro y si no es un gato
       result = 'dog' if float(result) >0.5 else 'cat'
       result_lst.append(result)
     return result_lst
-
-
-# En[ ]:
-
 
 # obtener predicciones de prueba de todos los modelos
 pred_results = test_img()
 pred_results
 
-
-# En[ ]:
 
 
 import cv2
@@ -293,9 +255,6 @@ for i in range(0, 12):
 
 plt.tight_layout()
 plt.show()
-
-
-# En[ ]:
 
 
 

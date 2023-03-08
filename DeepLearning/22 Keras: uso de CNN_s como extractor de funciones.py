@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # codificación: utf-8
 
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
-#
 # # **Keras Cats vs Dogs - Extracción de funciones**
 #
 # ---
@@ -22,37 +20,24 @@
 
 ### **1. Descarga y explora nuestros datos**
 
-# En 1]:
-
 
 from tensorflow.keras.preprocessing.image import array_to_img, img_to_array, load_img
 from tensorflow.keras.applications import VGG16, imagenet_utils
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-import pandas as pd 
+import pandas as pd
 import numpy as np
 import random
 import tqdm
 import os
 
 
-# En 2]:
-
-
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/dogs-vs-cats.zip')
-get_ipython().system('unzip -q gatos_perros.zip')
-get_ipython().system('unzip -q train.zip')
-get_ipython().system('unzip -q test1.zip')
-
-
 # ### **Cargando nuestros datos y sus etiquetas en un marco de datos**
 #
 # Hay muchas formas en que podemos hacer esto, esta forma es relativamente simple de seguir.
 
-# En 3]:
 
-
-filenames = os.listdir("./train")
+filenames = os.listdir("images/gatos_perros/train")
 
 categories = []
 
@@ -67,18 +52,15 @@ df = pd.DataFrame({
     'filename': filenames,
     'class': categories
 })
-df.head()
+
+print(df.head())
 
 
 ### **2. Cargue nuestro modelo VGG16 preentrenado**
 
-# En[4]:
-
 
 model = VGG16(weights="imagenet", include_top=False)
 
-
-# En[5]:
 
 
 model.summary()
@@ -96,19 +78,19 @@ model.summary()
 # ### **Almacenar nuestras rutas de imágenes y nombres de etiquetas**
 
 ### **3. Extrae nuestras características usando VGG16**
-
-# En[28]:
-
+# Al ignorar la parte densa del modelo, no tiene este modelo es solo convolucional no tiene capas totalmente conectadas
+# recorre todas las imágenes y extrae las caracterísiticas de las imágenes mediante la red con la salida 7*7*512 que
+# usaremos ca posteriori como entrada de nuestro nuevo clasificador
 
 batch_size = 32
 image_features = []
 image_labels = []
 
 # bucle sobre cada lote
-for i in range(0, len(image_paths)//batch_size):
+for i in range(0, len(filenames)//batch_size):
   # extraer nuestros lotes
-  batch_paths = image_paths[i:i + batch_size]
-  batch_labels = labels[i:i + batch_size]
+  batch_paths = 'images/gatos_perros/train/'+df['filename'][i:i + batch_size]
+  batch_labels = df['class'][i:i + batch_size]
   batch_images = []
 
   # iterar sobre cada imagen y extraer las características de nuestra imagen
@@ -139,26 +121,18 @@ for i in range(0, len(image_paths)//batch_size):
   image_labels.append(batch_labels)
 
 
-# En[29]:
-
 
 # veamos la imagen imageFeatures
 print(image_features[0].shape)
-image_features[0]
+print(image_features[0])
 
 
-# En[30]:
-
-
-image_labels
+print(image_labels)
 
 
 ### **4. Entrene a un clasificador LR usando esas características**
 #
 # Primero, almacenemos nuestra información de función extraída en un formato que sklearn pueda cargar directamente.
-
-# En[ ]:
-
 
 # tome nuestra lista de lotes y reduzca la dimensión para que ahora sea una lista de 25088 funciones x 25000 filas (25000 x 1 para nuestras etiquetas)
 imageLabels_data =  [lb for label_batch in image_labels for lb in label_batch]
@@ -168,14 +142,10 @@ imageFeatures_data = [feature for feature_batch in image_features for feature in
 image_labels_data = np.array(imageLabels_data)
 image_features_data = np.array(imageFeatures_data)
 
-
-# En[ ]:
-
-
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 
-y = image_labels_data 
+y = image_labels_data
 
 # Divida nuestro modelo en un conjunto de datos de prueba y entrenamiento para entrenar nuestro clasificador LR
 X_train, X_test, y_train, y_test = train_test_split(image_features_data, y, test_size=0.2, random_state = 7)
@@ -183,8 +153,6 @@ X_train, X_test, y_train, y_test = train_test_split(image_features_data, y, test
 glm = LogisticRegression(C=0.1)
 glm.fit(X_train,y_train)
 
-
-# En[ ]:
 
 
 # Obtenga precisión en el 20 % que dividimos de su conjunto de datos de entrenamiento
@@ -194,17 +162,13 @@ print(f'Accuracy on validation set using Logistic Regression: {accuracy*100}%')
 
 ### **5. Pruebe algunas inferencias**
 
-# En[ ]:
+
+image_names_test = os.listdir("images/gatos_perros/test1/")
+image_paths_test = ["images/gatos_perros/test1/"+ x for x in image_names_test]
 
 
-image_names_test = os.listdir("./test1")
-image_paths_test = ["./test1/"+ x for x in image_names_test]
 
-
-# En[ ]:
-
-
-import random 
+import random
 
 test_sample = random.sample(image_paths_test, 12)
 
@@ -223,15 +187,10 @@ def test_img():
     return result_lst
 
 
-# En[ ]:
-
-
 # obtener predicciones de prueba de todos los modelos
 pred_results = test_img()
 pred_results
 
-
-# En[ ]:
 
 
 plt.figure(figsize=(15, 15))
@@ -254,9 +213,5 @@ plt.show()
 # ¡Obtuvimos 98.34%, segundo lugar! No está nada mal :)
 #
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/Screenshot%202021-05-17%20at%208.09.25%20pm.png)
-
-# En[ ]:
-
-
 
 

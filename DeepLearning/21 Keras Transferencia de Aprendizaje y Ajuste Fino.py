@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 # codificación: utf-8
 
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
-#
 # # **Keras - Transferencia de aprendizaje con perros y gatos**
 #
 # ---
 #
-# En esta lección, aprendemos cómo configurar generadores de datos para cargar nuestro propio conjunto de datos y entrenar un clasificador usando Keras.
+# En esta lección, aprendemos cómo configurar generadores de datos para cargar nuestro propio conjunto de datos y
+# entrenar un clasificador usando Keras.
 # 1. Comprender las capas entrenables de una red neuronal
 # 2. Configuración de nuestros datos
 # 3. Construyendo nuestro modelo para Transfer Learning
 # 4. Realice un ajuste fino
-
-# En 1]:
 
 
 # Importación de bibliotecas
@@ -47,11 +44,13 @@ print(f'Number of trainable_weights: {len(layer.trainable_weights)}')
 print(f'Number of non_trainable_weights: {len(layer.non_trainable_weights)}')
 
 
-# Todas las capas se pueden entrenar con la excepción de **BatchNormalization**. Utiliza pesos no entrenables para realizar un seguimiento de la media y la varianza de sus entradas durante el entrenamiento.
+# Todas las capas se pueden entrenar con la excepción de **BatchNormalization**. Utiliza pesos no entrenables para
+# realizar un seguimiento de la media y la varianza de sus entradas durante el entrenamiento.
 
 # **Capas y modelos** también cuentan con un atributo booleano `entrenable`.
 #
-# Su valor se puede cambiar configurando `layer.trainable` a `False` mueve todos los pesos de la capa de entrenable a no entrenable.
+# Su valor se puede cambiar configurando `layer.trainable` a `False` mueve todos los pesos de la capa de entrenable a
+# no entrenable.
 #
 # Esto se llama **"congelar"** la capa: el estado de una capa congelada no
 # ser actualizado durante el entrenamiento (ya sea cuando se entrena con `fit()` o cuando se entrena con
@@ -78,9 +77,6 @@ model.compile(optimizer="adam", loss="mse")
 model.fit(np.random.random((2, 3)), np.random.random((2, 3)))
 
 
-# En[4]:
-
-
 # Verifique que los pesos de la capa 1 no hayan cambiado durante el entrenamiento
 final_layer1_weights_values = layer1.get_weights()
 
@@ -91,7 +87,8 @@ if initial_layer1_weights_values[1].all() == final_layer1_weights_values[1].all(
   print('Weights unchanged')
 
 
-# **Nota**: **`.trianable` es recursivo**, lo que significa que en un modelo o en cualquier capa que tenga subcapas, todas las capas secundarias tampoco se pueden entrenar.
+# **Nota**: **`.trianable` es recursivo**, lo que significa que en un modelo o en cualquier capa que tenga subcapas,
+# todas las capas secundarias tampoco se pueden entrenar.
 
 # ## **Implementación del aprendizaje por transferencia**
 #
@@ -140,16 +137,13 @@ for i, (image, label) in enumerate(train_ds.take(9)):
     plt.imshow(image)
     plt.title('Cat' if int(label) == 0 else 'Dog')
     plt.axis("off")
-
+plt.show()
 
 # ## **Estandarizar nuestros datos**
 #
 # - Estandarizar a un tamaño de imagen fijo. Elegimos 150x150.
 # - Normalice los valores de píxel entre -1 y 1. Haremos esto usando una capa de `Normalización` como
 # parte del propio modelo.
-
-# En[7]:
-
 
 size = (150, 150)
 
@@ -158,10 +152,8 @@ validation_ds = validation_ds.map(lambda x, y: (tf.image.resize(x, size), y))
 test_ds = test_ds.map(lambda x, y: (tf.image.resize(x, size), y))
 
 
-# Procesaremos los datos por lotes y utilizaremos el almacenamiento en caché y la captación previa para optimizar la velocidad de carga.
-
-# En[8]:
-
+# Procesaremos los datos por lotes y utilizaremos el almacenamiento en caché y la captación previa para optimizar la
+# velocidad de carga.
 
 batch_size = 32
 
@@ -171,8 +163,6 @@ test_ds = test_ds.cache().batch(batch_size).prefetch(buffer_size=10)
 
 
 # ### **Introducir algunos aumentos de datos aleatorios**
-
-# En[9]:
 
 
 from tensorflow import keras
@@ -188,8 +178,6 @@ data_augmentation = keras.Sequential(
 
 # #### **Visualizar nuestros aumentos de datos**
 
-# En[10]:
-
 
 import numpy as np
 
@@ -204,7 +192,7 @@ for images, labels in train_ds.take(1):
         plt.imshow(augmented_image[0].numpy().astype("int32"))
         plt.title(int(labels[i]))
         plt.axis("off")
-
+plt.show()
 
 ### **3. Construyendo nuestro modelo**
 #
@@ -220,8 +208,6 @@ for images, labels in train_ds.take(1):
 # incluso después de descongelar el modelo base para realizar ajustes.
 #
 # - Usaremos el **Modelo Xception** como base.
-
-# En[11]:
 
 
 base_model = keras.applications.Xception(
@@ -259,8 +245,6 @@ model.summary()
 #
 # Tenga en cuenta del resumen anterior que solo tenemos 2,049 parámetros entrenables.
 
-# En[ ]:
-
 
 model.compile(
     optimizer=keras.optimizers.Adam(),
@@ -268,7 +252,7 @@ model.compile(
     metrics=[keras.metrics.BinaryAccuracy()],
 )
 
-epochs = 20
+epochs = 5
 model.fit(train_ds, epochs=epochs, validation_data=validation_ds)
 
 
@@ -276,11 +260,11 @@ model.fit(train_ds, epochs=epochs, validation_data=validation_ds)
 #
 # **Descongelamos** el modelo base y entrenamos todo el modelo de principio a fin con una tasa de aprendizaje **baja**.
 #
-# **Notas** aunque el modelo base se vuelve entrenable, aún se ejecuta en modo de inferencia ya que pasamos `training=False` cuando lo llamamos cuando construimos el modelo.
+# **Notas** aunque el modelo base se vuelve entrenable, aún se ejecuta en modo de inferencia ya que pasamos
+# `training=False` cuando lo llamamos cuando construimos el modelo.
 #
-# Esto significa que las capas de normalización de lotes internas no actualizarán sus estadísticas de lotes. Si lo hicieran, causarían estragos en las representaciones aprendidas por el modelo hasta el momento.
-
-# En[ ]:
+# Esto significa que las capas de normalización de lotes internas no actualizarán sus estadísticas de lotes. Si lo
+# hicieran, causarían estragos en las representaciones aprendidas por el modelo hasta el momento.
 
 
 # Descongele el modelo_base. Tenga en cuenta que sigue ejecutándose en modo de inferencia
@@ -291,18 +275,12 @@ model.fit(train_ds, epochs=epochs, validation_data=validation_ds)
 base_model.trainable = True
 model.summary()
 
+# CON TASA BAJA TARDA MUCHO
 model.compile(
     optimizer=keras.optimizers.Adam(1e-5),  # Baja tasa de aprendizaje
     loss=keras.losses.BinaryCrossentropy(from_logits=True),
     metrics=[keras.metrics.BinaryAccuracy()],
 )
 
-epochs = 10
+epochs = 1
 model.fit(train_ds, epochs=epochs, validation_data=validation_ds)
-
-
-# En[ ]:
-
-
-
-
