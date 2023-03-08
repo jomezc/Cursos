@@ -98,7 +98,7 @@ train_files = os.listdir(train_dir)
 test_files = os.listdir(test_dir)
 
 # Crea nuestras transformaciones
-transformations = transforms.Compose([transforms.Resize((60,60)),transforms.ToTensor()])
+transformations = transforms.Compose([transforms.Resize((60, 60)), transforms.ToTensor()])
 
 # Crear nuestros objetos de conjunto de datos de tren y prueba
 train = Dataset(train_files, train_dir, transformations)
@@ -149,8 +149,8 @@ val = Dataset(test_files, test_dir, transformations)
 # Split into our train and validation
 train, val = torch.utils.data.random_split(train,[20000,5000])
 
-#train_loader = torch.utils.data.DataLoader(dataset = train, batch_size = 32, shuffle=True)
-#val_loader = torch.utils.data.DataLoader(dataset = val, batch_size = 32, shuffle=False)
+# train_loader = torch.utils.data.DataLoader(dataset = train, batch_size = 32, shuffle=True)
+# val_loader = torch.utils.data.DataLoader(dataset = val, batch_size = 32, shuffle=False)
 class Dataset():
     def __init__(self, filelist, filepath, transform = None):
         self.filelist = filelist
@@ -197,10 +197,7 @@ train_loader = torch.utils.data.DataLoader(dataset = train, batch_size = 32, shu
 val_loader = torch.utils.data.DataLoader(dataset = val, batch_size = 32, shuffle=False)
 
 
-### **2. Organizar su código en la estructura Lightning/filosofía de diseño**
-
-# En 20]:
-
+# ## **2. Organizar su código en la estructura Lightning/filosofía de diseño**
 
 class LitModel(pl.LightningModule):
     def __init__(self, batch_size):
@@ -248,10 +245,8 @@ class LitModel(pl.LightningModule):
         return F.softmax(x,dim = 1) 
 
 
-### **3. Selección automática de lotes**
 
-# En[21]:
-
+# ## **3. Selección automática de lotes**
 
 model = LitModel(batch_size = 32)
 
@@ -261,12 +256,10 @@ trainer = pl.Trainer(auto_scale_batch_size=True)
 trainer.tune(model)
 
 
-### **4. Selección automática de tasa de aprendizaje**
+# ## **4. Selección automática de tasa de aprendizaje**
 #
-# Edite el módulo Lightning como se muestra a continuación. Tenga en cuenta que hemos agregado nuevas líneas en las líneas 5 a 8.
-
-# En[23]:
-
+# Edite el módulo Lightning como se muestra a continuación. Tenga en cuenta que hemos agregado nuevas líneas en las
+# líneas 5 a 8.
 
 class LitModel(pl.LightningModule):
     def __init__(self, learning_rate, batch_size):
@@ -333,8 +326,6 @@ class LitModel(pl.LightningModule):
 
 # ### **Implemente nuestro sintonizador de tasa de aprendizaje automático**
 
-
-
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
@@ -350,9 +341,9 @@ trainer.tune(model)
 
 
 # ### **Visualizar el gráfico LR vs Loss**
-# La figura producida por lr_finder.plot() debería parecerse a la figura de abajo. Se recomienda no elegir la tasa de aprendizaje que logra la pérdida más baja, sino algo en el medio de la pendiente descendente más pronunciada (punto rojo). Este es el punto devuelto por py lr_finder.suggestion().
-
-# En[25]:
+# La figura producida por lr_finder.plot() debería parecerse a la figura de abajo. Se recomienda no elegir la tasa de
+# aprendizaje que logra la pérdida más baja, sino algo en el medio de la pendiente descendente más pronunciada
+# (punto rojo). Este es el punto devuelto por py lr_finder.suggestion().
 
 
 lr_finder = trainer.tuner.lr_find(model)
@@ -363,12 +354,10 @@ fig.show()
 
 
 ### **5. Entrene el modelo con el tamaño de lote aprendido y la tasa de aprendizaje**
-#
-# La tasa de aprendizaje y el tamaño del lote almacenados en `/content/lr_find_temp_model.ckpt` y `/content/scale_batch_size_temp_model.ckpt` respectivamente, se usarán sobre el conjunto de la tasa de aprendizaje y los tamaños de lote que establecemos.
-#
 
-# En[ ]:
-
+# La tasa de aprendizaje y el tamaño del lote almacenados en `/content/lr_find_temp_model.ckpt`
+# y `/content/scale_batch_size_temp_model.ckpt` respectivamente, se usarán sobre el conjunto de la tasa de aprendizaje
+# y los tamaños de lote que establecemos.
 
 # modelo inicial
 model = LitModel(batch_size = 32, learning_rate=0.001)
@@ -384,8 +373,6 @@ trainer.fit(model)
 
 # ## **Registros de Tensorboard**
 
-# En[ ]:
-
 
 '''
 # Iniciar tensorboard.
@@ -400,7 +387,7 @@ if __name__ == "__main__":
     url = tb.launch()
     print(f"Tensorflow listening on {url}")'''
 
-### **6. Uso de devoluciones de llamada - Detención anticipada y puntos de control**
+# ## **6. Uso de devoluciones de llamada - Detención anticipada y puntos de control**
 #
 # **Detención anticipada**: la detención anticipada es una forma de regularización utilizada para evitar el sobreajuste
 # cuando se entrena a un alumno con un método iterativo, como el descenso de gradiente.
@@ -432,22 +419,22 @@ checkpoint_callback = ModelCheckpoint(
     monitor='val_loss',
     dirpath='models/',
     filename='sample-catsvsdogs-{epoch:02d}-{val_loss:.2f}',
-    save_top_k=3,# Guardamos los 3 mejores modelos
+    save_top_k=3,  # Guardamos los 3 mejores modelos
     mode='min',
 )
 
 
 # Incluso podemos usar algunas devoluciones de llamadas personalizadas
-class MyPrintingCallback(pl.callbacks.Callback):  # class MyPrintingCallback(pl.callbacks.base.Callback) Deprecado
-
-    def on_init_start(self, trainer):
-        print('Starting to init trainer!')
-
-    def on_init_end(self, trainer):
-        print('trainer is init now')
-
-    def on_train_end(self, trainer, pl_module):
-        print('do something when training ends')
+# class MyPrintingCallback(pl.callbacks.Callback):  # class MyPrintingCallback(pl.callbacks.base.Callback) Deprecado
+#     # RuntimeError: The `on_init_start` callback hook was deprecated in v1.6 and is no longer supported as of v1.8.
+#     # def on_init_start(self, trainer):
+#     #     print('Starting to init trainer!')
+#
+#     def on_init_end(self, trainer):
+#         print('trainer is init now')
+#
+#     def on_train_end(self, trainer, pl_module):
+#         print('do something when training ends')
 
 
 # ### **Entrena con nuestras devoluciones de llamadas**
@@ -460,28 +447,20 @@ model = LitModel(batch_size = 32, learning_rate=0.001)
 trainer = pl.Trainer(
     gpus=1,
     max_epochs=10,
-    progress_bar_refresh_rate=10,
-    callbacks=[EarlyStopping('val_loss'), checkpoint_callback, MyPrintingCallback()]
+    # callbacks=[EarlyStopping('val_loss'), checkpoint_callback, MyPrintingCallback()]
+    callbacks=[EarlyStopping('val_loss'), checkpoint_callback]
 )
 
 # por UserWarning Deprecado
 
-
 trainer.fit(model)
-
-
-# En[ ]:
-
 
 '''# Iniciar tensorboard.
 get_ipython().run_line_magic('load_ext', 'tensorboard')
 get_ipython().run_line_magic('tensorboard', '--logdir lightning_logs/')'''
 
 
-### **8. Restaurar desde puntos de control**
-
-# En[ ]:
-
+# ## **8. Restaurar desde puntos de control**
 
 # Obtener la ruta del mejor modelo
 checkpoint_callback.best_model_path
@@ -489,23 +468,21 @@ checkpoint_callback.best_model_path
 
 # ### **Cargar y ejecutar la inferencia usando el mejor modelo de punto de control**
 
-# En[ ]:
 
-
-#cargando los mejores puntos de control para modelar
+# cargando los mejores puntos de control para modelar
 pretrained_model = LitModel.load_from_checkpoint(batch_size = 32, learning_rate=0.001, checkpoint_path = checkpoint_callback.best_model_path)
 pretrained_model = pretrained_model.to("cuda")
 pretrained_model.eval()
 pretrained_model.freeze()
 
 
-### **9. Guarde nuestro modelo para implementaciones de producción**
+# ## **9. Guarde nuestro modelo para implementaciones de producción**
 #
 # **Exportando a TorchScript**
 #
-# TorchScript le permite serializar sus modelos de manera que pueda cargarse en entornos que no sean de Python. LightningModule tiene un método útil to_torchscript() que devuelve un módulo con script que puede guardar o usar directamente.
-
-# En[ ]:
+# TorchScript le permite serializar sus modelos de manera que pueda cargarse en entornos que no sean de Python.
+# LightningModule tiene un método útil to_torchscript() que devuelve un módulo con script que puede guardar o usar
+# directamente.
 
 
 model = LitModel.load_from_checkpoint(batch_size = 32, learning_rate=0.001, checkpoint_path = checkpoint_callback.best_model_path)
@@ -516,18 +493,12 @@ script = model.to_torchscript()
 torch.jit.save(script, "model.pt")
 
 
-### **10. Ejecute la inferencia en 32 imágenes de nuestro registrador de datos de prueba**
-
-# En[ ]:
-
+# ## **10. Ejecute la inferencia en 32 imágenes de nuestro registrador de datos de prueba**
 
 import torchvision
 import matplotlib.pyplot as plt
 import numpy as np
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-# En[ ]:
 
 
 samples, _ = next(iter(val_loader))
@@ -547,6 +518,7 @@ for num, sample in enumerate(samples[:24]):
     plt.axis('off')
     sample = sample.cpu().numpy()
     plt.imshow(np.transpose(sample, (1,2,0)))
+plt.show()
 
 ### **12. Profiler - Perfilador de rendimiento y cuellos de botella**
 
@@ -564,7 +536,6 @@ for num, sample in enumerate(samples[:24]):
 trainer = pl.Trainer(
     accelerator='gpu', devices=1,
     max_epochs=1,
-    progress_bar_refresh_rate=10,
     profiler="simple"
 )
 # trainer = pl.Trainer(gpus=1, max_epochs=10)
