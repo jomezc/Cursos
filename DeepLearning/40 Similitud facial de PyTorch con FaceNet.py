@@ -36,11 +36,7 @@
 
 get_ipython().system('git clone https://github.com/timesler/facenet-pytorch.git')
 
-
-# En[ ]:
-
-
-pip install facenet-pytorch
+'''pip install facenet-pytorch'''
 
 
 ### **2. Cargue nuestros módulos y datos**

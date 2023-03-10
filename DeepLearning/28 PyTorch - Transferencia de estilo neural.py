@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 # codificación: utf-8
 
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
-#
 # # **Transferencia de estilo neuronal en PyTorch**
-#
-# ---
-#
 #
 # En esta lección, primero aprenderemos a implementar el **Algoritmo de transferencia de estilo neuronal** con PyTorch.
 #
-# Aplicamos la técnica conocida como *transferencia de estilo neuronal* que se muestra en la investigación publicada aquí <a href="https://arxiv.org/abs/1508.06576" class="external">Un algoritmo neuronal de estilo artístico</a > (Gatys et al.).
+# Aplicamos la técnica conocida como *transferencia de estilo neuronal* que se muestra en la investigación publicada aquí
+# <a href="https://arxiv.org/abs/1508.06576" class="external">Un algoritmo neuronal de estilo artístico</a > (Gatys et al.).
 #
-# En este tutorial demostramos el algoritmo de transferencia de estilo original. Optimiza el contenido de la imagen a un estilo particular. Los enfoques modernos entrenan un modelo para generar la imagen estilizada directamente (similar a [cyclegan](cyclegan.ipynb)). Este enfoque es mucho más rápido (hasta 1000x).
+# En este tutorial demostramos el algoritmo de transferencia de estilo original. Optimiza el contenido de la imagen a
+# un estilo particular. Los enfoques modernos entrenan un modelo para generar la imagen estilizada directamente
+# (similar a [cyclegan](cyclegan.ipynb)). Este enfoque es mucho más rápido (hasta 1000x).
 #
 # 1. Importación de paquetes y selección de un dispositivo
 # 2. Cargando las Imágenes
@@ -21,37 +19,29 @@
 # 5. Importación del modelo
 # 6. Descenso de gradiente
 # 7. Algoritmo de ejecución
-#
-#
 
 # # **Principio subyacente**
 # --------------------
 #
-# El principio es simple: definimos dos distancias, una para el contenido
-# ($D_C$) y uno para el estilo ($D_S$). $D_C$ mide qué tan diferente es el contenido
-# está entre dos imágenes, mientras que $D_S$ mide qué tan diferente es el estilo
-# entre dos imágenes. Luego, tomamos una tercera imagen, la entrada, y
-# transformarlo para minimizar tanto su contenido-distancia con el
-# content-image y su estilo-distancia con el estilo-imagen. Ahora podemos
-# importar los paquetes necesarios y comenzar la transferencia neuronal.
+'''
+El principio es sencillo: definimos dos distancias, una para el contenido (DC) y otra para el estilo (DS).
+La DC mide la diferencia de contenido entre dos imágenes, mientras que la DS mide la diferencia de estilo entre dos
+imágenes. A continuación, tomamos una tercera imagen, la de entrada, y la transformamos para minimizar tanto su
+distancia de contenido con la imagen de contenido como su distancia de estilo con la imagen de estilo. Ahora podemos
+importar los paquetes necesarios y comenzar la transferencia neuronal.
+
+Traducción realizada con la versión gratuita del traductor www.DeepL.com/Translator'''
 #
 ### **1. Importación de paquetes y selección de un dispositivo**
 #
 # A continuación se muestra una lista de los paquetes necesarios para implementar la transferencia neuronal.
 #
-# - ``torch``, ``torch.nn``, ``numpy`` (paquetes indispensables para
-# redes neuronales con PyTorch)
+# - ``torch``, ``torch.nn``, ``numpy`` (paquetes indispensables para redes neuronales con PyTorch)
 # - ``torch.optim`` (descensos de gradiente eficientes)
-# - ``PIL``, ``PIL.Image``, ``matplotlib.pyplot`` (cargar y mostrar
-# imágenes)
+# - ``PIL``, ``PIL.Image``, ``matplotlib.pyplot`` (cargar y mostrar imágenes)
 # - ``torchvision.transforms`` (transforma imágenes PIL en tensores)
 # - ``torchvision.models`` (entrenar o cargar modelos pre-entrenados)
 # - ``copiar`` (para copiar en profundidad los modelos; paquete del sistema)
-#
-#
-
-# En 1]:
-
 
 from __future__ import print_function
 
@@ -77,26 +67,19 @@ import copy
 # imágenes tardan más y se reproducirán mucho más rápido cuando se ejecutan en una GPU. Podemos
 # use ``torch.cuda.is_available()`` para detectar si hay una GPU disponible.
 # A continuación, configuramos ``torch.device`` para su uso a lo largo del tutorial. También el ``.to(device)``
-El método # se usa para mover tensores o módulos a un dispositivo deseado.
-#
-#
-
-# En 3]:
+# El método se usa para mover tensores o módulos a un dispositivo deseado.
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
 
-
-#
-
 ### **2. Cargando las imágenes**
 #
-# Ahora importaremos las imágenes de estilo y contenido. Las imágenes PIL originales tienen valores entre 0 y 255, pero cuando
-# transformados en tensores de antorcha, sus valores se convierten para estar entre
+# Ahora importaremos las imágenes de estilo y contenido. Las imágenes PIL originales tienen valores entre 0 y 255, pero
+# cuando transformados en tensores, sus valores se convierten para estar entre
 # 0 y 1. También es necesario cambiar el tamaño de las imágenes para que tengan las mismas dimensiones.
 # Un detalle importante a tener en cuenta es que las redes neuronales del
-# La biblioteca de antorchas está entrenada con valores de tensor que van de 0 a 1. Si
+# La biblioteca torch está entrenada con valores de tensor que van de 0 a 1. Si
 # intente alimentar las redes con 0 a 255 imágenes de tensor, luego las activará
 # los mapas de características no podrán detectar el contenido y el estilo previstos.
 # Sin embargo, las redes preentrenadas de la biblioteca Caffe están entrenadas con 0
@@ -109,11 +92,6 @@ print(device)
 # `bailando.jpg <https://pytorch.org/tutorials/_static/img/neural-style/dancing.jpg>`__.
 # Descargue estas dos imágenes y agréguelas a un directorio
 # con el nombre ``images`` en su directorio de trabajo actual.
-#
-#
-
-# En[4]:
-
 
 # tamaño deseado de la imagen de salida
 imsize = 512 if torch.cuda.is_available() else 128  # usar tamaño pequeño si no hay gpu
@@ -122,7 +100,8 @@ loader = transforms.Compose([
     transforms.Resize(imsize),  # escalar imagen importada
     transforms.ToTensor()])  # transformarlo en un tensor de antorcha
 
-
+# Parece que .unsqueeze(0) añade una dimensión falsa
+# .squeeze(0) elimina dicha dimensión
 def image_loader(url):
     response = requests.get(url)
     image = Image.open(BytesIO(response.content))
@@ -134,21 +113,13 @@ def image_loader(url):
 content_img = image_loader("https://pytorch.org/tutorials/_static/img/neural-style/dancing.jpg")
 style_img = image_loader("https://pytorch.org/tutorials/_static/img/neural-style/picasso.jpg")
 
-#content_path = tf.keras.utils.get_file('labrador.jpeg', 'https://github.com/rajeevratan84/ModernComputerVision/raw/main/labrador.jpeg')
-#style_path = tf.keras.utils.get_file('the_wave.jpg','https://github.com/rajeevratan84/ModernComputerVision/raw/main/the_wave.jpg')
-
 assert style_img.size() == content_img.size(), \
     "we need to import style and content images of the same size"
 
 
 # Ahora, vamos a crear una función que muestre una imagen reconvirtiendo un
-# copiarlo en formato PIL y mostrar la copia usando
-# ``plt.imshow``. Intentaremos mostrar el contenido y las imágenes de estilo.
-# para asegurarse de que se importaron correctamente.
-#
-#
-
-# En[5]:
+# copia en formato PIL y mostrar la copia usando  ``plt.imshow``. Intentaremos mostrar el contenido y las imágenes de
+# estilo para asegurarse de que se importaron correctamente.
 
 
 unloader = transforms.ToPILImage()  # reconvertir en imagen PIL
@@ -157,12 +128,12 @@ plt.ion()
 
 def imshow(tensor, title=None):
     image = tensor.cpu().clone()  # clonamos el tensor para no hacerle cambios
-    image = image.squeeze(0)      # eliminar la dimensión del lote falso
+    image = image.squeeze(0)      # Eliminar la dimensión del lote falso
     image = unloader(image)
     plt.imshow(image)
     if title is not None:
         plt.title(title)
-    plt.pause(0.001) # pausa un poco para que se actualicen las tramas
+    plt.pause(0.001)  # pausa un poco para que se actualicen las tramas
 
 
 plt.figure()
@@ -176,13 +147,13 @@ imshow(content_img, title='Content Image')
 #
 # ### **Pérdida de contenido**
 #
-# La pérdida de contenido es una función que representa una versión ponderada del
+# La pérdida de contenido es una función que representa una versión ponderada de la
 # distancia de contenido para una capa individual. La función toma la característica
-# mapea $F_{XL}$ de una capa $L$ en una entrada de procesamiento de red $X$ y devuelve el
+# mapea $F_{XL}$ de una capa $L$ en una entrada de procesamiento de red $X$ y devuelve la
 # distancia de contenido ponderado $w_{CL}.D_C^L(X,C)$ entre la imagen $X$ y la
 # imagen de contenido $C$. Los mapas de características de la imagen de contenido ($F_{CL}$) deben ser
 # conocido por la función para calcular la distancia del contenido. Nosotros
-# implementar esta función como un módulo de antorcha con un constructor que toma
+# implementar esta función como un módulo toch con un constructor que toma
 # $F_{CL}$ como entrada. La distancia $\|F_{XL} - F_{CL}\|^2$ es el error cuadrático medio
 # entre los dos conjuntos de mapas de características, y se puede calcular usando ``nn.MSELoss``.
 #
@@ -190,15 +161,11 @@ imshow(content_img, title='Content Image')
 # capa(s) que se utilizan para calcular la distancia del contenido. De esta manera
 # cada vez que la red recibe una imagen de entrada, las pérdidas de contenido serán
 # calculado en las capas deseadas y debido a la graduación automática, todos los
-Se calcularán # gradientes. Ahora, para hacer que la capa de pérdida de contenido
+# Se calcularán gradientes.
+# Ahora, para hacer que la capa de pérdida de contenido
 # transparente debemos definir un método ``forward`` que calcule el contenido
 # pérdida y luego devuelve la entrada de la capa. La pérdida calculada se guarda como
 # parámetro del módulo.
-#
-#
-#
-
-# En[6]:
 
 
 class ContentLoss(nn.Module):
@@ -225,7 +192,7 @@ class ContentLoss(nn.Module):
 # matriz es el resultado de multiplicar una matriz dada por su traspuesta
 # matriz. En esta aplicación, la matriz dada es una versión remodelada de
 # la función mapea $F_{XL}$ de una capa $L$. $F_{XL}$ se reforma para formar $\hat{F}_{XL}$, un $K$\ x\ $N$
-# matriz, donde $K$ es el número de mapas de características en la capa $L$ y $N$ es el
+# matriz, donde $K$ es el número de mapas de características en la capa $L$ y $N$ es la
 # longitud de cualquier mapa de características vectorizado $F_{XL}^k$. Por ejemplo, la primera línea
 # de $\hat{F}_{XL}$ corresponde al primer mapa de características vectorizado $F_{XL}^1$.
 #
@@ -237,11 +204,6 @@ class ContentLoss(nn.Module):
 # descenso de gradiente. Las características del estilo tienden a estar en las capas más profundas del
 # red, por lo que este paso de normalización es crucial.
 #
-#
-#
-
-# En[7]:
-
 
 def gram_matrix(input):
     a, b, c, d = input.size()  # a=tamaño del lote(=1)
@@ -260,12 +222,6 @@ def gram_matrix(input):
 # Ahora el módulo de pérdida de estilo se ve casi exactamente igual que el módulo de pérdida de contenido
 # módulo. La distancia de estilo también se calcula usando el cuadrado medio
 # error entre $G_{XL}$ y $G_{SL}$.
-#
-#
-#
-
-# En[8]:
-
 
 class StyleLoss(nn.Module):
 
@@ -283,26 +239,18 @@ class StyleLoss(nn.Module):
 #
 #
 # Ahora necesitamos importar una red neuronal preentrenada. Usaremos un 19
-Red VGG de # capa como la utilizada en el artículo.
+# Red VGG de # capa como la utilizada en el artículo.
 #
 # La implementación de PyTorch de VGG es un módulo dividido en dos
-# Módulos ``secuenciales``: ``características`` (que contienen capas de convolución y agrupación),
-# y ``clasificador`` (que contiene capas completamente conectadas). Usaremos el
-# módulo ``características`` porque necesitamos la salida del individuo
+# Módulos ``secuenciales``: ``features`` (que contienen capas de convolución y agrupación),
+# y ``classifier`` (que contiene capas completamente conectadas). Usaremos el
+# módulo ``features`` porque necesitamos la salida del individuo
 # capas de convolución para medir la pérdida de contenido y estilo. Algunas capas tienen
 # Comportamiento diferente durante el entrenamiento que la evaluación, por lo que debemos establecer el
 # red al modo de evaluación usando ``.eval()``.
-#
-#
-#
-
-# En[9]:
 
 
 cnn = models.vgg19(pretrained=True).features.to(device).eval()
-
-
-# En[10]:
 
 
 cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406]).to(device)
@@ -330,11 +278,6 @@ class Normalization(nn.Module):
 # capas de pérdida de contenido y pérdida de estilo inmediatamente después de la convolución
 # capa que están detectando. Para ello debemos crear un nuevo ``Sequential``
 # módulo que tiene módulos de pérdida de contenido y pérdida de estilo insertados correctamente.
-#
-#
-#
-
-# En[11]:
 
 
 # capas de profundidad deseadas para calcular las pérdidas de estilo/contenido:
@@ -407,10 +350,6 @@ def get_style_model_and_losses(cnn, normalization_mean, normalization_std,
 # o ruido blanco.
 #
 #
-#
-
-# En[12]:
-
 
 input_img = content_img.clone()
 # si desea utilizar ruido blanco en su lugar, descomente la siguiente línea:
@@ -430,10 +369,6 @@ imshow(input_img, title='Input Image')
 # nuestra imagen como el tensor a optimizar.
 #
 #
-#
-
-# En[13]:
-
 
 def get_input_optimizer(input_img):
     # esta línea para mostrar que la entrada es un parámetro que requiere un gradiente
@@ -451,11 +386,6 @@ def get_input_optimizer(input_img):
 # optimizar la entrada con valores que excedan el rango de tensor de 0 a 1 para
 # la imagen. Podemos solucionar esto corrigiendo los valores de entrada para que sean
 # entre 0 y 1 cada vez que se ejecuta la red.
-#
-#
-#
-
-# En[14]:
 
 
 def run_style_transfer(cnn, normalization_mean, normalization_std,
@@ -510,8 +440,6 @@ def run_style_transfer(cnn, normalization_mean, normalization_std,
 
 ### **7. Ejecutar algoritmo**
 
-# En[15]:
-
 
 output = run_style_transfer(cnn, cnn_normalization_mean, cnn_normalization_std,
                             content_img, style_img, input_img)
@@ -523,8 +451,6 @@ imshow(output, title='Output Image')
 plt.ioff()
 plt.show()
 
-
-# En[ ]:
 
 
 

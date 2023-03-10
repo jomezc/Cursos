@@ -27,14 +27,13 @@
 # Fuente: https://github.com/harveyslash/Facial-Similarity-with-Siamese-Networks-in-Pytorch
 #
 # Nota:
-# Se puede usar cualquier conjunto de datos. Cada clase debe estar en su propia carpeta. Esta es la misma estructura que utiliza el propio conjunto de datos de carpetas de imágenes de PyTorch.
+# Se puede usar cualquier conjunto de datos. Cada clase debe estar en su propia carpeta. Esta es la misma estructura que
+# utiliza el propio conjunto de datos de carpetas de imágenes de PyTorch.
 
 ### **1. Cargue nuestros módulos, datos y defina algunas funciones de utilidad**
 
-# En[ ]:
 
 
-get_ipython().run_line_magic('matplotlib', 'inline')
 import torchvision
 import torchvision.datasets as dset
 import torchvision.transforms as transforms
@@ -54,9 +53,6 @@ import torch.nn.functional as F
 
 # ### **Cree una función simple de visualización y trazado de imágenes**
 
-# En[ ]:
-
-
 def imshow(img,text=None,should_save=False):
     npimg = img.numpy()
     plt.axis("off")
@@ -74,30 +70,19 @@ def show_plot(iteration,loss):
 # ### **Descargue nuestro conjunto de datos - El conjunto de datos de AT&T Faces**
 # Fuente: https://www.kaggle.com/kasikrit/att-database-of-faces
 
-# En[ ]:
-
-
 # Descarga y descomprime nuestros datos
-get_ipython().system('wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/face_data.zip')
-get_ipython().system('unzip -q face_data.zip')
-
-
-# ### **Crear una clase que almacene nuestros parámetros**
-
-# En[ ]:
+'''wget https://moderncomputervision.s3.eu-west-2.amazonaws.com/face_data.zip'''
+'''unzip -q face_data.zip'''
 
 
 class Config():
-    training_dir = "./data/faces/training/"
-    testing_dir = "./data/faces/testing/"
+    training_dir = "images/data/faces/training/"
+    testing_dir = "images/data/faces/testing/"
     train_batch_size = 64
     train_number_epochs = 100
 
 
 ### **2. Configure nuestro procesamiento de datos: cree nuestros pares de imágenes**
-
-# En[ ]:
-
 
 class SiameseNetworkDataset(Dataset):
     
@@ -145,16 +130,10 @@ class SiameseNetworkDataset(Dataset):
 
 # ### **Establecer carpetas de imágenes**
 
-# En[ ]:
-
-
 folder_dataset = dset.ImageFolder(root=Config.training_dir)
 
 
 # ### **Crear nuestros transformadores**
-
-# En[ ]:
-
 
 siamese_dataset = SiameseNetworkDataset(imageFolderDataset=folder_dataset,
                                         transform=transforms.Compose([transforms.Resize((100,100)),
@@ -163,8 +142,6 @@ siamese_dataset = SiameseNetworkDataset(imageFolderDataset=folder_dataset,
 
 
 # ### **Cree nuestro cargador de datos y vea algunas imágenes de muestra**
-
-# En[ ]:
 
 
 vis_dataloader = DataLoader(siamese_dataset,
@@ -181,8 +158,6 @@ print(example_batch[2].numpy())
 
 
 ### **3. Construyendo nuestra red siamesa**
-
-# En[ ]:
 
 
 class SiameseNetwork(nn.Module):
@@ -228,8 +203,6 @@ class SiameseNetwork(nn.Module):
 
 # ## **Definir nuestra función de pérdida de contraste**
 
-# En[ ]:
-
 
 class ContrastiveLoss(torch.nn.Module):
     """Función de pérdida de contraste.
@@ -251,8 +224,6 @@ Basado en: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
 
 # ### **Hacer nuestro cargador de datos de entrenamiento**
 
-# En[ ]:
-
 
 train_dataloader = DataLoader(siamese_dataset,
                         shuffle=True,
@@ -262,8 +233,6 @@ train_dataloader = DataLoader(siamese_dataset,
 
 # ### **Definir nuestro Loss y Optimizer antes del entrenamiento**
 
-# En[ ]:
-
 
 net = SiameseNetwork().cuda()
 criterion = ContrastiveLoss()
@@ -271,9 +240,6 @@ optimizer = optim.Adam(net.parameters(),lr = 0.0005 )
 
 
 ### **4. Empezar a entrenar**
-
-# En[ ]:
-
 
 counter = []
 loss_history = [] 
@@ -299,10 +265,9 @@ show_plot(counter,loss_history)
 
 ### **5. Ver los resultados de nuestras pruebas**
 #
-# Los últimos 3 temas quedaron fuera del entrenamiento y se utilizarán para la prueba. La Distancia entre cada par de imágenes indica el grado de similitud que el modelo encontró entre las dos imágenes. Menos significa que encontró más similares, mientras que los valores más altos indican que los encontró diferentes.
-
-# En[ ]:
-
+# Los últimos 3 temas quedaron fuera del entrenamiento y se utilizarán para la prueba. La Distancia entre cada par de
+# imágenes indica el grado de similitud que el modelo encontró entre las dos imágenes. Menos significa que encontró
+# más similares, mientras que los valores más altos indican que los encontró diferentes.
 
 folder_dataset_test = dset.ImageFolder(root=Config.testing_dir)
 siamese_dataset = SiameseNetworkDataset(imageFolderDataset=folder_dataset_test,
@@ -322,10 +287,6 @@ for i in range(10):
     output1,output2 = net(Variable(x0).cuda(),Variable(x1).cuda())
     euclidean_distance = F.pairwise_distance(output1, output2)
     imshow(torchvision.utils.make_grid(concatenated),'Dissimilarity: {:.2f}'.format(euclidean_distance.item()))
-
-
-# En[ ]:
-
 
 
 

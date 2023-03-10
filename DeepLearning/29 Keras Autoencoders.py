@@ -11,28 +11,28 @@
 #
 # Crédito del tutorial: https://blog.keras.io/building-autoencoders-in-keras.html
 
-# Un codificador automático es un algoritmo de aprendizaje automático no supervisado. En nuestro ejemplo, toma una imagen como entrada y luego intenta reconstruir esa imagen usando menos información.
+# Un codificador automático es un algoritmo de aprendizaje automático no supervisado. En nuestro ejemplo, toma una
+# imagen como entrada y luego intenta reconstruir esa imagen usando menos información.
 #
-# Hacen esto proyectando datos dimensionales más altos a una dimensión más baja (similar al Análisis de Componentes Principales) manteniendo las características de mayor importancia. Esto se llama el espacio latente.
+# Hacen esto proyectando datos dimensionales más altos a una dimensión más baja (similar al Análisis de Componentes
+# Principales) manteniendo las características de mayor importancia. Esto se llama el espacio latente.
 #
 # ![](http://res.cloudinary.com/dyd911kmh/image/upload/f_auto,q_auto:best/v1522830223/AutoEncoder_kfqad1.png)
 #
 
 # ### **Un Autoencoder se compone de estas dos Redes**
 #
-# **Codificador**: comprime/reduce la muestra de la imagen de entrada en un número menor de bits. Este menor número de bits se denomina espacio latente o cuello de botella.
+# **Codificador**: comprime/reduce la muestra de la imagen de entrada en un número menor de bits. Este menor número
+# de bits se denomina espacio latente o cuello de botella.
 #
-# **Decodificador**: intenta reconstruir la entrada usando solo la codificación de la entrada. Si el decodificador puede reconstruir la imagen con precisión a partir de la salida del codificador, tiene un codificador que funciona correctamente (capaz de producir buenas codificaciones) y un sistema decodificador.
+# **Decodificador**: intenta reconstruir la entrada usando solo la codificación de la entrada. Si el decodificador
+# puede reconstruir la imagen con precisión a partir de la salida del codificador, tiene un codificador que funciona
+# correctamente (capaz de producir buenas codificaciones) y un sistema decodificador.
 
 ### **1. Creación de un codificador automático simple**
 #
 # Construiremos una sola capa neuronal completamente conectada como codificador y decodificador.
 #
-#
-
-# En 1]:
-
-
 # Importar y crear algunas funciones auxiliares
 import numpy as np
 import tensorflow as tf
@@ -95,7 +95,6 @@ def display(array1, array2):
 #
 # #### **Luego creamos una versión ruidosa de nuestros datos de prueba y entrenamiento**
 
-# En 2]:
 
 
 # Dado que solo necesitamos imágenes del conjunto de datos para codificar y decodificar,
@@ -115,11 +114,9 @@ display(train_data, noisy_train_data)
 
 
 ### **2. Ahora vamos a crear también nuestro modelo de codificador automático**
-#
-#
-# Vamos a usar la API funcional para construir nuestro codificador automático convolucional (esto debería ser familiar para los usuarios de PyTorch).
 
-# En 3]:
+# Vamos a usar la API funcional para construir nuestro codificador automático convolucional (esto debería ser familiar
+# para los usuarios de PyTorch).
 
 
 # Nuestra forma de entrada es 28 x 28 x 1
@@ -149,8 +146,6 @@ autoencoder.summary()
 #
 # NOTA: Estamos configurando los datos de validación usando el mismo formato.
 
-# En[4]:
-
 
 autoencoder.fit(
     x=train_data,
@@ -164,12 +159,12 @@ autoencoder.fit(
 
 #### **4. Obtén nuestras predicciones del codificador automático**
 #
-# Ahora haremos predicciones en nuestro conjunto de datos de prueba y mostraremos la imagen original junto con la predicción de nuestro codificador automático.
+# Ahora haremos predicciones en nuestro conjunto de datos de prueba y mostraremos la imagen original junto con la
+# predicción de nuestro codificador automático.
 #
-# Observe qué tan cerca están las predicciones de la imagen original. Sin embargo, si miras de cerca, puedes ver ligeras diferencias.
-#
+# Observe qué tan cerca están las predicciones de la imagen original. Sin embargo, si miras de cerca, puedes ver
+# ligeras diferencias.
 
-# En[5]:
 
 
 predictions = autoencoder.predict(test_data)
@@ -178,10 +173,8 @@ display(test_data, predictions)
 
 ### **5. Ahora usemos nuestro codificador automático como eliminador de ruido**
 #
-# Para hacer esto, lo volveremos a entrenar usando los datos ruidosos como nuestra entrada y los datos limpios como nuestro objetivo. Esto le enseña a nuestro codificador automático a aprender a eliminar el ruido de las imágenes.
-
-# En[6]:
-
+# Para hacer esto, lo volveremos a entrenar usando los datos ruidosos como nuestra entrada y los datos limpios como
+# nuestro objetivo. Esto le enseña a nuestro codificador automático a aprender a eliminar el ruido de las imágenes.
 
 autoencoder.fit(
     x=noisy_train_data,
@@ -195,15 +188,9 @@ autoencoder.fit(
 
 ### **6. Ahora vamos a evaluar su rendimiento en nuestros ruidosos datos de prueba**
 
-# En[7]:
-
 
 predictions = autoencoder.predict(noisy_test_data)
 display(noisy_test_data, predictions)
-
-
-# En[ ]:
-
 
 
 

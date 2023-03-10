@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # codificación: utf-8
 
-#
-#
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
-#
 # # **Codificadores automáticos de PyTorch que utilizan el conjunto de datos Fashion-MNIST**
 #
 # ---
@@ -13,17 +9,22 @@
 # En esta lección, implementaremos un **Codificador automático en el conjunto de datos MNIST de moda** usando PyTorch
 #
 #
-# Un codificador automático es un algoritmo de aprendizaje automático no supervisado. En nuestro ejemplo, toma una imagen como entrada y luego intenta reconstruir esa imagen usando menos información.
+# Un codificador automático es un algoritmo de aprendizaje automático no supervisado. En nuestro ejemplo, toma una
+# imagen como entrada y luego intenta reconstruir esa imagen usando menos información.
 #
-# Hacen esto proyectando datos dimensionales más altos a una dimensión más baja (similar al Análisis de Componentes Principales) manteniendo las características de mayor importancia. Esto se llama el espacio latente.
+# Hacen esto proyectando datos dimensionales más altos a una dimensión más baja (similar al Análisis de Componentes
+# Principales) manteniendo las características de mayor importancia. Esto se llama el espacio latente.
 #
 # ![](http://res.cloudinary.com/dyd911kmh/image/upload/f_auto,q_auto:best/v1522830223/AutoEncoder_kfqad1.png)
 #
 # ### **Un Autoencoder se compone de estas dos Redes**
 #
-# **Codificador**: comprime/reduce la muestra de la imagen de entrada en un número menor de bits. Este menor número de bits se denomina espacio latente o cuello de botella.
+# **Codificador**: comprime/reduce la muestra de la imagen de entrada en un número menor de bits. Este menor número de
+# bits se denomina espacio latente o cuello de botella.
 #
-# **Decodificador**: intenta reconstruir la entrada usando solo la codificación de la entrada. Si el decodificador puede reconstruir la imagen con precisión a partir de la salida del codificador, tiene un codificador que funciona correctamente (capaz de producir buenas codificaciones) y un sistema decodificador.
+# **Decodificador**: intenta reconstruir la entrada usando solo la codificación de la entrada. Si el decodificador
+# puede reconstruir la imagen con precisión a partir de la salida del codificador, tiene un codificador que funciona
+# correctamente (capaz de producir buenas codificaciones) y un sistema decodificador.
 #
 # **Crédito del tutorial:**
 #
@@ -31,8 +32,6 @@
 
 ### **1. Cargue y preprocese nuestro conjunto de datos F-MNIST**
 #
-
-# En 1]:
 
 
 import os
@@ -49,21 +48,16 @@ from torch.utils.data import DataLoader
 from torchvision.utils import save_image
 
 
-### **2. Cargue nuestros datos, cree sus transformaciones, defina nuestras constantes y haga nuestros cargadores de datos**
-
-# En 2]:
-
+### **2. Cargue nuestros datos, cree sus transformaciones, defina nuestras constantes y haga nuestros cargadores de#
+# datos**
 
 # constantes
-NUM_EPOCHS = 50
+NUM_EPOCHS = 10
 LEARNING_RATE = 1e-3
 BATCH_SIZE = 128
 
 # transformaciones de imagen
 transform = transforms.Compose([transforms.ToTensor(),])
-
-
-# En 3]:
 
 
 # Cargue nuestro conjunto de datos FashionMNIST
@@ -78,9 +72,6 @@ testset = datasets.FashionMNIST(
     train=False,
     download=True,
     transform=transform)
-
-
-# En[4]:
 
 
 # Crear nuestros cargadores de datos
@@ -99,8 +90,6 @@ testloader = DataLoader(
 #
 # **En primer lugar, algunas funciones de utilidad**
 
-# En[5]:
-
 
 # Primero haga algunas funciones de utilidad
 def get_device():
@@ -111,7 +100,7 @@ def get_device():
     return device
 
 def make_dir():
-    image_dir = 'FashionMNIST_Images'
+    image_dir = 'images/FashionMNIST_Images'
     if not os.path.exists(image_dir):
         os.makedirs(image_dir)
 
@@ -122,14 +111,13 @@ def save_decoded_image(img, epoch):
 
 # ### **Crear nuestra clase modelo**
 
-# En[6]:
-
 
 class Autoencoder(nn.Module):
     def __init__(self):
         super(Autoencoder, self).__init__()
 
         # codificador
+        # nn.Linear recomendado para imágenes pequeñas en escala de grises, grandes a color CNN
         self.enc1 = nn.Linear(in_features=784, out_features=256)
         self.enc2 = nn.Linear(in_features=256, out_features=128)
         self.enc3 = nn.Linear(in_features=128, out_features=64)
@@ -163,7 +151,6 @@ print(net)
 
 # ### **Definir nuestra función de pérdida y optimizador**
 
-# En[7]:
 
 
 criterion = nn.MSELoss()
@@ -173,8 +160,6 @@ optimizer = optim.Adam(net.parameters(), lr=LEARNING_RATE)
 ### **4. Entrena a nuestro modelo**
 #
 # #### **Definir nuestras funciones de Entrenamiento y Prueba**
-
-# En[8]:
 
 
 def train(net, trainloader, NUM_EPOCHS):
@@ -215,8 +200,7 @@ def test_image_reconstruction(net, testloader):
 
 # ### **Entrenando nuestro Modelo**
 
-# En[9]:
-
+#
 
 # obtener el dispositivo de cómputo
 device = get_device()
@@ -245,8 +229,6 @@ test_image_reconstruction(net, testloader)
 #
 # Ver nuestras imágenes reconstruidas.
 
-# En[10]:
-
 
 from IPython.display import Image
 
@@ -254,8 +236,6 @@ Image('fashionmnist_reconstruction.png')
 
 
 # ### **Ver el original**
-
-# En[11]:
 
 
 import matplotlib.pyplot as plt
@@ -271,13 +251,11 @@ def imshow(img):
 
 # obtener algunas imágenes de entrenamiento aleatorias
 dataiter = iter(trainloader)
-images, labels = dataiter.next()
+images, labels = next(dataiter)
 
 # mostrar imagenes
 imshow(torchvision.utils.make_grid(images))
 
-
-# En[ ]:
 
 
 

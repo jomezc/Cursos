@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # codificación: utf-8
+# 'https://stackoverflow.com/questions/41694740/open-images-with-pil-in-pycharm' # VER IMAGENES PIL EN PỲCHARM
 ##############################################
 # 02 Keras TensorFlow CNN MNIST Tutorial ######
 ##############################################

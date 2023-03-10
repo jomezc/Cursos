@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 # codificación: utf-8
 
-# ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
-#
 # # **Transferencia de estilo neuronal en Keras Tensorflow 2.0**
 #
 # ---
 #
 #
-# En esta lección, primero aprendemos a implementar el **Algoritmo de transferencia de estilo neuronal** usando Keras con Tensorflow 2.0. También comenzamos a aprender a cargar y usar modelos desde el TF-Hub.
+# En esta lección, primero aprendemos a implementar el **Algoritmo de transferencia de estilo neuronal** usando Keras
+# con Tensorflow 2.0. También comenzamos a aprender a cargar y usar modelos desde el TF-Hub.
 #
-# Aplicamos la técnica conocida como *transferencia de estilo neuronal* que se muestra en la investigación publicada aquí <a href="https://arxiv.org/abs/1508.06576" class="external">Un algoritmo neuronal de estilo artístico</a > (Gatys et al.).
+# Aplicamos la técnica conocida como *transferencia de estilo neuronal* que se muestra en la investigación publicada
+# aquí <a href="https://arxiv.org/abs/1508.06576" class="external">Un algoritmo neuronal de estilo artístico</a > (Gatys et al.).
 #
-# En este tutorial demostramos el algoritmo de transferencia de estilo original. Optimiza el contenido de la imagen a un estilo particular. Los enfoques modernos entrenan un modelo para generar la imagen estilizada directamente (similar a [cyclegan](cyclegan.ipynb)). Este enfoque es mucho más rápido (hasta 1000x).
+# En este tutorial demostramos el algoritmo de transferencia de estilo original. Optimiza el contenido de la imagen a u
+# n estilo particular. Los enfoques modernos entrenan un modelo para generar la imagen estilizada directamente (similar a [cyclegan](cyclegan.ipynb)). Este enfoque es mucho más rápido (hasta 1000x).
 #
 # 1. Configuración, módulos de carga y función auxiliar
 # 2. Transferencia de estilo rápido usando TF-Hub
@@ -29,10 +30,6 @@
 
 ### **1. Configurar, cargar módulos y funciones auxiliares**
 #
-#
-#
-
-# En[36]:
 
 
 import os
@@ -40,9 +37,6 @@ import tensorflow as tf
 
 # Cargar modelos comprimidos desde tensorflow_hub
 os.environ['TFHUB_MODEL_LOAD_FORMAT'] = 'COMPRESSED'
-
-
-# En[37]:
 
 
 # Establecer nuestros parámetros de trazado de imagen e importar algunos módulos
@@ -58,10 +52,6 @@ import PIL.Image
 import time
 import functools
 
-
-# En[38]:
-
-
 # función que transforma un tensor en imagen
 def tensor_to_image(tensor):
   tensor = tensor*255
@@ -71,8 +61,6 @@ def tensor_to_image(tensor):
     tensor = tensor[0]
   return PIL.Image.fromarray(tensor)
 
-
-# En[39]:
 
 
 # cargar nuestro contenido y diseñar imágenes
@@ -86,7 +74,6 @@ style_path = tf.keras.utils.get_file('the_wave.jpg','https://github.com/rajeevra
 
 # Defina una función para cargar una imagen y limite su dimensión máxima a 512 píxeles.
 
-# En[40]:
 
 
 def load_img(path_to_img):
@@ -108,8 +95,6 @@ def load_img(path_to_img):
 
 # Crea una función simple para mostrar una imagen:
 
-# En[41]:
-
 
 def imshow(image, title=None):
   if len(image.shape) > 3:
@@ -118,9 +103,7 @@ def imshow(image, title=None):
   plt.imshow(image)
   if title:
     plt.title(title)
-
-
-# En[42]:
+  plt.show()
 
 
 content_image = load_img(content_path)
@@ -135,7 +118,8 @@ imshow(style_image, 'Style Image')
 
 ### **2. Transferencia rápida de estilos usando TF-Hub**
 #
-# Antes de implementar el algoritmo por nuestra cuenta, intentemos usar un fundador de modelo preentrenado simple en TensorFlow Hub.
+# Antes de implementar el algoritmo por nuestra cuenta, intentemos usar un fundador de modelo preentrenado simple en
+# TensorFlow Hub.
 #
 # [Modelo de TensorFlow Hub](https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2).
 
@@ -152,7 +136,8 @@ hub_model = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylizati
 stylized_image = hub_model(tf.constant(content_image), tf.constant(style_image))[0]
 
 # convertir el tensor devuelto en una imagen
-tensor_to_image(stylized_image)
+plt.imshow(tensor_to_image(stylized_image))
+plt.show()
 
 
 ### **3. Implementando nuestro modelo desde cero**
@@ -166,8 +151,6 @@ tensor_to_image(stylized_image)
 # Aquí usaremos la arquitectura de red VGG19, una red de clasificación de imágenes previamente entrenada. Estas capas intermedias son necesarias para definir la representación de contenido y estilo de las imágenes. Para una imagen de entrada, intente hacer coincidir las representaciones de destino de contenido y estilo correspondientes en estas capas intermedias.
 #
 
-# En[44]:
-
 
 # Cargar VGG19 sin la cabeza
 vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
@@ -178,9 +161,6 @@ for layer in vgg.layers:
 
 
 # Elija capas intermedias de la red para representar el estilo y el contenido de la imagen:
-
-# En[45]:
-
 
 content_layers = ['block5_conv2'] 
 
@@ -196,23 +176,31 @@ num_style_layers = len(style_layers)
 
 # #### **¿Por qué elegir capas intermedias para representaciones de estilo y contenido?**
 #
-# Entonces, ¿por qué estas salidas intermedias dentro de nuestra red de clasificación de imágenes preentrenada nos permiten definir representaciones de estilo y contenido?
+# Entonces, ¿por qué estas salidas intermedias dentro de nuestra red de clasificación de imágenes preentrenada nos
+# permiten definir representaciones de estilo y contenido?
 #
-# En un nivel alto, para que una red realice la clasificación de imágenes (para lo cual esta red ha sido entrenada), debe comprender la imagen. Esto requiere tomar la imagen sin procesar como píxeles de entrada y crear una representación interna que convierta los píxeles de la imagen sin procesar en una comprensión compleja de las características presentes en la imagen.
+# En un nivel alto, para que una red realice la clasificación de imágenes (para lo cual esta red ha sido entrenada),
+# debe comprender la imagen. Esto requiere tomar la imagen sin procesar como píxeles de entrada y crear una
+# representación interna que convierta los píxeles de la imagen sin procesar en una comprensión compleja de las
+# características presentes en la imagen.
 #
-# Esta es también una de las razones por las que las redes neuronales convolucionales pueden generalizar bien: **son capaces de capturar las invariancias y definir características dentro de las clases** (p. ej., gatos frente a perros) que son independientes del ruido de fondo y otras molestias. Por lo tanto, en algún lugar entre donde la imagen sin procesar se introduce en el modelo y la etiqueta de clasificación de salida, el modelo sirve como extractor de características complejas. Al acceder a las capas intermedias del modelo, puede describir el contenido y el estilo de las imágenes de entrada.
+# Esta es también una de las razones por las que las redes neuronales convolucionales pueden generalizar bien: **son c
+# apaces de capturar las invariancias y definir características dentro de las clases** (p. ej., gatos frente a perros)
+# que son independientes del ruido de fondo y otras molestias. Por lo tanto, en algún lugar entre donde la imagen
+# sin procesar se introduce en el modelo y la etiqueta de clasificación de salida, el modelo sirve como extractor de
+# características complejas. Al acceder a las capas intermedias del modelo, puede describir el contenido y el estilo
+# de las imágenes de entrada.
 
 ### **4. Construye el modelo**
 #
-# Las redes en `tf.keras.applications` están diseñadas para que pueda extraer fácilmente los valores de la capa intermedia utilizando la API funcional de Keras.
+# Las redes en `tf.keras.applications` están diseñadas para que pueda extraer fácilmente los valores de la capa
+# intermedia utilizando la API funcional de Keras.
 #
 # Para definir un modelo utilizando la API funcional, especifique las entradas y salidas:
 #
 # `modelo = Modelo(entradas, salidas)`
 #
 # La siguiente función crea un modelo VGG19 que devuelve una lista de salidas de capas intermedias:
-
-# En[46]:
 
 
 def vgg_layers(layer_names):
@@ -229,9 +217,6 @@ def vgg_layers(layer_names):
 
 
 # Ahora usamos la función anterior para obtener nuestro extractor de estilo y salidas de estilo
-
-# En[47]:
-
 
 style_extractor = vgg_layers(style_layers)
 style_outputs = style_extractor(style_image*255)
@@ -258,9 +243,6 @@ for name, output in zip(style_layers, style_outputs):
 #
 # Esto se puede implementar de manera concisa usando la función `tf.linalg.einsum`:
 
-# En[55]:
-
-
 def gram_matrix(input_tensor):
   result = tf.linalg.einsum('bijc,bijd->bcd', input_tensor, input_tensor)
   input_shape = tf.shape(input_tensor)
@@ -270,9 +252,6 @@ def gram_matrix(input_tensor):
 
 ### **5. Extraer estilo y contenido**
 # Cree un modelo que devuelva los tensores de estilo y contenido.
-
-# En[49]:
-
 
 class StyleContentModel(tf.keras.models.Model):
   def __init__(self, style_layers, content_layers):
@@ -305,10 +284,8 @@ class StyleContentModel(tf.keras.models.Model):
     return {'content': content_dict, 'style': style_dict}
 
 
-# Cuando se llama a una imagen, este modelo devuelve la matriz de gramo (estilo) de `style_layers` y el contenido de `content_layers`:
-
-# En[56]:
-
+# Cuando se llama a una imagen, este modelo devuelve la matriz de gramo (estilo) de `style_layers` y el contenido de
+# `content_layers`:
 
 extractor = StyleContentModel(style_layers, content_layers)
 
@@ -336,9 +313,8 @@ for name, output in sorted(results['content'].items()):
 #
 # ¡Con este extractor de estilo y contenido, ahora puede implementar el algoritmo de transferencia de estilo!
 #
-# Haga esto calculando el error cuadrático medio para la salida de su imagen en relación con cada objetivo, luego tome la suma ponderada de estas pérdidas.
-
-# En[16]:
+# Haga esto calculando el error cuadrático medio para la salida de su imagen en relación con cada objetivo, luego
+# tome la suma ponderada de estas pérdidas.
 
 
 # Establezca sus valores objetivo de estilo y contenido
@@ -346,18 +322,13 @@ style_targets = extractor(style_image)['style']
 content_targets = extractor(content_image)['content']
 
 
-# Defina una `tf.Variable` para que contenga la imagen a optimizar. Para hacerlo rápido, inicialícelo con la imagen del contenido (la `tf.Variable` debe tener la misma forma que la imagen del contenido):
-
-# En[17]:
-
+# Defina una `tf.Variable` para que contenga la imagen a optimizar. Para hacerlo rápido, inicialícelo con la imagen
+# del contenido (la `tf.Variable` debe tener la misma forma que la imagen del contenido):
 
 image = tf.Variable(content_image)
 
 
 # Dado que esta es una imagen flotante, defina una función para mantener los valores de píxel entre 0 y 1:
-
-# En[18]:
-
 
 def clip_0_1(image):
   return tf.clip_by_value(image, clip_value_min=0.0, clip_value_max=1.0)
@@ -365,22 +336,16 @@ def clip_0_1(image):
 
 # Crear un optimizador. El documento recomienda LBFGS, pero `Adam` también funciona bien:
 
-# En 19]:
-
 
 opt = tf.optimizers.Adam(learning_rate=0.02, beta_1=0.99, epsilon=1e-1)
 
 
 # Para optimizar esto, use una combinación ponderada de las dos pérdidas para obtener la pérdida total:
 
-# En 20]:
-
 
 style_weight=1e-2
 content_weight=1e4
 
-
-# En[57]:
 
 
 def style_content_loss(outputs):
@@ -398,9 +363,6 @@ def style_content_loss(outputs):
 
 
 # Use `tf.GradientTape` para actualizar la imagen.
-#
-
-# En[58]:
 
 
 @tf.function()
@@ -416,20 +378,17 @@ def train_step(image):
 
 # Ahora ejecute algunos pasos para probar:
 
-# En[59]:
+train_step(image)
+train_step(image)
+train_step(image)
+plt.imshow(tensor_to_image(stylized_image))
+plt.show()
 
-
-train_step(image)
-train_step(image)
-train_step(image)
-tensor_to_image(image)
 
 
 # **¡Funciona!**
 #
 # Ya que está funcionando, realice una optimización más larga:
-
-# En[60]:
 
 
 import time
@@ -446,6 +405,8 @@ for n in range(epochs):
     print(".", end='')
   display.clear_output(wait=True)
   display.display(tensor_to_image(image))
+  plt.imshow(tensor_to_image(stylized_image))
+  plt.show()
   print("Train step: {}".format(step))
   
 end = time.time()
@@ -454,10 +415,9 @@ print("Total time: {:.1f}".format(end-start))
 
 ### **7. Pérdida de variación total - Reducción de artefactos de alta frecuencia**
 #
-# Una desventaja de esta implementación básica es que produce muchos artefactos de alta frecuencia. Disminuya estos utilizando un término de regularización explícito en los componentes de alta frecuencia de la imagen. En transferencia de estilo, esto a menudo se denomina *pérdida de variación total*:
-
-# En[25]:
-
+# Una desventaja de esta implementación básica es que produce muchos artefactos de alta frecuencia. Disminuya estos
+# utilizando un término de regularización explícito en los componentes de alta frecuencia de la imagen.
+# En transferencia de estilo, esto a menudo se denomina *pérdida de variación total*:
 
 def high_pass_x_y(image):
   x_var = image[:, :, 1:, :] - image[:, :, :-1, :]
@@ -467,9 +427,6 @@ def high_pass_x_y(image):
 
 
 # ## Ver visualmente los componentes de alta frecuencia
-
-# En[26]:
-
 
 x_deltas, y_deltas = high_pass_x_y(content_image)
 
@@ -493,8 +450,6 @@ imshow(clip_0_1(2*x_deltas+0.5), "Vertical Deltas: Styled")
 #
 # Además, este componente de alta frecuencia es básicamente un detector de bordes. Puede obtener un resultado similar del detector de bordes Sobel, por ejemplo:
 
-# En[27]:
-
 
 plt.figure(figsize=(14, 10))
 
@@ -507,17 +462,12 @@ imshow(clip_0_1(sobel[..., 1]/4+0.5), "Vertical Sobel-edges")
 
 # La pérdida de regularización asociada a esto es la suma de los cuadrados de los valores:
 
-# En[61]:
-
-
 def total_variation_loss(image):
   x_deltas, y_deltas = high_pass_x_y(image)
   return tf.reduce_sum(tf.abs(x_deltas)) + tf.reduce_sum(tf.abs(y_deltas))
 
 
 # Eso demostró lo que hace. Pero no es necesario que lo implementes tú mismo, TensorFlow incluye una implementación estándar:
-
-# En[63]:
 
 
 tf.image.total_variation(image).numpy()
@@ -527,15 +477,11 @@ tf.image.total_variation(image).numpy()
 #
 # Elija un peso para `total_variation_loss`, elegiremos 30
 
-# En[65]:
-
 
 total_variation_weight=30
 
 
 # Ahora inclúyelo en la función `train_step`:
-
-# En[66]:
 
 
 @tf.function()
@@ -550,15 +496,10 @@ def train_step(image, total_variation_weight):
   image.assign(clip_0_1(image))
 
 
-# En[67]:
-
-
 image = tf.Variable(content_image)
 
 
 # Y ejecuta la optimización:
-
-# En[68]:
 
 
 import time
@@ -582,10 +523,8 @@ end = time.time()
 print("Total time: {:.1f}".format(end-start))
 
 
-# ### **¡¡Mucho mejor!!**
+'''# ### **¡¡Mucho mejor!!**
 # #### **Guarda el resultado y presume a tus amigos**
-
-# En[70]:
 
 
 file_name = 'stylized-image.png'
@@ -597,9 +536,7 @@ except ImportError:
    pass
 else:
   files.download(file_name)
-
-
-# En[ ]:
+'''
 
 
 

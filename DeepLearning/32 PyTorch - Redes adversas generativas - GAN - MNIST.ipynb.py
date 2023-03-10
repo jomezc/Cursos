@@ -4,7 +4,7 @@
 # ![](https://github.com/rajeevratan84/ModernComputerVision/raw/main/logo_MCV_W.png)
 #
 # # **Redes adversarias generativas (GAN) en PyTorch: GAN convolucionales profundas o DCGAN con MNIST**
-#
+#cle
 # ---
 #
 # En esta lección, aprenderemos a usar PyTorch para crear un DCGAN simple usando el conjunto de datos MNIST.
@@ -59,7 +59,6 @@ for i in range(32):
 #
 # Nuestro Descriminador recibe la imagen de 28x28 generada por nuestro Generador y genera una puntuación de probabilidad de que pertenezca o no al conjunto de datos original.
 
-# En[4]:
 
 
 class Discriminator(nn.Module):
@@ -94,8 +93,6 @@ discriminator = Discriminator().to(device=device)
 
 ### **5. Definir nuestro Modelo de Generador**
 
-# En[5]:
-
 
 class Generator(nn.Module):
     def __init__(self):
@@ -108,7 +105,7 @@ class Generator(nn.Module):
             nn.Linear(512, 1024),
             nn.ReLU(),
             nn.Linear(1024, 784),
-            nn.Tanh(), # Usamos la función de activación Tanh() para que nuestras salidas estén entre -1 y 1
+            nn.Tanh(),  # Usamos la función de activación Tanh() para que nuestras salidas estén entre -1 y 1
         )
 
     def forward(self, x):
@@ -122,31 +119,29 @@ generator = Generator().to(device=device)
 
 # ## **Establecer nuestros parámetros de entrenamiento**
 
-# En[6]:
 
 
 # Establecer nuestra tasa de aprendizaje, épocas
 lr = 0.0001
-epochs = 50
+epochs = 25
 loss_function = nn.BCELoss()
 
 optimizer_discriminator = torch.optim.Adam(discriminator.parameters(), lr=lr)
 optimizer_generator = torch.optim.Adam(generator.parameters(), lr=lr)
 
 
-# En[8]:
 
 
 for epoch in range(epochs):
     for n, (samples, labels) in enumerate(train_loader):
         # Obtener datos para entrenar al discriminador
         real_samples = samples.to(device=device)
-        real_samples_labels = torch.ones((batch_size, 1)).to(device=device)
-        latent_space_samples = torch.randn((batch_size, 100)).to(device=device)
+        real_samples_labels = torch.ones((batch_size, 1)).to(device=device)  # los reales son un 1 , un ok que es real
+        latent_space_samples = torch.randn((batch_size, 100)).to(device=device)  # generamos vectores aleatorios
         generated_samples = generator(latent_space_samples)
-        generated_samples_labels = torch.zeros((batch_size, 1)).to(device=device)
+        generated_samples_labels = torch.zeros((batch_size, 1)).to(device=device)  # los generados son 0 son falsas
         all_samples = torch.cat((real_samples, generated_samples))
-        all_samples_labels = torch.cat((real_samples_labels, generated_samples_labels))
+        all_samples_labels = torch.cat((real_samples_labels, generated_samples_labels))  # los real samples son 1 queremos generarlo todo verdadero
 
         # Entrenando al discriminador
         discriminator.zero_grad()
@@ -156,6 +151,8 @@ for epoch in range(epochs):
         optimizer_discriminator.step()
 
         # Datos para entrenar el generador
+        # el vector necesita ese vector 1x100 para generar esa muestra , por lo que creamos esos vectores aleatorios de
+        # ese tamaño
         latent_space_samples = torch.randn((batch_size, 100)).to(device=device)
 
         # Entrenando al generador
@@ -174,25 +171,23 @@ for epoch in range(epochs):
 
 ### **5. Ahora inspeccionemos nuestras muestras generadas**
 
-# En[ ]:
 
 
 latent_space_samples = torch.randn(batch_size, 100).to(device=device)
 generated_samples = generator(latent_space_samples)
 
 
-# En[ ]:
 
 
 generated_samples = generated_samples.cpu().detach()
 for i in range(16):
     ax = plt.subplot(4, 4, i + 1)
+    # También tenemos que remodelarlo (reshape), porque el generador produce un vector 784, así que tenemos
+    # que traerlo de vuelta a la Forma de veintiocho por 28 píxeles.
     plt.imshow(generated_samples[i].reshape(28, 28), cmap="gray")
     plt.xticks([])
     plt.yticks([])
-
-
-# En[ ]:
+plt.show()
 
 
 
