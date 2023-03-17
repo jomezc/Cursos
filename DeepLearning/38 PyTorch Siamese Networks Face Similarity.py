@@ -164,7 +164,9 @@ class SiameseNetwork(nn.Module):
     def __init__(self):
         super(SiameseNetwork, self).__init__()
         self.cnn1 = nn.Sequential(
-            nn.ReflectionPad2d(1),
+            nn.ReflectionPad2d(1),  # Rellena el tensor de entrada utilizando la reflexión del límite de entrada.
+
+
             nn.Conv2d(1, 4, kernel_size=3),
             nn.ReLU(inplace=True),
             nn.BatchNorm2d(4),

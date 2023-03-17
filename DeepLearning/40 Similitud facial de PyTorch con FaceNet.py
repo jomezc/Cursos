@@ -23,33 +23,40 @@
 #
 # Este es un repositorio para modelos Inception Resnet (V1) en pytorch, entrenados previamente en VGGFace2 y CASIA-Webface.
 #
-# Los pesos del modelo de Pytorch se inicializaron usando parámetros transferidos del repositorio facenet de tensorflow de David Sandberg.
+# Los pesos del modelo de Pytorch se inicializaron usando parámetros transferidos del repositorio facenet de tensorflow
+# de David Sandberg.
 #
-# También se incluye en este repositorio una implementación pytorch eficiente de MTCNN para la detección de rostros antes de la inferencia. Estos modelos también están preentrenados. Hasta donde sabemos, esta es la implementación de MTCNN más rápida disponible.
+# También se incluye en este repositorio una implementación pytorch eficiente de MTCNN para la detección de rostros
+# antes de la inferencia. Estos modelos también están preentrenados. Hasta donde sabemos, esta es la implementación
+# de MTCNN más rápida disponible.
 #
 # https://github.com/timesler/facenet-pytorch#guide-to-mtcnn-in-facenet-pytorch
 
+
+# IDEA
+# Detector rápido de MTCNN - https://www.kaggle.com/code/timesler/fast-mtcnn-detector-55-fps-at-full-resolution/notebook
+
+# otro ejemplo de detección de rostros + clsasificación
+# https://arsfutura.com/magazine/face-recognition-with-facenet-and-mtcnn/
 ### **1. Clone el repositorio e instale facenet-pytorch**
 
-# En[12]:
 
-
-get_ipython().system('git clone https://github.com/timesler/facenet-pytorch.git')
+'''git clone https://github.com/timesler/facenet-pytorch.git'''
 
 '''pip install facenet-pytorch'''
 
 
 ### **2. Cargue nuestros módulos y datos**
 #
-# El siguiente ejemplo ilustra cómo usar el paquete python facenet_pytorch para realizar la detección y el reconocimiento de rostros en un conjunto de datos de imágenes usando un Inception Resnet V1 entrenado previamente en el conjunto de datos VGGFace2.
+# El siguiente ejemplo ilustra cómo usar el paquete python facenet_pytorch para realizar la detección y el
+# reconocimiento de rostros en un conjunto de datos de imágenes usando un Inception Resnet V1 entrenado previamente en
+# el conjunto de datos VGGFace2.
 #
 # Se incluyen los siguientes métodos de Pytorch:
 #
 # conjuntos de datos
 # cargadores de datos
 # Procesamiento GPU/CPU
-
-# En[13]:
 
 
 from facenet_pytorch import MTCNN, InceptionResnetV1
@@ -63,9 +70,6 @@ import os
 workers = 0 if os.name == 'nt' else 4
 
 
-# En[ ]:
-
-
 # Determinar si una GPU nvidia está disponible
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print('Running on device: {}'.format(device))
@@ -73,11 +77,11 @@ print('Running on device: {}'.format(device))
 
 # **Definir módulo MTCNN**
 #
-# Los parámetros predeterminados se muestran a modo de ilustración, pero no son necesarios. Tenga en cuenta que, dado que MTCNN es una colección de redes neuronales y otro código, el dispositivo debe pasarse de la siguiente manera para permitir la copia de objetos cuando sea necesario internamente.
+# Los parámetros predeterminados se muestran a modo de ilustración, pero no son necesarios. Tenga en cuenta que, dado
+# que MTCNN es una colección de redes neuronales y otro código, el dispositivo debe pasarse de la siguiente manera para
+# permitir la copia de objetos cuando sea necesario internamente.
 #
 # Consulte la ayuda (MTCNN) para obtener más detalles.
-
-# En[ ]:
 
 
 mtcnn = MTCNN(
@@ -88,11 +92,11 @@ mtcnn = MTCNN(
 
 # **Definir el módulo Inception Resnet V1**
 #
-# Establecer classify=True para el clasificador preentrenado. Para este ejemplo, usaremos el modelo para generar incrustaciones/características de CNN. Tenga en cuenta que para la inferencia, es importante establecer el modelo en modo eval.
+# Establecer classify=True para el clasificador preentrenado. Para este ejemplo, usaremos el modelo para generar
+# incrustaciones/características de CNN. Tenga en cuenta que para la inferencia, es importante establecer el modelo en
+# modo eval.
 #
 # Consulte la ayuda (InceptionResnetV1) para obtener más detalles.
-
-# En[ ]:
 
 
 resnet = InceptionResnetV1(pretrained='vggface2').eval().to(device)
@@ -100,23 +104,19 @@ resnet = InceptionResnetV1(pretrained='vggface2').eval().to(device)
 
 # **Definir un conjunto de datos y un cargador de datos**
 #
-# Agregamos el atributo idx_to_class al conjunto de datos para permitir una fácil recodificación de índices de etiquetas para identificar nombres más adelante.
-
-# En[ ]:
+# Agregamos el atributo idx_to_class al conjunto de datos para permitir una fácil recodificación de índices de
+# etiquetas para identificar nombres más adelante.
 
 
 def collate_fn(x):
     return x[0]
 
-dataset = datasets.ImageFolder('facenet-pytorch/data/test_images')
+dataset = datasets.ImageFolder('models/facenet-pytorch/data/test_images')
 dataset.idx_to_class = {i:c for c, i in dataset.class_to_idx.items()}
 loader = DataLoader(dataset, collate_fn=collate_fn, num_workers=workers)
 
 
 # ### **Ver nuestras imágenes**
-
-# En[ ]:
-
 
 import glob
 import cv2
@@ -136,18 +136,20 @@ def imgshow(title="", image = None, size = 6):
       print("Image not found")
 
 
-for f in glob.glob('./facenet-pytorch/data/test_images/**/*.jpg', recursive=True):
+for f in glob.glob('models/facenet-pytorch/data/test_images/**/*.jpg', recursive=True):
     image = cv2.imread(f)
     imgshow(f, image)
 
 
 ### **3. Realizar detección facial MTCNN**
 #
-# Iterar a través del objeto DataLoader y detectar rostros y probabilidades de detección asociadas para cada uno. El método de reenvío MTCNN devuelve imágenes recortadas al rostro detectado, si se detectó un rostro. De manera predeterminada, solo se devuelve una sola cara detectada: para que MTCNN devuelva todas las caras detectadas, establezca keep_all=True al crear el objeto MTCNN anterior.
+# Iterar a través del objeto DataLoader y detectar rostros y probabilidades de detección asociadas para cada uno. El
+# método de reenvío MTCNN devuelve imágenes recortadas al rostro detectado, si se detectó un rostro. De manera
+# predeterminada, solo se devuelve una sola cara detectada: para que MTCNN devuelva todas las caras detectadas,
+# establezca keep_all=True al crear el objeto MTCNN anterior.
 #
-# Para obtener cuadros delimitadores en lugar de imágenes de caras recortadas, puede llamar a la función mtcnn.detect() de nivel inferior. Consulte la ayuda (mtcnn.detect) para obtener más información.
-
-# En[ ]:
+# Para obtener cuadros delimitadores en lugar de imágenes de caras recortadas, puede llamar a la función mtcnn.detect()
+# de nivel inferior. Consulte la ayuda (mtcnn.detect) para obtener más información.
 
 
 aligned = []
@@ -163,12 +165,14 @@ for x, y in loader:
 
 # **Calcular incrustaciones de imágenes**
 #
-#MTCNN devolverá imágenes de rostros del mismo tamaño, lo que permite un fácil procesamiento por lotes con el módulo de reconocimiento Resnet. Aquí, dado que solo tenemos unas pocas imágenes, construimos un solo lote y realizamos inferencias sobre él.
+# MTCNN devolverá imágenes de rostros del mismo tamaño, lo que permite un fácil procesamiento por lotes con el módulo de
+# reconocimiento Resnet. Aquí, dado que solo tenemos unas pocas imágenes, construimos un solo lote y realizamos
+# inferencias sobre él.
 #
-# Para conjuntos de datos reales, el código debe modificarse para controlar los tamaños de los lotes que se pasan a Resnet, especialmente si se procesan en una GPU. Para pruebas repetidas, es mejor separar la detección de rostros (usando MTCNN) de la incrustación o clasificación (usando InceptionResnetV1), ya que el cálculo de rostros recortados o cuadros delimitadores se puede realizar una sola vez y los rostros detectados se pueden guardar para uso futuro.
-
-# En[ ]:
-
+# Para conjuntos de datos reales, el código debe modificarse para controlar los tamaños de los lotes que se pasan a
+# Resnet, especialmente si se procesan en una GPU. Para pruebas repetidas, es mejor separar la detección de rostros
+# (usando MTCNN) de la incrustación o clasificación (usando InceptionResnetV1), ya que el cálculo de rostros recortados
+# o cuadros delimitadores se puede realizar una sola vez y los rostros detectados se pueden guardar para uso futuro.
 
 aligned = torch.stack(aligned).to(device)
 embeddings = resnet(aligned).detach().cpu()
@@ -176,15 +180,8 @@ embeddings = resnet(aligned).detach().cpu()
 
 # **Imprimir matriz de distancia para clases**
 
-# En[ ]:
-
-
 dists = [[(e1 - e2).norm().item() for e2 in embeddings] for e1 in embeddings]
 pd.DataFrame(dists, columns=names, index=names)
-
-
-# En[ ]:
-
 
 
 

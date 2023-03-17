@@ -313,6 +313,7 @@ print("Model Loaded")
 # Este código busca las caras que extrajo en la carpeta "group_of_faces" y usa la similitud (similitud del coseno)
 # para detectar qué caras son más similares a la que se extrae con su cámara web.
 
+# **se ha quitado por motivos de deprecación y rapidez la webcam por una imagen fija**
 
 from IPython.display import display, Javascript
 
