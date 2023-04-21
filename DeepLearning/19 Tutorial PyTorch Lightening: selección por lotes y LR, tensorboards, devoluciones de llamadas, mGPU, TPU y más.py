@@ -250,7 +250,7 @@ class LitModel(pl.LightningModule):
 
 model = LitModel(batch_size = 32)
 
-trainer = pl.Trainer(auto_scale_batch_size=True)
+trainer = pl.Trainer()
 # entrenador = pl.Entrenador(auto_scale_batch_size='binsearch')
 
 trainer.tune(model)

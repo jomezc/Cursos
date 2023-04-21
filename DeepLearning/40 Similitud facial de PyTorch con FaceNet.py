@@ -170,7 +170,7 @@ for x, y in loader:
 # inferencias sobre él.
 #
 # Para conjuntos de datos reales, el código debe modificarse para controlar los tamaños de los lotes que se pasan a
-# Resnet, especialmente si se procesan en una GPU. Para pruebas repetidas, es mejor separar la detección de rostros
+# Resnet, especialmente si se procesan en una GPU. Para SOCKET repetidas, es mejor separar la detección de rostros
 # (usando MTCNN) de la incrustación o clasificación (usando InceptionResnetV1), ya que el cálculo de rostros recortados
 # o cuadros delimitadores se puede realizar una sola vez y los rostros detectados se pueden guardar para uso futuro.
 

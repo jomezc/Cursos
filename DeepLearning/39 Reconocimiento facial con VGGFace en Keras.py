@@ -153,7 +153,7 @@ def verifyFace(img1, img2):
         print("They are not same person!")
 
 
-# ### **Hagamos algunas pruebas**
+# ### **Hagamos algunas SOCKET**
 
 
 # Comparemos dos caras de la misma persona

@@ -16,7 +16,7 @@ def imshow(title = "Image", image = None, size = 10):
     plt.show()
 
 
-# Cargamos imagen original de pruebas en escala de grises
+# Cargamos imagen original de SOCKET en escala de grises
 cb_img = cv2.imread("images/checkerboard_18x18.png", 0)
 
 # Establezca el mapa de colores en escala de grises para una representación adecuada, si no se ven colores incorrectos

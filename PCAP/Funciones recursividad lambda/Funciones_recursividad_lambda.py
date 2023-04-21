@@ -375,7 +375,7 @@ print(area_of_triangle(1., 1., 2. ** .5))
 # La fórmula para convertir de celsius a fahrenheit es: celsius * 9/5 + 32 Función 2. Recibir un parámetro llamado
 # fahrenheit y regresar el valor equivalente a celsius: fahrenheit_celsius(fahrenheit)
 # La fórmula para convertir de fahrenheit a celsius es:  (fahrenheit-32) * 5/9 Los valores los debe proporcionar el
-# usuario, utilizando la función input y convirtiéndolo a tipo float. Deben hacer al menos dos pruebas, una donde
+# usuario, utilizando la función input y convirtiéndolo a tipo float. Deben hacer al menos dos SOCKET, una donde
 # conviertan de grados celscius a grados fahrenheit, y otra donde conviertan de grados fahrenheit a grados celsius y
 # mandar a imprimir los resultados.
 
@@ -518,7 +518,7 @@ def pantalla(str):
 pantalla('9081726354')
 
 # Versión con menos código pero mas complejidad (n*n vs MIA 5*n)
-# using a list containing patterns （0~9）
+# using a list containing functionality （0~9）
 
 list= [['###', '# #', '# #', '# #', '###'],
 [' #', ' #', ' #', ' #', ' #'],

@@ -736,7 +736,7 @@ def imshow(title = "Image", image = None, size = 10):
     plt.show()
 
 
-# Cargamos imagen original de pruebas en escala de grises
+# Cargamos imagen original de SOCKET en escala de grises
 cb_img = cv2.imread("images/checkerboard_18x18.png", 0)
 
 # Establezca el mapa de colores en escala de grises para una representación adecuada, si no se ven colores incorrectos
@@ -8091,7 +8091,7 @@ plt.show()
 #   de imágenes en color.
 # Evalúan nuestro algoritmo mediante una "prueba de Turing de coloración", en la que se pide a los participantes humanos
 # que elijan entre una imagen en color generada y otra real.
-# Su método consigue engañar a los humanos en el 32% de las pruebas, un porcentaje significativamente superior al de
+# Su método consigue engañar a los humanos en el 32% de las SOCKET, un porcentaje significativamente superior al de
 # métodos anteriores.
 #
 # ![](http://richzhang.github.io/colorization/resources/images/teaser3.jpg)

@@ -17,7 +17,7 @@
 #   de imágenes en color.
 # Evalúan nuestro algoritmo mediante una "prueba de Turing de coloración", en la que se pide a los participantes humanos
 # que elijan entre una imagen en color generada y otra real.
-# Su método consigue engañar a los humanos en el 32% de las pruebas, un porcentaje significativamente superior al de
+# Su método consigue engañar a los humanos en el 32% de las SOCKET, un porcentaje significativamente superior al de
 # métodos anteriores.
 #
 # ![](http://richzhang.github.io/colorization/resources/images/teaser3.jpg)

@@ -426,11 +426,11 @@ class ImagenetTransferLearning(pl.LightningModule):
         de avance.(foward)'''
         self.feature_extractor = nn.Sequential(*layers)  # básicamente reconstruye el modelo de manera efectiva
         # usar el modelo preentrenado
-        num_target_classes = 2 # como solo tenemos 2 clases lo establecemos
+        num_target_classes = 2  # como solo tenemos 2 clases lo establecemos
         # estamos estableciendo una red neuronal para realizar transfer learning con extracción de características
         # con la red preentrenada pero en la ultima capa totalmente conectada que tiene los detalles y salidas
         # cambiandolo por nuestras 2 clases objetivo
-        # nn.linear Aplica una transformación lineal a los datos entrantes ( explicación arriba)
+        # nn.linear Aplica una transformación lineal a los datos entrantes (explicación arriba)
         self.classifier = nn.Linear(num_filters, num_target_classes)
 
     def forward(self, x):
@@ -528,7 +528,7 @@ checkpoint_callback = ModelCheckpoint(
 
 trainer = pl.Trainer(
     accelerator='gpu', devices=1,
-    max_epochs=10,
+    # max_epochs=10,
     callbacks=[EarlyStopping('val_loss'), checkpoint_callback], # Añadido por mi
     default_root_dir="checkpoints/"
 )

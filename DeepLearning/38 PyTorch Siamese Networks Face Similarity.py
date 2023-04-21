@@ -18,7 +18,7 @@
 # 2. Configure nuestro procesamiento de datos: cree nuestros pares de imágenes
 # 3. Construyendo nuestra Red Siamés
 # 4. Comienza a entrenar
-# 5. Ver los resultados de nuestras pruebas
+# 5. Ver los resultados de nuestras SOCKET
 #
 # **Créditos**:
 #
@@ -265,7 +265,7 @@ for epoch in range(0,Config.train_number_epochs):
 show_plot(counter,loss_history)
 
 
-### **5. Ver los resultados de nuestras pruebas**
+### **5. Ver los resultados de nuestras SOCKET**
 #
 # Los últimos 3 temas quedaron fuera del entrenamiento y se utilizarán para la prueba. La Distancia entre cada par de
 # imágenes indica el grado de similitud que el modelo encontró entre las dos imágenes. Menos significa que encontró
